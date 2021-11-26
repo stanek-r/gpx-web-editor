@@ -20,16 +20,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'basic-angular-install'`, () => {
+  it(`should have as title 'New angular app'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('basic-angular-install');
+    expect(app.title).toEqual('New angular app');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('basic-angular-install app is running!');
+    expect(compiled.querySelector('.content span').textContent).toContain('New angular app app is running!');
   });
 });

@@ -25,7 +25,7 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/basic-angular-install'),
+      dir: require('path').join(__dirname, './coverage/gpx-web-editor'),
       subdir: '.',
       reporters: [
         { type: 'html' },
