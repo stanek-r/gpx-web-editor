@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "frontend/gpx-web-editor/dist",
+    "public": "frontend/dist/gpx-web-editor",
     "ignore": [
       "firebase.json",
       "**/.*",
