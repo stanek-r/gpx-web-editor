@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from './services/firebase.service';
 import { SharedModule } from '../../shared/shared.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [UploadComponent],
@@ -16,6 +17,7 @@ import { SharedModule } from '../../shared/shared.module';
     FormsModule,
     CommonModule,
     SharedModule,
+    HttpClientModule,
   ],
   providers: [FirebaseService],
   exports: [],
