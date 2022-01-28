@@ -14,18 +14,12 @@ export interface FileUpload {
   downloadUrl: any;
   userIP?: string;
 }
-export interface ChatMessage {
-  message: string;
-  userIP?: string;
-}
 
 @Injectable()
 export class FirebaseService {
   private filesBasePath = '/files';
-  private chatBasePath = '/chat';
   private ipAddress!: string;
   private uploadedFiles$ = new ReplaySubject<FileUpload[]>(1);
-  private chatMessages$ = new ReplaySubject<ChatMessage[]>(1);
   private fireUser$ = new ReplaySubject<any>(1);
 
   constructor(
@@ -51,13 +45,6 @@ export class FirebaseService {
     return uploadTask.percentageChanges();
   }
 
-  pushMessageToDB(message: string): void {
-    this.fireDB.list(this.chatBasePath).push({
-      message,
-      userIP: this.ipAddress,
-    } as ChatMessage);
-  }
-
   private saveFileData(fileUpload: FileUpload): void {
     this.fireDB.list(this.filesBasePath).push(fileUpload);
   }
@@ -65,12 +52,11 @@ export class FirebaseService {
   initializeFireBase(): void {
     this.getIPAddress();
     this.loadFilesFromDB();
-    this.loadMessagesFromDB();
   }
 
   async loginToGoogle(): Promise<void> {
     this.fireAuth.signInWithPopup(new GoogleAuthProvider()).then((user) => {
-      // this.initializeFireBase();
+      this.initializeFireBase();
       this.fireUser$.next(user);
     });
   }
@@ -84,21 +70,8 @@ export class FirebaseService {
       });
   }
 
-  loadMessagesFromDB(): void {
-    this.fireDB
-      .list(this.chatBasePath)
-      .valueChanges()
-      .subscribe((data: any[]) => {
-        this.chatMessages$.next(data.reverse());
-      });
-  }
-
   getUploadedFiles(): Observable<FileUpload[]> {
     return this.uploadedFiles$;
-  }
-
-  getChatMessages(): Observable<ChatMessage[]> {
-    return this.chatMessages$;
   }
 
   getFireUser(): Observable<any> {

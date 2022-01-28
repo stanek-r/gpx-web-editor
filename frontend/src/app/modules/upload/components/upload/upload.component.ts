@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import {
-  ChatMessage,
-  FileUpload,
-  FirebaseService,
-} from '../../services/firebase.service';
+import { FileUpload, FirebaseService } from '../../services/firebase.service';
 import firebase from 'firebase';
 import User = firebase.User;
 
@@ -16,7 +12,6 @@ import User = firebase.User;
 export class UploadComponent implements OnInit {
   uploading$?: Observable<number | undefined>;
   files$?: Observable<FileUpload[]>;
-  messages$?: Observable<ChatMessage[]>;
   user$?: Observable<User>;
 
   chatInput = '';
@@ -25,7 +20,6 @@ export class UploadComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.files$ = this.firebaseService.getUploadedFiles();
-    this.messages$ = this.firebaseService.getChatMessages();
     this.user$ = this.firebaseService.getFireUser();
   }
 
@@ -34,11 +28,6 @@ export class UploadComponent implements OnInit {
       const file = event.target.files[0];
       this.uploading$ = this.firebaseService.pushFileToStorage(file);
     }
-  }
-
-  onMessageSend(): void {
-    this.firebaseService.pushMessageToDB(this.chatInput);
-    this.chatInput = '';
   }
 
   async loginViaGoogle(): Promise<void> {
