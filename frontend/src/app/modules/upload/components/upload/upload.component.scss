@@ -1,0 +1,19 @@
+.user-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  div {
+    padding: 20px;
+  }
+
+  app-image {
+    width: 50px;
+
+    ::ng-deep img {
+      width: 100%;
+    }
+  }
+}

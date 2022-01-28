@@ -1,0 +1,8 @@
+<img [src]="imageUrl" [alt]="alt" />
+<img [src]="lowUrl" class="d-none" (load)="showImage()" />
+<img
+  [src]="highUrl"
+  class="d-none"
+  *ngIf="highUrl && (loadBigImages$ | async)"
+  (load)="changeResolution()"
+/>

@@ -1,0 +1,42 @@
+<a routerLink="/">BACK</a><br /><br />
+<div class="row" *ngIf="user$ | async as user; else loggedOut">
+  <div class="user-info">
+    <div>Name: {{ user.displayName }}</div>
+    <div>Email: {{ user.email }}</div>
+    <app-image
+      [lowUrl]="user.photoURL == null ? '' : user.photoURL"
+    ></app-image>
+    <div>{{ uploading$ | async | number: "1.0-0" }}</div>
+  </div>
+  <input type="file" (change)="onFileSelected($event)" /><br /><br />
+  <div *ngIf="messages$ | async as messages" class="col-6">
+    <p>Chat messages:</p>
+    <div class="m-3">
+      <input
+        type="text"
+        placeholder="Some amazing text..."
+        [(ngModel)]="chatInput"
+        (submit)="onMessageSend()"
+      />
+      <button type="button" (click)="onMessageSend()">Send</button>
+    </div>
+    <div *ngFor="let message of messages" class="m-3">
+      <p>{{ message.userIP }} - {{ message.message }}</p>
+    </div>
+  </div>
+  <div *ngIf="files$ | async as files" class="col-6">
+    <p>Files:</p>
+    <div *ngFor="let file of files" class="m-3">
+      <p>
+        {{ file.name }} | {{ file.userIP }} |
+        <a [download]="file.name" [href]="file.downloadUrl" title="ImageName"
+          >Download</a
+        >
+      </p>
+    </div>
+  </div>
+  <p>{{ user | json }}</p>
+</div>
+<ng-template #loggedOut>
+  <button type="button" (click)="loginViaGoogle()">Login</button>
+</ng-template>
