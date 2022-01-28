@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './modules/home/home.component';
+import { UploadComponent } from './modules/upload/components/upload/upload.component';
 
 const routes: Routes = [
   {
@@ -10,8 +11,7 @@ const routes: Routes = [
   },
   {
     path: 'upload',
-    loadChildren: () =>
-      import('./modules/upload/upload.module').then((m) => m.UploadModule),
+    component: UploadComponent,
   },
   { path: '**', redirectTo: '/' },
 ];
