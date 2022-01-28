@@ -70,7 +70,7 @@ export class FirebaseService {
 
   async loginToGoogle(): Promise<void> {
     this.fireAuth.signInWithPopup(new GoogleAuthProvider()).then((user) => {
-      this.initializeFireBase();
+      // this.initializeFireBase();
       this.fireUser$.next(user);
     });
   }
