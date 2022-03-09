@@ -1,1 +1,11 @@
-<p>Test page!</p>
+<agm-map [latitude]="lat" [longitude]="long" [zoom]="zoom">
+  <agm-marker
+    [markerDraggable]="true"
+    [latitude]="markLat"
+    [longitude]="markLng"
+    (dragEnd)="markerDragEnd($event)"
+  >
+    <agm-info-window>hello</agm-info-window>
+  </agm-marker>
+</agm-map>
+<button (click)="printMarkerInfo()">Hello</button>
