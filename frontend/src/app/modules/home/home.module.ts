@@ -12,7 +12,7 @@ import { AgmDirectionModule } from 'agm-direction';
     SharedModule,
     RouterModule,
     AgmCoreModule.forRoot({
-      apiKey: '',
+      apiKey: 'AIzaSyBlhKqQmeaoitPsrm293z_X19hTYJ8ckts',
     }),
     CommonModule,
     AgmDirectionModule,
