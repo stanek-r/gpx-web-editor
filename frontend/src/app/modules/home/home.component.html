@@ -1,11 +1,13 @@
 <agm-map [latitude]="lat" [longitude]="long" [zoom]="zoom">
-  <agm-marker
-    [markerDraggable]="true"
-    [latitude]="markLat"
-    [longitude]="markLng"
-    (dragEnd)="markerDragEnd($event)"
-  >
-    <agm-info-window>hello</agm-info-window>
-  </agm-marker>
+  <agm-direction
+    *ngFor="let mapData of routes; let i = index"
+    [origin]="mapData.start"
+    [destination]="mapData.end"
+    [markerOptions]="markerOptions"
+    [renderOptions]="renderOptions"
+    (originDrag)="markerDragStart($event, i)"
+    (destinationDrag)="markerDragEnd($event, i)"
+    [travelMode]="travelMode"
+  ></agm-direction>
 </agm-map>
-<button (click)="printMarkerInfo()">Hello</button>
+<button (click)="printTrace()">Print route</button>

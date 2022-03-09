@@ -4,6 +4,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { RouterModule } from '@angular/router';
 import { AgmCoreModule } from '@agm/core';
 import { CommonModule } from '@angular/common';
+import { AgmDirectionModule } from 'agm-direction';
 
 @NgModule({
   declarations: [HomeComponent],
@@ -14,6 +15,7 @@ import { CommonModule } from '@angular/common';
       apiKey: '',
     }),
     CommonModule,
+    AgmDirectionModule,
   ],
   exports: [],
 })
