@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { google } from '@agm/core/services/google-maps-types';
+import { isNil } from '@angular/fire/database/utils';
 
 export interface MapData {
   start: google.maps.LatLngLiteral;
@@ -116,9 +117,13 @@ export class MapComponent implements OnInit {
     ]);
   }
 
-  removePoint(): void {
+  removePoint(index?: number): void {
     const oldPoints = this.convertRoutesIntoPoints();
-    oldPoints.pop();
+    if (index) {
+      oldPoints.splice(index, 1);
+    } else {
+      oldPoints.pop();
+    }
     this.routes = this.convertPointsIntoRoutes(oldPoints);
   }
 }

@@ -8,9 +8,9 @@
     (originDrag)="markerDragStart($event, i)"
     (destinationDrag)="markerDragEnd($event, i)"
     [travelMode]="travelMode"
-  ></agm-direction> </agm-map
-><br />
-<div class="row">
+  ></agm-direction>
+</agm-map>
+<div class="row mt-3">
   <div class="col-6">
     <label for="latitude">Latitude:</label>
     <input
@@ -34,6 +34,7 @@
   <div class="col-6">
     <p *ngFor="let point of this.convertRoutesIntoPoints(); let i = index">
       Point {{ i + 1 }}: {{ point.lat }} {{ point.lng }}
+      <button (click)="removePoint(i)">X</button>
     </p>
   </div>
 </div>
