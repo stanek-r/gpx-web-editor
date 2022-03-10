@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { HomeModule } from './modules/home/home.module';
 import { UploadModule } from './modules/upload/upload.module';
+import { EditorModule } from './modules/editor/editor.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -13,6 +14,7 @@ import { UploadModule } from './modules/upload/upload.module';
     AppRoutingModule,
     HttpClientModule,
     HomeModule,
+    EditorModule,
     UploadModule,
   ],
   providers: [],

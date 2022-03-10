@@ -1,13 +1,2 @@
-<agm-map [latitude]="lat" [longitude]="long" [zoom]="zoom">
-  <agm-direction
-    *ngFor="let mapData of routes; let i = index"
-    [origin]="mapData.start"
-    [destination]="mapData.end"
-    [markerOptions]="markerOptions"
-    [renderOptions]="renderOptions"
-    (originDrag)="markerDragStart($event, i)"
-    (destinationDrag)="markerDragEnd($event, i)"
-    [travelMode]="travelMode"
-  ></agm-direction>
-</agm-map>
-<button (click)="printTrace()">Print route</button>
+<a routerLink="/editor">Editor</a>
+<a routerLink="/upload">Upload</a>

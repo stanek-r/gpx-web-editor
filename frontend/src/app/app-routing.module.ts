@@ -2,12 +2,17 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './modules/home/home.component';
 import { UploadComponent } from './modules/upload/components/upload/upload.component';
+import { MapComponent } from './modules/editor/map/map.component';
 
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
     pathMatch: 'full',
+  },
+  {
+    path: 'editor',
+    component: MapComponent,
   },
   {
     path: 'upload',

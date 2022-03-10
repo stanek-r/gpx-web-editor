@@ -2,21 +2,11 @@ import { NgModule } from '@angular/core';
 import { HomeComponent } from './home.component';
 import { SharedModule } from '../../shared/shared.module';
 import { RouterModule } from '@angular/router';
-import { AgmCoreModule } from '@agm/core';
 import { CommonModule } from '@angular/common';
-import { AgmDirectionModule } from 'agm-direction';
 
 @NgModule({
   declarations: [HomeComponent],
-  imports: [
-    SharedModule,
-    RouterModule,
-    AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyBlhKqQmeaoitPsrm293z_X19hTYJ8ckts',
-    }),
-    CommonModule,
-    AgmDirectionModule,
-  ],
+  imports: [SharedModule, RouterModule, CommonModule],
   exports: [],
 })
 export class HomeModule {}
