@@ -1,4 +1,4 @@
-<a routerLink="/">BACK</a><br /><br />
+<app-side-menu></app-side-menu> <a routerLink="/">BACK</a><br /><br />
 <div class="row" *ngIf="user$ | async as user; else loggedOut">
   <div class="user-info">
     <div>Name: {{ user.displayName }}</div>
