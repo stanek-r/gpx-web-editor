@@ -6,6 +6,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { HomeModule } from './modules/home/home.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { EditorModule } from './modules/editor/editor.module';
+import { UserModule } from './modules/login/user.module';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -13,9 +15,11 @@ import { EditorModule } from './modules/editor/editor.module';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    SharedModule,
     HomeModule,
     EditorModule,
     UploadModule,
+    UserModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

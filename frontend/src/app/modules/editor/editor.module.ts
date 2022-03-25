@@ -5,9 +5,10 @@ import { CommonModule } from '@angular/common';
 import { AgmDirectionModule } from 'agm-direction';
 import { AgmCoreModule } from '@agm/core';
 import { MapComponent } from './map/map.component';
+import { ListComponent } from './list/list.component';
 
 @NgModule({
-  declarations: [MapComponent],
+  declarations: [MapComponent, ListComponent],
   imports: [
     SharedModule,
     RouterModule,

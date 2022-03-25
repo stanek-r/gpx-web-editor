@@ -1,19 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { google } from '@agm/core/services/google-maps-types';
-import { isNil } from '@angular/fire/database/utils';
-
-export interface MapData {
-  start: google.maps.LatLngLiteral;
-  end: google.maps.LatLngLiteral;
-}
-
-enum TravelMode {
-  BICYCLING = 'BICYCLING',
-  DRIVING = 'DRIVING',
-  TRANSIT = 'TRANSIT',
-  TWO_WHEELER = 'TWO_WHEELER',
-  WALKING = 'WALKING',
-}
+import { MapData, TravelMode } from '../../../shared/models/map.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { StorageService } from '../../../services/storage.service';
 
 @Component({
   selector: 'app-map',
@@ -40,16 +28,30 @@ export class MapComponent implements OnInit {
   readonly travelMode = TravelMode.WALKING;
 
   routes: MapData[] = [];
+  id!: string;
 
   @ViewChild('latitude') latInput!: ElementRef<HTMLInputElement>;
   @ViewChild('longtitude') lngInput!: ElementRef<HTMLInputElement>;
 
+  constructor(
+    private readonly storageService: StorageService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
+  ) {}
+
   ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      this.router.navigate(['/editor']);
+      return;
+    } else {
+      this.id = id;
+    }
     this.routes = this.convertPointsIntoRoutes(
-      this.getPointsFromLocalStorage()
+      this.storageService.getPointsByGroupId(id)
     );
     setInterval(
-      () => this.savePointsToLocalStorage(this.convertRoutesIntoPoints()),
+      () => this.storageService.save(this.id, this.convertRoutesIntoPoints()),
       5000
     );
   }
@@ -74,14 +76,6 @@ export class MapComponent implements OnInit {
     }
   }
 
-  getPointsFromLocalStorage(): google.maps.LatLngLiteral[] {
-    return JSON.parse(localStorage.getItem('gpx_points') ?? '[]');
-  }
-
-  savePointsToLocalStorage(points: google.maps.LatLngLiteral[]): void {
-    localStorage.setItem('gpx_points', JSON.stringify(points));
-  }
-
   convertPointsIntoRoutes(points: google.maps.LatLngLiteral[]): MapData[] {
     const routes: MapData[] = [];
     let tmp = points[0];
@@ -97,10 +91,12 @@ export class MapComponent implements OnInit {
 
   convertRoutesIntoPoints(): google.maps.LatLngLiteral[] {
     const points: google.maps.LatLngLiteral[] = [];
-    for (const route of this.routes) {
-      points.push(route.start);
+    if (this.routes.length > 0) {
+      for (const route of this.routes) {
+        points.push(route.start);
+      }
+      points.push(this.routes[this.routes.length - 1].end);
     }
-    points.push(this.routes[this.routes.length - 1].end);
     return points;
   }
 
@@ -111,10 +107,11 @@ export class MapComponent implements OnInit {
         lng: +this.lngInput.nativeElement.value,
       },
     ];
-    this.routes = this.convertPointsIntoRoutes([
-      ...this.convertRoutesIntoPoints(),
-      ...newPoints,
-    ]);
+    const oldPoints = this.convertRoutesIntoPoints();
+    if (oldPoints.length === 0) {
+      oldPoints.push(newPoints[0]);
+    }
+    this.routes = this.convertPointsIntoRoutes([...oldPoints, ...newPoints]);
   }
 
   removePoint(index?: number): void {

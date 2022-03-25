@@ -1,0 +1,26 @@
+<app-side-menu></app-side-menu>
+<div class="action-menu">
+  <button type="button" class="btn btn-primary" (click)="addNewGroup()">
+    Add new group
+  </button>
+</div>
+<div class="list" *ngIf="listOfPointGroups.length > 0">
+  <div *ngFor="let group of listOfPointGroups">
+    <p>ID: {{ group.id }}</p>
+    <ol>
+      <li *ngFor="let point of group.points">
+        Lat: {{ point.lat }}, Lng: {{ point.lng }}
+      </li>
+    </ol>
+    <button type="button" class="btn btn-secondary" [routerLink]="group.id">
+      Show
+    </button>
+    <button
+      type="button"
+      class="btn btn-danger mt-1"
+      (click)="removeGroup(group.id)"
+    >
+      Remove
+    </button>
+  </div>
+</div>

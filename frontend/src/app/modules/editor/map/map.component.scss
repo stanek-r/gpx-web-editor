@@ -1,4 +1,14 @@
-agm-map {
+.map-div {
   height: 80vh;
-  width: 100%;
+  width: calc(100% - 60px);
+  margin-left: 60px;
+
+  agm-map {
+    height: 100%;
+    width: 100%;
+  }
+}
+.point-info {
+  width: 50%;
+  padding-left: 80px;
 }

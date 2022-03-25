@@ -1,0 +1,25 @@
+<div *ngIf="sideMenuExpanded; else notExpanded">
+  <div class="menu">
+    <button type="button" class="btn" (click)="toggleSideMenu()">X</button>
+    <div class="items">
+      <a routerLink="/" (click)="toggleSideMenu()">Home</a>
+      <a routerLink="/editor" (click)="toggleSideMenu()">Editor</a>
+      <a routerLink="/upload" (click)="toggleSideMenu()">Upload</a>
+    </div>
+  </div>
+</div>
+<ng-template #notExpanded>
+  <div class="menu-rolled">
+    <button type="button" class="btn mt-2" (click)="toggleSideMenu()">
+      <img src="./assets/menu-icon.png" />
+    </button>
+    <button
+      type="button"
+      class="btn mt-2"
+      [routerLink]="backUrl"
+      *ngIf="backUrl"
+    >
+      <img src="./assets/back.png" />
+    </button>
+  </div>
+</ng-template>
