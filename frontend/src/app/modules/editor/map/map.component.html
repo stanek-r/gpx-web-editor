@@ -1,4 +1,4 @@
-<app-side-menu backUrl="/editor"></app-side-menu>
+<app-side-menu backUrl="/editor" (clickedBackEvent)="save()"></app-side-menu>
 <div class="map-div">
   <agm-map [latitude]="lat" [longitude]="long" [zoom]="zoom">
     <agm-direction

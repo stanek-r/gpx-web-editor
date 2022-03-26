@@ -13,12 +13,7 @@
     <button type="button" class="btn mt-2" (click)="toggleSideMenu()">
       <img src="./assets/menu-icon.png" />
     </button>
-    <button
-      type="button"
-      class="btn mt-2"
-      [routerLink]="backUrl"
-      *ngIf="backUrl"
-    >
+    <button type="button" class="btn mt-2" *ngIf="backUrl" (click)="back()">
       <img src="./assets/back.png" />
     </button>
   </div>
