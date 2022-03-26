@@ -47,13 +47,9 @@ export class MapComponent implements OnInit {
     } else {
       this.id = id;
     }
-    const points = this.storageService.getPointsByGroupId(id);
-    if (points.length > 0) {
-      this.routes = this.convertPointsIntoRoutes(points);
-    } else {
-      this.routes = this.convertPointsIntoRoutes(this.getDefaultRoute());
-      this.storageService.save(this.id, this.convertRoutesIntoPoints());
-    }
+    this.routes = this.convertPointsIntoRoutes(
+      this.storageService.getPointsByGroupId(id)
+    );
     setInterval(
       () => this.storageService.save(this.id, this.convertRoutesIntoPoints()),
       5000
@@ -126,22 +122,5 @@ export class MapComponent implements OnInit {
       oldPoints.pop();
     }
     this.routes = this.convertPointsIntoRoutes(oldPoints);
-  }
-
-  getDefaultRoute(): any {
-    return [
-      {
-        lat: 49.84079607910464,
-        lng: 18.280282526428223,
-      },
-      {
-        lat: 49.83933753799882,
-        lng: 18.28155267354127,
-      },
-    ];
-  }
-
-  save(): void {
-    this.storageService.save(this.id, this.convertRoutesIntoPoints());
   }
 }

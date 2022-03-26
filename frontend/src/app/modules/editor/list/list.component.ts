@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { StorageService } from '../../../services/storage.service';
 import { Router } from '@angular/router';
-import { nanoid } from 'nanoid';
 
 @Component({
   selector: 'app-list',
@@ -20,11 +19,6 @@ export class ListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadGroups();
-  }
-
-  loadGroups(): void {
-    this.listOfPointGroups = [];
     const pointGroups = this.storageService.getAllPointsGroups();
     // tslint:disable-next-line:forin
     for (const pointGroupsKey in pointGroups) {
@@ -36,11 +30,22 @@ export class ListComponent implements OnInit {
   }
 
   addNewGroup(): void {
-    this.router.navigate(['/editor', nanoid(10)]);
+    let highestNumber = 0;
+    for (const group of this.listOfPointGroups) {
+      if (isNaN(+group.id)) {
+        continue;
+      }
+      if (+group.id > highestNumber) {
+        highestNumber = +group.id;
+      }
+    }
+    this.router.navigate(['/editor', highestNumber + 1]);
   }
 
   removeGroup(id: string): void {
+    this.listOfPointGroups = this.listOfPointGroups.filter(
+      (group) => group.id !== id
+    );
     this.storageService.removeGroup(id);
-    this.loadGroups();
   }
 }
