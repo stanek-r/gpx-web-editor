@@ -25,7 +25,7 @@ export class MapComponent implements OnInit {
   readonly renderOptions = {
     suppressMarkers: true,
   };
-  readonly travelMode = TravelMode.WALKING;
+  travelMode: TravelMode | undefined;
 
   routes: MapData[] = [];
   id!: string;
@@ -61,8 +61,8 @@ export class MapComponent implements OnInit {
   }
 
   markerDragStart($event: any, index: number): void {
-    const lat: number = $event.lat();
-    const lng: number = $event.lng();
+    const lat: number = $event.coords.lat;
+    const lng: number = $event.coords.lng;
 
     this.routes[index].start = { lat, lng };
     if (index > 0) {
@@ -71,8 +71,8 @@ export class MapComponent implements OnInit {
   }
 
   markerDragEnd($event: any, index: number): void {
-    const lat: number = $event.lat();
-    const lng: number = $event.lng();
+    const lat: number = $event.coords.lat;
+    const lng: number = $event.coords.lng;
 
     this.routes[index].end = { lat, lng };
     if (index < this.routes.length - 1) {

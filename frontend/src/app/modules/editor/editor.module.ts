@@ -6,6 +6,7 @@ import { AgmDirectionModule } from 'agm-direction';
 import { AgmCoreModule } from '@agm/core';
 import { MapComponent } from './map/map.component';
 import { ListComponent } from './list/list.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [MapComponent, ListComponent],
@@ -17,6 +18,7 @@ import { ListComponent } from './list/list.component';
       apiKey: 'AIzaSyBlhKqQmeaoitPsrm293z_X19hTYJ8ckts',
     }),
     AgmDirectionModule,
+    FormsModule,
   ],
   exports: [],
 })
