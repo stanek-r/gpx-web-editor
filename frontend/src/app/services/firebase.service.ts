@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireDatabase } from '@angular/fire/database';
-import { Observable, ReplaySubject } from 'rxjs';
+import { from, Observable, ReplaySubject } from 'rxjs';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { HttpClient } from '@angular/common/http';
 import { v4 as uuidv4 } from 'uuid';
 import firebase from 'firebase';
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
+import { BlockUiService } from './block-ui.service';
+import FacebookAuthProvider = firebase.auth.FacebookAuthProvider;
 
 export interface FileUpload {
   name: string;
@@ -15,19 +17,28 @@ export interface FileUpload {
   userIP?: string;
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class FirebaseService {
   private filesBasePath = '/files';
   private ipAddress!: string;
   private uploadedFiles$ = new ReplaySubject<FileUpload[]>(1);
-  private fireUser$ = new ReplaySubject<any>(1);
+  private fireUser$ = new ReplaySubject<firebase.User | null>(1);
 
   constructor(
     private readonly fireAuth: AngularFireAuth,
     private readonly fireDB: AngularFireDatabase,
     private readonly fireStorage: AngularFireStorage,
-    private readonly http: HttpClient
-  ) {}
+    private readonly http: HttpClient,
+    private readonly blockUiService: BlockUiService
+  ) {
+    this.blockUiService.block();
+    this.fireAuth.user.subscribe((user) => {
+      this.fireUser$.next(user);
+      this.blockUiService.unblockAll();
+    });
+  }
 
   pushFileToStorage(file: File): Observable<number | undefined> {
     const myUUID = uuidv4();
@@ -54,11 +65,24 @@ export class FirebaseService {
     this.loadFilesFromDB();
   }
 
-  async loginToGoogle(): Promise<void> {
-    this.fireAuth.signInWithPopup(new GoogleAuthProvider()).then((user) => {
-      this.initializeFireBase();
-      this.fireUser$.next(user);
-    });
+  loginToGoogle(): Observable<any> {
+    return from(this.fireAuth.signInWithPopup(new GoogleAuthProvider()));
+  }
+
+  loginToFacebook(): Observable<any> {
+    return from(this.fireAuth.signInWithPopup(new FacebookAuthProvider()));
+  }
+
+  loginWithEmail(email: string, password: string): Observable<any> {
+    return from(this.fireAuth.signInWithEmailAndPassword(email, password));
+  }
+
+  registerWithEmail(email: string, password: string): Observable<any> {
+    return from(this.fireAuth.createUserWithEmailAndPassword(email, password));
+  }
+
+  logout(): void {
+    this.fireAuth.signOut();
   }
 
   loadFilesFromDB(): void {
@@ -74,7 +98,7 @@ export class FirebaseService {
     return this.uploadedFiles$;
   }
 
-  getFireUser(): Observable<any> {
+  getFireUser(): Observable<firebase.User | null> {
     return this.fireUser$;
   }
 

@@ -1,0 +1,52 @@
+<div class="login">
+  <h1>GPX editor přihlášení</h1>
+  <form (ngSubmit)="loginEmailClick()">
+    <div class="input-group input-group-lg">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Email"
+        aria-label="Email"
+        aria-describedby="basic-addon2"
+        #email
+      />
+    </div>
+    <div class="input-group input-group-lg mt-1">
+      <input
+        type="password"
+        class="form-control"
+        placeholder="Password"
+        aria-label="Password"
+        aria-describedby="basic-addon2"
+        #password
+      />
+    </div>
+    <div *ngIf="error" class="alert alert-danger mt-2" role="alert">
+      {{ error }}
+    </div>
+    <div class="input-group mt-2 d-flex justify-content-center">
+      <button type="submit" class="btn btn-dark btn-lg">Přihlásit se</button>
+      <button
+        type="button"
+        class="btn btn-secondary btn-lg"
+        (click)="registerEmailClick()"
+      >
+        Registrovat se
+      </button>
+    </div>
+  </form>
+  <button
+    type="button"
+    class="btn btn-dark btn-lg mt-2"
+    (click)="loginGoogleClick()"
+  >
+    Přihlásit se pomocí Google
+  </button>
+  <!--  <button-->
+  <!--    type="button"-->
+  <!--    class="btn btn-dark btn-lg mt-2"-->
+  <!--    (click)="loginFacebookClick()"-->
+  <!--  >-->
+  <!--    Přihlásit se pomocí Facebook-->
+  <!--  </button>-->
+</div>

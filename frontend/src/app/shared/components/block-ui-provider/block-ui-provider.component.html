@@ -1,0 +1,11 @@
+<ng-container *ngIf="blocks$ | async as blocks">
+  <div class="block-ui-wrapper" *ngIf="blocks.length">
+    <div class="block-ui-content">
+      <mat-spinner [diameter]="113"></mat-spinner>
+      <div *ngIf="blocks[0].text as text" class="mt-16">
+        <p *ngFor="let line of text.split('\n')">{{ line }}</p>
+      </div>
+      <span></span>
+    </div>
+  </div>
+</ng-container>
