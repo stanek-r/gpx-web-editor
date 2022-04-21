@@ -30,7 +30,7 @@ export class FirebaseService {
   private ipAddress!: string;
 
   private fireUser$ = new ReplaySubject<firebase.User | null>(1);
-  private uid: string | undefined;
+  private fireUser: firebase.User | null = null;
 
   private pointsMap$ = new ReplaySubject<any>(1);
 
@@ -42,9 +42,9 @@ export class FirebaseService {
     private readonly blockUiService: BlockUiService
   ) {
     this.blockUiService.block();
-    this.fireAuth.user.subscribe((user) => {
+    this.fireAuth.user.subscribe(async (user) => {
       this.fireUser$.next(user);
-      this.uid = user?.uid;
+      this.fireUser = user;
       this.blockUiService.unblockAll();
     });
   }
@@ -90,16 +90,15 @@ export class FirebaseService {
   loadUsersPointGroups(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.fireDB
-        .list(this.groupsBasePath + '/' + this.uid)
+        .list(this.groupsBasePath + '/' + this.fireUser?.uid)
         .valueChanges()
-        .subscribe(() => {
+        .subscribe(async () => {
+          const token = await this.fireUser?.getIdToken();
           this.http
             .get(
-              this.fireBaseDatabaseUrl +
-                this.groupsBasePath +
-                '/' +
-                this.uid +
-                '.json'
+              `${this.fireBaseDatabaseUrl + this.groupsBasePath}/${
+                this.fireUser?.uid
+              }.json?auth=${token}`
             )
             .subscribe((data) => {
               this.pointsMap$.next(data);
