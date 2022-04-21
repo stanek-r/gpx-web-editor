@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { FirebaseService } from './firebase.service';
 
 @Injectable({
   providedIn: 'root',
@@ -7,44 +8,41 @@ export class StorageService {
   private pointsMap!: any;
   private isLoaded = false;
 
-  private _loadFromLocalStorage(): void {
-    const storage = localStorage.getItem('gpx_points');
-    if (storage) {
-      this.pointsMap = JSON.parse(storage);
-    } else {
-      this.pointsMap = {};
-    }
-  }
-
-  private _saveToLocalStorage(): void {
-    localStorage.setItem('gpx_points', JSON.stringify(this.pointsMap));
+  constructor(private readonly firebaseService: FirebaseService) {
+    this.firebaseService.loadUsersPointGroups().then(() => {
+      this.isLoaded = true;
+      this.firebaseService.getPointsMap().subscribe((pointMap) => {
+        this.pointsMap = pointMap;
+      });
+    });
   }
 
   save(id: string, points: google.maps.LatLngLiteral[]): void {
-    this.pointsMap[id] = points;
-    this._saveToLocalStorage();
+    if (this.isLoaded) {
+      this.pointsMap[id] = points;
+      this.firebaseService.savePointGroup(id, points);
+    }
   }
 
-  getPointsByGroupId(id: string): google.maps.LatLngLiteral[] {
-    if (!this.isLoaded) {
-      this._loadFromLocalStorage();
-    }
-    const points = this.pointsMap[id];
-    if (points) {
-      return points;
-    }
-    return [];
-  }
-
-  getAllPointsGroups(): any {
-    if (!this.isLoaded) {
-      this._loadFromLocalStorage();
-    }
-    return this.pointsMap;
+  async getPointsByGroupId(id: string): Promise<google.maps.LatLngLiteral[]> {
+    return new Promise((resolve, reject) => {
+      const interval = setInterval(() => {
+        if (!this.isLoaded) {
+          return;
+        }
+        const points = this.pointsMap[id];
+        if (points) {
+          clearInterval(interval);
+          resolve(points);
+        }
+        clearInterval(interval);
+        resolve([]);
+      }, 100);
+    });
   }
 
   removeGroup(id: string): void {
     delete this.pointsMap[id];
-    this._saveToLocalStorage();
+    this.firebaseService.deletePointGroup(id);
   }
 }

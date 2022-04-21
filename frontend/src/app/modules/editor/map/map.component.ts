@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MapData, TravelMode } from '../../../shared/models/map.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../../../services/storage.service';
@@ -8,7 +14,7 @@ import { StorageService } from '../../../services/storage.service';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnDestroy {
   readonly lat = 49.83815;
   readonly long = 18.2838842;
   readonly zoom = 10;
@@ -30,6 +36,9 @@ export class MapComponent implements OnInit {
   routes: MapData[] = [];
   id!: string;
 
+  private interval: any;
+  private changed = false;
+
   @ViewChild('latitude') latInput!: ElementRef<HTMLInputElement>;
   @ViewChild('longtitude') lngInput!: ElementRef<HTMLInputElement>;
 
@@ -39,7 +48,7 @@ export class MapComponent implements OnInit {
     private readonly router: Router
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       this.router.navigate(['/editor']);
@@ -47,17 +56,23 @@ export class MapComponent implements OnInit {
     } else {
       this.id = id;
     }
-    const points = this.storageService.getPointsByGroupId(id);
+    const points = await this.storageService.getPointsByGroupId(id);
     if (points.length > 0) {
       this.routes = this.convertPointsIntoRoutes(points);
     } else {
       this.routes = this.convertPointsIntoRoutes(this.getDefaultRoute());
       this.storageService.save(this.id, this.convertRoutesIntoPoints());
     }
-    setInterval(
-      () => this.storageService.save(this.id, this.convertRoutesIntoPoints()),
-      5000
-    );
+    this.interval = setInterval(() => {
+      if (this.changed) {
+        this.storageService.save(this.id, this.convertRoutesIntoPoints());
+        this.changed = false;
+      }
+    }, 1000);
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.interval);
   }
 
   markerDragStart($event: any, index: number): void {
@@ -68,6 +83,7 @@ export class MapComponent implements OnInit {
     if (index > 0) {
       this.routes[index - 1].end = { lat, lng };
     }
+    this.changed = true;
   }
 
   markerDragEnd($event: any, index: number): void {
@@ -78,6 +94,7 @@ export class MapComponent implements OnInit {
     if (index < this.routes.length - 1) {
       this.routes[index + 1].start = { lat, lng };
     }
+    this.changed = true;
   }
 
   convertPointsIntoRoutes(points: google.maps.LatLngLiteral[]): MapData[] {
@@ -116,6 +133,7 @@ export class MapComponent implements OnInit {
       oldPoints.push(newPoints[0]);
     }
     this.routes = this.convertPointsIntoRoutes([...oldPoints, ...newPoints]);
+    this.changed = true;
   }
 
   removePoint(index?: number): void {
@@ -126,6 +144,7 @@ export class MapComponent implements OnInit {
       oldPoints.pop();
     }
     this.routes = this.convertPointsIntoRoutes(oldPoints);
+    this.changed = true;
   }
 
   getDefaultRoute(): any {

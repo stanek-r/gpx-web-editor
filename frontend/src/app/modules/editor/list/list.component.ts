@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { StorageService } from '../../../services/storage.service';
 import { Router } from '@angular/router';
 import { nanoid } from 'nanoid';
+import { FirebaseService } from '../../../services/firebase.service';
 
 @Component({
   selector: 'app-list',
@@ -16,6 +17,7 @@ export class ListComponent implements OnInit {
 
   constructor(
     private readonly storageService: StorageService,
+    private readonly firebaseService: FirebaseService,
     private readonly router: Router
   ) {}
 
@@ -24,15 +26,16 @@ export class ListComponent implements OnInit {
   }
 
   loadGroups(): void {
-    this.listOfPointGroups = [];
-    const pointGroups = this.storageService.getAllPointsGroups();
-    // tslint:disable-next-line:forin
-    for (const pointGroupsKey in pointGroups) {
-      this.listOfPointGroups.push({
-        id: pointGroupsKey,
-        points: pointGroups[pointGroupsKey],
-      });
-    }
+    this.firebaseService.getPointsMap().subscribe((pointGroups) => {
+      this.listOfPointGroups = [];
+      // tslint:disable-next-line:forin
+      for (const pointGroupsKey in pointGroups) {
+        this.listOfPointGroups.push({
+          id: pointGroupsKey,
+          points: pointGroups[pointGroupsKey],
+        });
+      }
+    });
   }
 
   addNewGroup(): void {
@@ -41,6 +44,5 @@ export class ListComponent implements OnInit {
 
   removeGroup(id: string): void {
     this.storageService.removeGroup(id);
-    this.loadGroups();
   }
 }

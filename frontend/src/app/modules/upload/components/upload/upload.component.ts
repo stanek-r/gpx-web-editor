@@ -22,7 +22,6 @@ export class UploadComponent implements OnInit {
   constructor(private readonly firebaseService: FirebaseService) {}
 
   async ngOnInit(): Promise<void> {
-    this.files$ = this.firebaseService.getUploadedFiles();
     this.user$ = this.firebaseService.getFireUser();
   }
 

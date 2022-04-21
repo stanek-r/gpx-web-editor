@@ -9,6 +9,7 @@ import firebase from 'firebase';
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 import { BlockUiService } from './block-ui.service';
 import FacebookAuthProvider = firebase.auth.FacebookAuthProvider;
+import { map, take } from 'rxjs/operators';
 
 export interface FileUpload {
   name: string;
@@ -21,10 +22,17 @@ export interface FileUpload {
   providedIn: 'root',
 })
 export class FirebaseService {
+  private fireBaseDatabaseUrl =
+    'https://gpx-web-editor-default-rtdb.europe-west1.firebasedatabase.app';
   private filesBasePath = '/files';
+  private groupsBasePath = '/groups';
+
   private ipAddress!: string;
-  private uploadedFiles$ = new ReplaySubject<FileUpload[]>(1);
+
   private fireUser$ = new ReplaySubject<firebase.User | null>(1);
+  private uid: string | undefined;
+
+  private pointsMap$ = new ReplaySubject<any>(1);
 
   constructor(
     private readonly fireAuth: AngularFireAuth,
@@ -36,33 +44,13 @@ export class FirebaseService {
     this.blockUiService.block();
     this.fireAuth.user.subscribe((user) => {
       this.fireUser$.next(user);
+      this.uid = user?.uid;
       this.blockUiService.unblockAll();
     });
   }
 
-  pushFileToStorage(file: File): Observable<number | undefined> {
-    const myUUID = uuidv4();
-    const filePath = `${this.filesBasePath}/${myUUID}`;
-    // const uploadTask = this.fireStorage.upload(filePath, file);
-    const uploadTask = this.fireStorage.ref(filePath).put(file);
-    uploadTask.then(async (data) => {
-      this.saveFileData({
-        name: file.name,
-        pathToFile: filePath,
-        downloadUrl: await data.ref.getDownloadURL(),
-        userIP: this.ipAddress,
-      });
-    });
-    return uploadTask.percentageChanges();
-  }
-
-  private saveFileData(fileUpload: FileUpload): void {
-    this.fireDB.list(this.filesBasePath).push(fileUpload);
-  }
-
-  initializeFireBase(): void {
-    this.getIPAddress();
-    this.loadFilesFromDB();
+  getFireUser(): Observable<firebase.User | null> {
+    return this.fireUser$;
   }
 
   loginToGoogle(): Observable<any> {
@@ -85,21 +73,64 @@ export class FirebaseService {
     this.fireAuth.signOut();
   }
 
-  loadFilesFromDB(): void {
-    this.fireDB
-      .list(this.filesBasePath)
-      .valueChanges()
-      .subscribe((data: any) => {
-        this.uploadedFiles$.next(data);
+  savePointGroup(id: string, pointArray: any): void {
+    this.fireUser$.pipe(take(1)).subscribe((user) => {
+      this.fireDB
+        .list(this.groupsBasePath + '/' + user?.uid)
+        .set(id, pointArray);
+    });
+  }
+
+  deletePointGroup(id: string): void {
+    this.fireUser$.pipe(take(1)).subscribe((user) => {
+      this.fireDB.list(this.groupsBasePath + '/' + user?.uid).remove(id);
+    });
+  }
+
+  loadUsersPointGroups(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.fireDB
+        .list(this.groupsBasePath + '/' + this.uid)
+        .valueChanges()
+        .subscribe(() => {
+          this.http
+            .get(
+              this.fireBaseDatabaseUrl +
+                this.groupsBasePath +
+                '/' +
+                this.uid +
+                '.json'
+            )
+            .subscribe((data) => {
+              this.pointsMap$.next(data);
+              resolve();
+            });
+        });
+    });
+  }
+
+  getPointsMap(): Observable<any> {
+    return this.pointsMap$;
+  }
+
+  pushFileToStorage(file: File): Observable<number | undefined> {
+    const myUUID = uuidv4();
+    const filePath = `${this.filesBasePath}/${myUUID}`;
+    // const uploadTask = this.fireStorage.upload(filePath, file);
+    const uploadTask = this.fireStorage.ref(filePath).put(file);
+    uploadTask.then(async (data) => {
+      this.saveFileData({
+        name: file.name,
+        pathToFile: filePath,
+        downloadUrl: await data.ref.getDownloadURL(),
+        userIP: this.ipAddress,
       });
+    });
+    return uploadTask.percentageChanges();
   }
 
-  getUploadedFiles(): Observable<FileUpload[]> {
-    return this.uploadedFiles$;
-  }
-
-  getFireUser(): Observable<firebase.User | null> {
-    return this.fireUser$;
+  private saveFileData(fileUpload: FileUpload): void {
+    this.fireDB.list(this.filesBasePath).push(fileUpload);
   }
 
   private getIPAddress(): void {
