@@ -9,7 +9,7 @@ import firebase from 'firebase';
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 import { BlockUiService } from './block-ui.service';
 import FacebookAuthProvider = firebase.auth.FacebookAuthProvider;
-import { map, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
 export interface FileUpload {
   name: string;
