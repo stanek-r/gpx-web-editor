@@ -101,7 +101,7 @@ export class FirebaseService {
               }.json?auth=${token}`
             )
             .subscribe((data) => {
-              this.pointsMap$.next(data);
+              this.pointsMap$.next(data ?? {});
               resolve();
             });
         });
