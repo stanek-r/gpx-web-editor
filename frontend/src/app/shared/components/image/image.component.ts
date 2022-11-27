@@ -1,6 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ImageService } from '../../../services/image.service';
-import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
 
 @Component({
