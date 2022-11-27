@@ -2,5 +2,6 @@
 <div *ngIf="fireUser$ | async as fireUser" class="ms-5 ps-5 pt-4">
   <p>Uživatel: {{ fireUser.displayName }}</p>
   <p>Email: {{ fireUser.email }}</p>
+  <p>Verified: {{ fireUser.emailVerified }}</p>
   <img [src]="fireUser.photoURL" alt="User image" *ngIf="fireUser.photoURL" />
 </div>

@@ -9,7 +9,7 @@ import firebase from 'firebase';
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 import { BlockUiService } from './block-ui.service';
 import FacebookAuthProvider = firebase.auth.FacebookAuthProvider;
-import { take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 
 export interface FileUpload {
   name: string;
@@ -66,7 +66,15 @@ export class FirebaseService {
   }
 
   registerWithEmail(email: string, password: string): Observable<any> {
-    return from(this.fireAuth.createUserWithEmailAndPassword(email, password));
+    return from(
+      this.fireAuth.createUserWithEmailAndPassword(email, password)
+    ).pipe(
+      tap((credentials) => {
+        if (credentials?.user && !credentials.user.emailVerified) {
+          credentials.user.sendEmailVerification();
+        }
+      })
+    );
   }
 
   logout(): void {
