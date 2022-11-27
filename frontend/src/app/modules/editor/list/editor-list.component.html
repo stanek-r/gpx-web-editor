@@ -1,7 +1,10 @@
 <app-side-menu></app-side-menu>
 <div class="action-menu">
   <button type="button" class="btn btn-primary" (click)="addNewGroup()">
-    Add new group
+    Vytvořit novou skupinu bodů
+  </button>
+  <button type="button" class="btn btn-secondary" routerLink="/upload">
+    Nahrát GPX soubor
   </button>
 </div>
 <div class="list" *ngIf="listOfPointGroups.length > 0">
@@ -13,14 +16,17 @@
       </li>
     </ol>
     <button type="button" class="btn btn-secondary" [routerLink]="group.id">
-      Show
+      Zobrazit
+    </button>
+    <button type="button" class="btn btn-secondary mt-1" (click)="exportToFile(group.id)">
+      Exportovat
     </button>
     <button
       type="button"
       class="btn btn-danger mt-1"
       (click)="removeGroup(group.id)"
     >
-      Remove
+      Odstranit
     </button>
   </div>
 </div>

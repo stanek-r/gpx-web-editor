@@ -3,17 +3,22 @@ import { StorageService } from '../../../services/storage.service';
 import { Router } from '@angular/router';
 import { nanoid } from 'nanoid';
 import { FirebaseService } from '../../../services/firebase.service';
+// @ts-ignore
+import createGpx from 'gps-to-gpx';
+
+export interface PointGroup {
+  id: string;
+  points: google.maps.LatLngLiteral[];
+}
 
 @Component({
-  selector: 'app-list',
-  templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss'],
+  selector: 'app-editor-list',
+  templateUrl: './editor-list.component.html',
+  styleUrls: ['./editor-list.component.scss'],
 })
-export class ListComponent implements OnInit {
-  listOfPointGroups: {
-    id: string;
-    points: google.maps.LatLngLiteral[];
-  }[] = [];
+export class EditorListComponent implements OnInit {
+  listOfPointGroups: PointGroup[] = [];
+  fileUrl!: string;
 
   constructor(
     private readonly storageService: StorageService,
@@ -44,5 +49,19 @@ export class ListComponent implements OnInit {
 
   removeGroup(id: string): void {
     this.storageService.removeGroup(id);
+  }
+
+  exportToFile(id: string): void {
+    const gpx = createGpx(this.listOfPointGroups.find((pg) => pg.id === id)?.points.map((point) => ({ latitude: point.lat, longitude: point.lng, elevation: 0, time: '2016-07-06T12:36:00Z' })), {
+      activityName: 'RUN',
+      startTime: '2016-07-06T12:36:00Z',
+    });
+    const blob = new Blob([gpx], { type: 'application/octet-stream' });
+    const url = window.URL.createObjectURL(blob);
+
+    const anchor = document.createElement('a');
+    anchor.download = id + '.gpx';
+    anchor.href = url;
+    anchor.click();
   }
 }

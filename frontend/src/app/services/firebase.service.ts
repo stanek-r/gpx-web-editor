@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireDatabase } from '@angular/fire/database';
-import { from, Observable, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, from, Observable, ReplaySubject } from 'rxjs';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { HttpClient } from '@angular/common/http';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,6 +10,7 @@ import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 import { BlockUiService } from './block-ui.service';
 import FacebookAuthProvider = firebase.auth.FacebookAuthProvider;
 import { take, tap } from 'rxjs/operators';
+import { Project } from '../modules/projects/list/project-list.component';
 
 export interface FileUpload {
   name: string;
@@ -26,13 +27,14 @@ export class FirebaseService {
     'https://gpx-web-editor-default-rtdb.europe-west1.firebasedatabase.app';
   private filesBasePath = '/files';
   private groupsBasePath = '/groups';
-
-  private ipAddress!: string;
+  private projectsBasePath = '/projects';
 
   private fireUser$ = new ReplaySubject<firebase.User | null>(1);
   private fireUser: firebase.User | null = null;
 
-  private pointsMap$ = new ReplaySubject<any>(1);
+  private pointsMap$ = new BehaviorSubject<any>({});
+  private projects$ = new BehaviorSubject<any>({});
+  private files$ = new BehaviorSubject<any>([]);
 
   constructor(
     private readonly fireAuth: AngularFireAuth,
@@ -89,6 +91,20 @@ export class FirebaseService {
     });
   }
 
+  saveProject(project: Project): void {
+    this.fireUser$.pipe(take(1)).subscribe((user) => {
+      this.fireDB
+        .list(this.projectsBasePath + '/' + user?.uid)
+        .set(project.id, project);
+    });
+  }
+
+  deleteProject(id: string): void {
+    this.fireUser$.pipe(take(1)).subscribe((user) => {
+      this.fireDB.list(this.projectsBasePath + '/' + user?.uid).remove(id);
+    });
+  }
+
   deletePointGroup(id: string): void {
     this.fireUser$.pipe(take(1)).subscribe((user) => {
       this.fireDB.list(this.groupsBasePath + '/' + user?.uid).remove(id);
@@ -113,11 +129,51 @@ export class FirebaseService {
               resolve();
             });
         });
+      this.fireDB
+        .list(this.projectsBasePath + '/' + this.fireUser?.uid)
+        .valueChanges()
+        .subscribe(async () => {
+          const token = await this.fireUser?.getIdToken();
+          this.http
+            .get(
+              `${this.fireBaseDatabaseUrl + this.projectsBasePath}/${
+                this.fireUser?.uid
+              }.json?auth=${token}`
+            )
+            .subscribe((data) => {
+              this.projects$.next(data ?? {});
+              resolve();
+            });
+        });
+      // this.fireDB
+      //   .list(this.filesBasePath + '/' + this.fireUser?.uid)
+      //   .valueChanges()
+      //   .subscribe(async () => {
+      //     const token = await this.fireUser?.getIdToken();
+      //     this.http
+      //       .get(
+      //         `${this.fireBaseDatabaseUrl + this.filesBasePath}/${
+      //           this.fireUser?.uid
+      //         }.json?auth=${token}`
+      //       )
+      //       .subscribe((data) => {
+      //         this.files$.next(Object.values(data));
+      //         resolve();
+      //       });
+      //   });
     });
   }
 
   getPointsMap(): Observable<any> {
     return this.pointsMap$;
+  }
+
+  getProjects(): Observable<any> {
+    return this.projects$;
+  }
+
+  getFiles(): Observable<any[]> {
+    return this.files$;
   }
 
   pushFileToStorage(file: File): Observable<number | undefined> {
@@ -130,21 +186,14 @@ export class FirebaseService {
         name: file.name,
         pathToFile: filePath,
         downloadUrl: await data.ref.getDownloadURL(),
-        userIP: this.ipAddress,
       });
     });
     return uploadTask.percentageChanges();
   }
 
   private saveFileData(fileUpload: FileUpload): void {
-    this.fireDB.list(this.filesBasePath).push(fileUpload);
-  }
-
-  private getIPAddress(): void {
-    this.http
-      .get('https://api.ipify.org/?format=json')
-      .subscribe((res: any) => {
-        this.ipAddress = res.ip;
-      });
+    this.fireUser$.pipe(take(1)).subscribe((user) => {
+      this.fireDB.list(this.filesBasePath + '/' + user?.uid).push(fileUpload);
+    });
   }
 }

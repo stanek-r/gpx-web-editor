@@ -1,15 +1,8 @@
 <app-side-menu></app-side-menu> <a routerLink="/">BACK</a><br /><br />
-<div class="row" *ngIf="user$ | async as user">
-  <div class="user-info">
-    <div>Name: {{ user.displayName }}</div>
-    <div>Email: {{ user.email }}</div>
-    <app-image
-      [lowUrl]="user.photoURL == null ? '' : user.photoURL"
-    ></app-image>
-    <div>{{ uploading$ | async | number: "1.0-0" }}</div>
-  </div>
+<div class="container" *ngIf="user$ | async as user">
+  <div class="upload-process">{{ uploading$ | async | number: "1.0-0" }}</div>
   <input type="file" (change)="onFileSelected($event)" /><br /><br />
-  <div *ngIf="files$ | async as files" class="col-6">
+  <div *ngIf="files$ | async as files" class="file-list">
     <p>Files:</p>
     <div *ngFor="let file of files" class="m-3">
       <p>

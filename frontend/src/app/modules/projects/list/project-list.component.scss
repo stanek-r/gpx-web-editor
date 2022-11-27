@@ -1,0 +1,29 @@
+.action-menu {
+  display: flex;
+  justify-content: center;
+  margin-left: 60px;
+  margin-top: 40px;
+
+  button {
+    margin: 10px;
+  }
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-left: 60px;
+
+  div {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin: 40px;
+
+    p {
+      font-size: 30px;
+      text-align: center;
+    }
+  }
+}

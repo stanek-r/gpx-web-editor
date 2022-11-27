@@ -39,17 +39,20 @@ export class MapComponent implements OnInit, OnDestroy {
   private interval: any;
   private changed = false;
 
+  backProject: string | null = null;
+
   @ViewChild('latitude') latInput!: ElementRef<HTMLInputElement>;
   @ViewChild('longtitude') lngInput!: ElementRef<HTMLInputElement>;
 
   constructor(
     private readonly storageService: StorageService,
     private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly router: Router,
   ) {}
 
   async ngOnInit(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id');
+    this.backProject = this.route.snapshot.queryParamMap.get('backProject');
     if (!id) {
       this.router.navigate(['/editor']);
       return;
