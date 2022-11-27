@@ -10,7 +10,9 @@ import { BlockUiService } from '../../../services/block-ui.service';
 export class LoginComponent {
   @ViewChild('email') email!: ElementRef;
   @ViewChild('password') password!: ElementRef;
+  @ViewChild('passwordRepeat') passwordRepeat!: ElementRef;
 
+  registerSwitch = false;
   error?: string;
 
   constructor(
@@ -21,35 +23,51 @@ export class LoginComponent {
   loginEmailClick(): void {
     const email = this.email.nativeElement.value;
     const password = this.password.nativeElement.value;
-    if (email !== '' && password !== '') {
-      const subscription: any = this.firebaseService
-        .loginWithEmail(email, password)
-        .pipe(this.blockUiService.blockPipe())
-        .subscribe({
-          next: () => subscription.unsubscribe(),
-          error: (err) => {
-            this.error = err.message;
-            subscription.unsubscribe();
-          },
-        });
+    if (email === '' || password === '') {
+      this.error = 'Vyplňtě prosím přihlašovací údaje';
+      return;
     }
+    const subscription: any = this.firebaseService
+      .loginWithEmail(email, password)
+      .pipe(this.blockUiService.blockPipe())
+      .subscribe({
+        next: () => subscription.unsubscribe(),
+        error: (err) => {
+          this.error = err.message;
+          subscription.unsubscribe();
+        },
+      });
+  }
+
+  switchRegister(register: boolean): void {
+    this.registerSwitch = register;
   }
 
   registerEmailClick(): void {
     const email = this.email.nativeElement.value;
     const password = this.password.nativeElement.value;
-    if (email !== '' && password !== '') {
-      const subscription: any = this.firebaseService
-        .registerWithEmail(email, password)
-        .pipe(this.blockUiService.blockPipe())
-        .subscribe({
-          next: () => subscription.unsubscribe(),
-          error: (err) => {
-            this.error = err.message;
-            subscription.unsubscribe();
-          },
-        });
+    const passwordRepeat = this.passwordRepeat.nativeElement.value;
+    if (email === '' || password === '' || passwordRepeat === '') {
+      this.error = 'Vyplňtě prosím registrační údaje';
+      return;
     }
+    if (password !== passwordRepeat) {
+      this.error = 'Hesla se neshodují';
+      return;
+    }
+    const subscription: any = this.firebaseService
+      .registerWithEmail(email, password)
+      .pipe(this.blockUiService.blockPipe())
+      .subscribe({
+        next: () => {
+          subscription.unsubscribe();
+          this.registerSwitch = false;
+        },
+        error: (err) => {
+          this.error = err.message;
+          subscription.unsubscribe();
+        },
+      });
   }
 
   loginGoogleClick(): void {
