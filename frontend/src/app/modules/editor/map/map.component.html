@@ -1,91 +1,94 @@
-<app-side-menu
-  [backUrl]="backProject ? '/projects/' + backProject : '/editor'"
-  (clickedBackEvent)="save()"
-></app-side-menu>
-<div class="map-div">
-  <agm-map
-    [latitude]="lat"
-    [longitude]="long"
-    [zoom]="zoom"
-    *ngIf="!travelMode; else otherModes"
-  >
-    <agm-marker
-      *ngFor="let mapData of routes; let i = index"
-      [latitude]="mapData.start.lat"
-      [longitude]="mapData.start.lng"
-      (dragEnd)="markerDragStart($event, i)"
-      [markerDraggable]="true"
-    ></agm-marker>
-    <agm-marker
-      *ngFor="let mapData of routes; let i = index"
-      [latitude]="mapData.end.lat"
-      [longitude]="mapData.end.lng"
-      (dragEnd)="markerDragEnd($event, i)"
-      [markerDraggable]="true"
-    ></agm-marker>
-    <agm-polyline *ngFor="let mapData of routes; let i = index">
-      <agm-polyline-point
-        [latitude]="mapData.start.lat"
-        [longitude]="mapData.start.lng"
-      ></agm-polyline-point>
-      <agm-polyline-point
-        [latitude]="mapData.end.lat"
-        [longitude]="mapData.end.lng"
-      ></agm-polyline-point>
-    </agm-polyline>
-  </agm-map>
-  <ng-template #otherModes>
-    <agm-map>
-      <agm-direction
-        *ngFor="let mapData of routes; let i = index"
-        [origin]="mapData.start"
-        [destination]="mapData.end"
-        [markerOptions]="markerOptions"
-        [renderOptions]="renderOptions"
-        (originDrag)="markerDragStart($event, i)"
-        (destinationDrag)="markerDragEnd($event, i)"
-        [travelMode]="travelMode"
-      ></agm-direction>
-    </agm-map>
-  </ng-template>
+<app-side-menu [backUrl]="'/editor'"></app-side-menu>
+<div class="info-div" *ngIf="fileToShow">
+  <pre>
+    {{ fileToShow | json }}
+  </pre>
 </div>
-<div class="point-info mt-3">
-  <div class="row">
-    <div class="col-6">
-      <label for="latitude">Latitude:</label>
-      <input
-        type="number"
-        id="latitude"
-        name="latitude"
-        value="49.83815"
-        #latitude
-      /><br />
-      <label for="longtitude">Longtitude:</label>
-      <input
-        type="number"
-        id="longtitude"
-        name="longtitude"
-        value="18.2838842"
-        #longtitude
-      /><br />
-      <button (click)="addPoint()">Add point</button>
-      <br /><br />
-      <button (click)="removePoint()">Remove last point</button>
-      <br /><br />
-      <select [(ngModel)]="travelMode">
-        <option value="">Air</option>
-        <option value="WALKING">Walking</option>
-        <option value="DRIVING">Driving</option>
-        <option value="TRANSIT">Transit</option>
-        <option value="TWO_WHEELER">Two wheeler</option>
-        <option value="BICYCLING">Bicycling</option>
-      </select>
-    </div>
-    <div class="col-6">
-      <p *ngFor="let point of this.convertRoutesIntoPoints(); let i = index">
-        Point {{ i + 1 }}: {{ point.lat }} {{ point.lng }}
-        <button (click)="removePoint(i)">X</button>
-      </p>
-    </div>
-  </div>
-</div>
+
+<!--<div class="map-div">-->
+<!--  <agm-map-->
+<!--    [latitude]="lat"-->
+<!--    [longitude]="long"-->
+<!--    [zoom]="zoom"-->
+<!--    *ngIf="!travelMode; else otherModes"-->
+<!--  >-->
+<!--    <agm-marker-->
+<!--      *ngFor="let mapData of routes; let i = index"-->
+<!--      [latitude]="mapData.start.lat"-->
+<!--      [longitude]="mapData.start.lng"-->
+<!--      (dragEnd)="markerDragStart($event, i)"-->
+<!--      [markerDraggable]="true"-->
+<!--    ></agm-marker>-->
+<!--    <agm-marker-->
+<!--      *ngFor="let mapData of routes; let i = index"-->
+<!--      [latitude]="mapData.end.lat"-->
+<!--      [longitude]="mapData.end.lng"-->
+<!--      (dragEnd)="markerDragEnd($event, i)"-->
+<!--      [markerDraggable]="true"-->
+<!--    ></agm-marker>-->
+<!--    <agm-polyline *ngFor="let mapData of routes; let i = index">-->
+<!--      <agm-polyline-point-->
+<!--        [latitude]="mapData.start.lat"-->
+<!--        [longitude]="mapData.start.lng"-->
+<!--      ></agm-polyline-point>-->
+<!--      <agm-polyline-point-->
+<!--        [latitude]="mapData.end.lat"-->
+<!--        [longitude]="mapData.end.lng"-->
+<!--      ></agm-polyline-point>-->
+<!--    </agm-polyline>-->
+<!--  </agm-map>-->
+<!--  <ng-template #otherModes>-->
+<!--    <agm-map>-->
+<!--      <agm-direction-->
+<!--        *ngFor="let mapData of routes; let i = index"-->
+<!--        [origin]="mapData.start"-->
+<!--        [destination]="mapData.end"-->
+<!--        [markerOptions]="markerOptions"-->
+<!--        [renderOptions]="renderOptions"-->
+<!--        (originDrag)="markerDragStart($event, i)"-->
+<!--        (destinationDrag)="markerDragEnd($event, i)"-->
+<!--        [travelMode]="travelMode"-->
+<!--      ></agm-direction>-->
+<!--    </agm-map>-->
+<!--  </ng-template>-->
+<!--</div>-->
+<!--<div class="point-info mt-3">-->
+<!--  <div class="row">-->
+<!--    <div class="col-6">-->
+<!--      <label for="latitude">Latitude:</label>-->
+<!--      <input-->
+<!--        type="number"-->
+<!--        id="latitude"-->
+<!--        name="latitude"-->
+<!--        value="49.83815"-->
+<!--        #latitude-->
+<!--      /><br />-->
+<!--      <label for="longtitude">Longtitude:</label>-->
+<!--      <input-->
+<!--        type="number"-->
+<!--        id="longtitude"-->
+<!--        name="longtitude"-->
+<!--        value="18.2838842"-->
+<!--        #longtitude-->
+<!--      /><br />-->
+<!--      <button (click)="addPoint()">Add point</button>-->
+<!--      <br /><br />-->
+<!--      <button (click)="removePoint()">Remove last point</button>-->
+<!--      <br /><br />-->
+<!--      <select [(ngModel)]="travelMode">-->
+<!--        <option value="">Air</option>-->
+<!--        <option value="WALKING">Walking</option>-->
+<!--        <option value="DRIVING">Driving</option>-->
+<!--        <option value="TRANSIT">Transit</option>-->
+<!--        <option value="TWO_WHEELER">Two wheeler</option>-->
+<!--        <option value="BICYCLING">Bicycling</option>-->
+<!--      </select>-->
+<!--    </div>-->
+<!--    <div class="col-6">-->
+<!--      <p *ngFor="let point of this.convertRoutesIntoPoints(); let i = index">-->
+<!--        Point {{ i + 1 }}: {{ point.lat }} {{ point.lng }}-->
+<!--        <button (click)="removePoint(i)">X</button>-->
+<!--      </p>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->

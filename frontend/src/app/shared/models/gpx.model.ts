@@ -1,3 +1,5 @@
+import {Link, Point} from "gpxparser";
+
 export interface Distance  {
   total: number;
   cumul: number;
@@ -19,8 +21,8 @@ export interface GpxPoint {
 
 export interface GpxWaypoint extends GpxPoint {
   name: string;
-  cmt: string;
-  desc: string;
+  cmt?: string;
+  desc?: string;
 }
 
 export interface GpxRoute {
@@ -30,14 +32,14 @@ export interface GpxRoute {
   desc?: string;
   src?: string;
   number?: string;
-  link?: string;
+  link?: string | Link;
   type?: string;
   distance?: Distance;
   elevation?: Elevation;
   slopes: number[];
 }
 
-export interface MetaData {
+export interface GpxMetaData {
   name: string;
   desc: string;
   link: string;
@@ -46,7 +48,7 @@ export interface MetaData {
 }
 
 export interface GpxModel {
-  metadata: MetaData;
+  metadata: GpxMetaData;
   waypoints: GpxWaypoint[];
   routes: GpxRoute[];
 }

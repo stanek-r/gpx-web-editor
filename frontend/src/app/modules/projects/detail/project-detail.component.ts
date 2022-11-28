@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Project } from '../list/project-list.component';
 import { StorageService } from '../../../services/storage.service';
 import { FirebaseService } from '../../../services/firebase.service';
-import { PointGroup } from '../../editor/list/editor-list.component';
 
 @Component({
   selector: 'app-project-detail',
@@ -12,7 +11,7 @@ import { PointGroup } from '../../editor/list/editor-list.component';
 })
 export class ProjectDetailComponent implements OnInit {
   projectToShow?: Project;
-  pointGroups?: PointGroup[];
+  pointGroups?: any[];
 
   constructor(
     private readonly route: ActivatedRoute,

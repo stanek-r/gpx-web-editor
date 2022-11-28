@@ -5,9 +5,9 @@ import {HttpClient} from '@angular/common/http';
 import {BlockUiService} from './block-ui.service';
 import {BehaviorSubject, from, Observable, of} from 'rxjs';
 import firebase from 'firebase';
-import {switchMap, tap} from 'rxjs/operators';
+import {filter, switchMap, take, tap} from 'rxjs/operators';
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
-import {GpxModel} from "../shared/models/gpx.model";
+import {GpxModel} from '../shared/models/gpx.model';
 import User = firebase.User;
 
 @Injectable({
@@ -42,6 +42,14 @@ export class FirebaseV2Service {
     this.fireDB.list(this.filesBasePath + '/' + user.uid).set(id, data);
   }
 
+  deleteGPXFileData(id: string): void {
+    const user = this.fireUserSubject.getValue();
+    if (!user) {
+      return;
+    }
+    this.fireDB.list(this.filesBasePath + '/' + user?.uid).remove(id);
+  }
+
   async loadGPXFileData(id: string): Promise<GpxModel | null> {
     const user = this.fireUserSubject.getValue();
     if (!user) {
@@ -54,7 +62,7 @@ export class FirebaseV2Service {
     return new Promise<GpxModel | null>((resolve, reject) => {
       this.http
         .get(
-          `${this.fireBaseDatabaseUrl + this.filesBasePath}/${user.uid}.json?auth=${token}`
+          `${this.fireBaseDatabaseUrl + this.filesBasePath}/${user.uid}/${id}.json?auth=${token}`
         )
         .subscribe({
           next: (data) => {
@@ -66,22 +74,25 @@ export class FirebaseV2Service {
   }
 
   getDBChangeEvent(): Observable<any> {
-    return this.fireDB
-      .list(`${this.filesBasePath}/${this.fireUserSubject.getValue()?.uid}`)
-      .valueChanges()
-      .pipe(switchMap(async (data: any) => {
-        const user = this.fireUserSubject.getValue();
-        if (!user) {
-          return of(null);
-        }
-        const token = await user.getIdToken();
-        if (!token) {
-          return of(null);
-        }
-        return this.http.get<any>(
-          `${this.fireBaseDatabaseUrl + this.filesBasePath}/${user.uid}.json?auth=${token}`
-        );
-      }));
+    return this.fireUserSubject.pipe(filter(user => user !== null), switchMap(() => {
+      return this.fireDB
+        .list(`${this.filesBasePath}/${this.fireUserSubject.getValue()?.uid}`)
+        .valueChanges()
+        .pipe(switchMap(() => {
+          const user = this.fireUserSubject.getValue();
+          if (!user) {
+            return of(null);
+          }
+          return from(user.getIdToken()).pipe(switchMap((token) => {
+            if (!token) {
+              return of(null);
+            }
+            return this.http.get<any>(
+              `${this.fireBaseDatabaseUrl + this.filesBasePath}/${user.uid}.json?auth=${token}`
+            );
+          }));
+        }));
+    }));
   }
 
   getFireUser(): Observable<User | null> {

@@ -1,15 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { StorageService } from '../../../services/storage.service';
 import { Router } from '@angular/router';
-import { nanoid } from 'nanoid';
-import { FirebaseService } from '../../../services/firebase.service';
+import {Observable} from "rxjs";
+import {PointGroupInfo, StorageV2Service} from "../../../services/storageV2.service";
+
 // @ts-ignore
 import createGpx from 'gps-to-gpx';
-
-export interface PointGroup {
-  id: string;
-  points: google.maps.LatLngLiteral[];
-}
 
 @Component({
   selector: 'app-editor-list',
@@ -17,41 +12,31 @@ export interface PointGroup {
   styleUrls: ['./editor-list.component.scss'],
 })
 export class EditorListComponent implements OnInit {
-  listOfPointGroups: PointGroup[] = [];
+  pointGroups$!: Observable<PointGroupInfo[] | null>;
 
   constructor(
-    private readonly storageService: StorageService,
-    private readonly firebaseService: FirebaseService,
+    private readonly storageService: StorageV2Service,
     private readonly router: Router
   ) {}
 
   ngOnInit(): void {
-    this.loadGroups();
-  }
-
-  loadGroups(): void {
-    this.firebaseService.getPointsMap().subscribe((pointGroups) => {
-      this.listOfPointGroups = [];
-      // tslint:disable-next-line:forin
-      for (const pointGroupsKey in pointGroups) {
-        this.listOfPointGroups.push({
-          id: pointGroupsKey,
-          points: pointGroups[pointGroupsKey],
-        });
-      }
-    });
+    this.pointGroups$ = this.storageService.getListOfFiles();
   }
 
   addNewGroup(): void {
-    this.router.navigate(['/editor', nanoid(10)]);
+    // this.router.navigate(['/editor', nanoid(10)]);
   }
 
   removeGroup(id: string): void {
-    this.storageService.removeGroup(id);
+    this.storageService.removeFile(id);
   }
 
-  exportToFile(id: string): void {
-    const gpx = createGpx(this.listOfPointGroups.find((pg) => pg.id === id)?.points.map((point) => ({ latitude: point.lat, longitude: point.lng, elevation: 0, time: '2016-07-06T12:36:00Z' })), {
+  async exportToFile(id: string): Promise<void> {
+    const file = await this.storageService.getFile(id);
+    if (!file) {
+      return;
+    }
+    const gpx = createGpx(file.routes[0].points.map((point) => ({ latitude: point.lat, longitude: point.lon, elevation: 0 })), {
       activityName: 'RUN',
       startTime: '2016-07-06T12:36:00Z',
     });

@@ -1,26 +1,57 @@
 import {Injectable} from '@angular/core';
 import {GpxModel} from '../shared/models/gpx.model';
 import {FirebaseV2Service} from './firebaseV2.service';
-import {HttpClient} from '@angular/common/http';
+import {BehaviorSubject, Observable} from 'rxjs';
+
+export interface PointGroupInfo {
+  id: string;
+  name?: string;
+  type?: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class StorageV2Service {
 
-  private pointGroups?: string[];
+  private pointGroups?: PointGroupInfo[];
+  private pointGroupsSubject = new BehaviorSubject<PointGroupInfo[] | null>(null);
 
   constructor(
-    private readonly firebaseService: FirebaseV2Service,
-    private readonly http: HttpClient
+    private readonly firebaseService: FirebaseV2Service
   ) {
+
     this.firebaseService.getDBChangeEvent().subscribe((data) => {
-      console.log(data);
+      if (!data) {
+        this.pointGroups = [];
+        this.pointGroupsSubject.next([]);
+        return;
+      }
+      const pointGroupsTmp: PointGroupInfo[] = [];
+      for (const key of Object.keys(data)) {
+        pointGroupsTmp.push({
+          id: key,
+          name: data[key].metadata.name,
+        });
+      }
+      this.pointGroups = pointGroupsTmp;
+      this.pointGroupsSubject.next(pointGroupsTmp);
     });
   }
 
+  getListOfFiles(): Observable<PointGroupInfo[] | null> {
+    return this.pointGroupsSubject.asObservable();
+  }
+
+  removeFile(id: string): void {
+    if (!this.pointGroups?.find(pg => pg.id === id)) {
+      return;
+    }
+    this.firebaseService.deleteGPXFileData(id);
+  }
+
   async getFile(id: string): Promise<GpxModel | null> {
-    if (!this.pointGroups?.includes(id)) {
+    if (!this.pointGroups?.find(pg => pg.id === id)) {
       return Promise.resolve(null);
     }
     return this.firebaseService.loadGPXFileData(id);

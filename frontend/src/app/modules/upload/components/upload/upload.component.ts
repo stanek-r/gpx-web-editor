@@ -8,6 +8,7 @@ import {StorageV2Service} from '../../../../services/storageV2.service';
 import {FirebaseV2Service} from '../../../../services/firebaseV2.service';
 import {GpxModel} from '../../../../shared/models/gpx.model';
 import {nanoid} from 'nanoid';
+import {mapToGpxMetadata, mapToGpxTrackOrRoute, mapToGpxWaypoint} from "../../../../shared/gpx.mapper";
 
 @Component({
   selector: 'app-upload',
@@ -34,7 +35,8 @@ export class UploadComponent implements OnInit {
       if (fileString) {
         const gpxFileData = this.importFromFile(fileString);
         const id = nanoid(10);
-        this.storageService.saveFile(id, gpxFileData);
+        await this.storageService.saveFile(id, gpxFileData);
+        this.router.navigate(['/editor']);
       }
     }
   }
@@ -54,10 +56,15 @@ export class UploadComponent implements OnInit {
     const gpx = new gpxParser();
     gpx.parse(fileString);
 
+    const routesAndTracks = [
+      ...gpx.routes.map((r) => mapToGpxTrackOrRoute(r)),
+      ...gpx.tracks.map((t) => mapToGpxTrackOrRoute(t))
+    ];
+
     return {
-      metadata: gpx.metadata,
-      waypoints: gpx.waypoints,
-      routes: gpx.routes,
+      metadata: mapToGpxMetadata(gpx.metadata),
+      waypoints: gpx.waypoints.map(w => mapToGpxWaypoint(w)),
+      routes: routesAndTracks,
     };
   }
 }
