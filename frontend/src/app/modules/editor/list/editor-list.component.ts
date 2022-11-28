@@ -18,7 +18,6 @@ export interface PointGroup {
 })
 export class EditorListComponent implements OnInit {
   listOfPointGroups: PointGroup[] = [];
-  fileUrl!: string;
 
   constructor(
     private readonly storageService: StorageService,

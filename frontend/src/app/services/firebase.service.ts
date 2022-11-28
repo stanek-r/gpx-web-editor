@@ -118,16 +118,7 @@ export class FirebaseService {
         .valueChanges()
         .subscribe(async () => {
           const token = await this.fireUser?.getIdToken();
-          this.http
-            .get(
-              `${this.fireBaseDatabaseUrl + this.groupsBasePath}/${
-                this.fireUser?.uid
-              }.json?auth=${token}`
-            )
-            .subscribe((data) => {
-              this.pointsMap$.next(data ?? {});
-              resolve();
-            });
+
         });
       this.fireDB
         .list(this.projectsBasePath + '/' + this.fireUser?.uid)
