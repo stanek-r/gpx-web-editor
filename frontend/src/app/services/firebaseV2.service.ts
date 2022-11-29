@@ -74,7 +74,10 @@ export class FirebaseV2Service {
   }
 
   getDBChangeEvent(): Observable<any> {
-    return this.fireUserSubject.pipe(filter(user => user !== null), switchMap(() => {
+    return this.fireUserSubject.pipe(switchMap((value) => {
+      if (!value) {
+        return of(null);
+      }
       return this.fireDB
         .list(`${this.filesBasePath}/${this.fireUserSubject.getValue()?.uid}`)
         .valueChanges()
