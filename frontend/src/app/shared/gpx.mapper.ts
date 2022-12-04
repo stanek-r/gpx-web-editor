@@ -1,20 +1,32 @@
-import {GpxMetaData, GpxPoint, GpxRoute, GpxWaypoint} from './models/gpx.model';
-import {MetaData, Point, Route, Track, Waypoint} from 'gpxparser';
+import {
+  GpxMetaData,
+  GpxPoint,
+  GpxPointGroup,
+  GpxWaypoint,
+} from './models/gpx.model';
+import { MetaData, Point, Route, Track, Waypoint } from 'gpxparser';
 
 export function mapToGpxPoint(point: Point): GpxPoint {
   return { ele: point.ele, lat: point.lat, lon: point.lon, time: point.time };
 }
 
 export function mapToGpxWaypoint(point: Waypoint): GpxWaypoint {
-  return { ...mapToGpxPoint(point), name: point.name, cmt: point.cmt, desc: point.desc};
+  return {
+    ...mapToGpxPoint(point),
+    name: point.name,
+    cmt: point.cmt,
+    desc: point.desc,
+  };
 }
 
-export function mapToGpxTrackOrRoute(trackOrRoute: Track | Route): GpxRoute {
+export function mapToGpxTrackOrRoute<T>(
+  trackOrRoute: Track | Route
+): GpxPointGroup {
   return {
     name: trackOrRoute.name ?? null,
     link: trackOrRoute.link ?? null,
-    points: trackOrRoute.points.map(p => mapToGpxPoint(p)),
-    slopes: trackOrRoute.slopes.map(s => isNaN(s) ? 0 : s),
+    points: trackOrRoute.points.map((p) => mapToGpxPoint(p)),
+    slopes: trackOrRoute.slopes.map((s) => (isNaN(s) ? 0 : s)),
   };
 }
 

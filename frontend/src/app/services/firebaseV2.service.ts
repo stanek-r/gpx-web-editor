@@ -1,20 +1,19 @@
-import {Injectable} from '@angular/core';
-import {AngularFireAuth} from '@angular/fire/auth';
-import {AngularFireDatabase} from '@angular/fire/database';
-import {HttpClient} from '@angular/common/http';
-import {BlockUiService} from './block-ui.service';
-import {BehaviorSubject, from, Observable, of} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireDatabase } from '@angular/fire/database';
+import { HttpClient } from '@angular/common/http';
+import { BlockUiService } from './block-ui.service';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import firebase from 'firebase';
-import {filter, switchMap, take, tap} from 'rxjs/operators';
+import { filter, switchMap, take, tap } from 'rxjs/operators';
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
-import {GpxModel} from '../shared/models/gpx.model';
+import { GpxModel } from '../shared/models/gpx.model';
 import User = firebase.User;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FirebaseV2Service {
-
   private fireBaseDatabaseUrl =
     'https://gpx-web-editor-default-rtdb.europe-west1.firebasedatabase.app';
   private filesBasePath = '/gpx-files';
@@ -62,40 +61,50 @@ export class FirebaseV2Service {
     return new Promise<GpxModel | null>((resolve, reject) => {
       this.http
         .get(
-          `${this.fireBaseDatabaseUrl + this.filesBasePath}/${user.uid}/${id}.json?auth=${token}`
+          `${this.fireBaseDatabaseUrl + this.filesBasePath}/${
+            user.uid
+          }/${id}.json?auth=${token}`
         )
         .subscribe({
           next: (data) => {
             resolve(data as GpxModel);
           },
-          error: () => resolve(null)
+          error: () => resolve(null),
         });
     });
   }
 
   getDBChangeEvent(): Observable<any> {
-    return this.fireUserSubject.pipe(switchMap((value) => {
-      if (!value) {
-        return of(null);
-      }
-      return this.fireDB
-        .list(`${this.filesBasePath}/${this.fireUserSubject.getValue()?.uid}`)
-        .valueChanges()
-        .pipe(switchMap(() => {
-          const user = this.fireUserSubject.getValue();
-          if (!user) {
-            return of(null);
-          }
-          return from(user.getIdToken()).pipe(switchMap((token) => {
-            if (!token) {
-              return of(null);
-            }
-            return this.http.get<any>(
-              `${this.fireBaseDatabaseUrl + this.filesBasePath}/${user.uid}.json?auth=${token}`
-            );
-          }));
-        }));
-    }));
+    return this.fireUserSubject.pipe(
+      switchMap((value) => {
+        if (!value) {
+          return of(null);
+        }
+        return this.fireDB
+          .list(`${this.filesBasePath}/${this.fireUserSubject.getValue()?.uid}`)
+          .valueChanges()
+          .pipe(
+            switchMap(() => {
+              const user = this.fireUserSubject.getValue();
+              if (!user) {
+                return of(null);
+              }
+              return from(user.getIdToken()).pipe(
+                switchMap((token) => {
+                  if (!token) {
+                    return of(null);
+                  }
+                  return this.http.get<any>(
+                    `${this.fireBaseDatabaseUrl + this.filesBasePath}/${
+                      user.uid
+                    }.json?auth=${token}`
+                  );
+                })
+              );
+            })
+          );
+      })
+    );
   }
 
   getFireUser(): Observable<User | null> {
@@ -129,5 +138,4 @@ export class FirebaseV2Service {
   logout(): void {
     this.fireAuth.signOut();
   }
-
 }

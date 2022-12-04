@@ -1,6 +1,11 @@
 <app-side-menu></app-side-menu>
 <div class="action-menu">
-  <button type="button" class="btn btn-primary" (click)="addNewGroup()" disabled>
+  <button
+    type="button"
+    class="btn btn-primary"
+    (click)="addNewGroup()"
+    disabled
+  >
     Vytvořit novou skupinu bodů
   </button>
   <button type="button" class="btn btn-primary" routerLink="/upload">
@@ -16,7 +21,11 @@
       <button type="button" class="btn btn-primary" [routerLink]="group.id">
         Zobrazit
       </button>
-      <button type="button" class="btn btn-secondary mt-1" (click)="exportToFile(group.id)">
+      <button
+        type="button"
+        class="btn btn-secondary mt-1"
+        (click)="exportToFile(group.id)"
+      >
         Exportovat
       </button>
       <button

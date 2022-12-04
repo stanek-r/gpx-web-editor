@@ -3,12 +3,16 @@ import { Observable } from 'rxjs';
 import firebase from 'firebase';
 import User = firebase.User;
 import gpxParser from 'gpxparser';
-import {Router} from '@angular/router';
-import {StorageV2Service} from '../../../../services/storageV2.service';
-import {FirebaseV2Service} from '../../../../services/firebaseV2.service';
-import {GpxModel} from '../../../../shared/models/gpx.model';
-import {nanoid} from 'nanoid';
-import {mapToGpxMetadata, mapToGpxTrackOrRoute, mapToGpxWaypoint} from "../../../../shared/gpx.mapper";
+import { Router } from '@angular/router';
+import { StorageV2Service } from '../../../../services/storageV2.service';
+import { FirebaseV2Service } from '../../../../services/firebaseV2.service';
+import { GpxModel } from '../../../../shared/models/gpx.model';
+import { nanoid } from 'nanoid';
+import {
+  mapToGpxMetadata,
+  mapToGpxTrackOrRoute,
+  mapToGpxWaypoint,
+} from '../../../../shared/gpx.mapper';
 
 @Component({
   selector: 'app-upload',
@@ -21,7 +25,7 @@ export class UploadComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly firebaseService: FirebaseV2Service,
-    private readonly storageService: StorageV2Service,
+    private readonly storageService: StorageV2Service
   ) {}
 
   ngOnInit(): void {
@@ -56,15 +60,14 @@ export class UploadComponent implements OnInit {
     const gpx = new gpxParser();
     gpx.parse(fileString);
 
-    const routesAndTracks = [
-      ...gpx.routes.map((r) => mapToGpxTrackOrRoute(r)),
-      ...gpx.tracks.map((t) => mapToGpxTrackOrRoute(t))
-    ];
+    const routes = gpx.routes.map((r) => mapToGpxTrackOrRoute(r));
+    const tracks = gpx.tracks.map((t) => mapToGpxTrackOrRoute(t));
 
     return {
       metadata: mapToGpxMetadata(gpx.metadata),
-      waypoints: gpx.waypoints.map(w => mapToGpxWaypoint(w)),
-      routes: routesAndTracks,
+      waypoints: gpx.waypoints.map((w) => mapToGpxWaypoint(w)),
+      routes,
+      tracks,
     };
   }
 }

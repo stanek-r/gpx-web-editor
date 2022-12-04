@@ -1,186 +1,307 @@
 import {
   Component,
+  ElementRef,
+  OnDestroy,
   OnInit,
+  ViewChild,
 } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {StorageV2Service} from "../../../services/storageV2.service";
-import {GpxModel} from "../../../shared/models/gpx.model";
+import { ActivatedRoute, Router } from '@angular/router';
+import { StorageV2Service } from '../../../services/storageV2.service';
+import { GpxModel, GpxPoint } from '../../../shared/models/gpx.model';
+import { TravelMode } from '../../../shared/models/map.model';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnDestroy {
+  @ViewChild('indexSelect') indexSelect!: ElementRef<HTMLSelectElement>;
 
-  fileToShow?: GpxModel;
+  lat: number | undefined;
+  lng: number | undefined;
+  readonly zoom = 9;
 
-  constructor(private readonly route: ActivatedRoute, private readonly storageService: StorageV2Service, private readonly router: Router,) {
-  }
+  // travelMode: TravelMode | undefined;
+  id: string | null = null;
+  fileData: GpxModel | null = null;
 
-  async ngOnInit(): Promise<void> {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
-      this.router.navigate(['/editor']);
-      return;
-    }
-    const file = await this.storageService.getFile(id);
-    if (!file) {
-      this.router.navigate(['/editor']);
-      return;
-    }
-    this.fileToShow = file;
-  }
+  changed = false;
+  addPoint = false;
+  selectedType: 'routes' | 'tracks' | 'waypoints' = 'waypoints';
+  selectedIndex = 0;
+  subSelectedIndex = 0;
 
-  // readonly lat = 49.83815;
-  // readonly long = 18.2838842;
-  // readonly zoom = 10;
   // readonly markerOptions = {
   //   origin: {
   //     opacity: 1.0,
-  //     draggable: true,
+  //     draggable: false,
   //   },
   //   destination: {
   //     opacity: 1.0,
-  //     draggable: true,
+  //     draggable: false,
   //   },
   // };
   // readonly renderOptions = {
   //   suppressMarkers: true,
   // };
-  // travelMode: TravelMode | undefined;
-  //
-  // routes: MapData[] = [];
-  // id!: string;
-  //
-  // private interval: any;
-  // private changed = false;
-  //
-  // backProject: string | null = null;
-  //
-  // @ViewChild('latitude') latInput!: ElementRef<HTMLInputElement>;
-  // @ViewChild('longtitude') lngInput!: ElementRef<HTMLInputElement>;
-  //
-  // constructor(
-  //   private readonly storageService: StorageService,
-  //   private readonly route: ActivatedRoute,
-  //   private readonly router: Router,
-  // ) {}
-  //
-  // async ngOnInit(): Promise<void> {
-  //   const id = this.route.snapshot.paramMap.get('id');
-  //   this.backProject = this.route.snapshot.queryParamMap.get('backProject');
-  //   if (!id) {
-  //     this.router.navigate(['/editor']);
-  //     return;
-  //   } else {
-  //     this.id = id;
-  //   }
-  //   const points = await this.storageService.getPointsByGroupId(id);
-  //   if (points.length > 0) {
-  //     this.routes = this.convertPointsIntoRoutes(points);
-  //   } else {
-  //     this.routes = this.convertPointsIntoRoutes(this.getDefaultRoute());
-  //     this.storageService.save(this.id, this.convertRoutesIntoPoints());
-  //   }
-  //   this.interval = setInterval(() => {
-  //     if (this.changed) {
-  //       this.storageService.save(this.id, this.convertRoutesIntoPoints());
-  //       this.changed = false;
-  //     }
-  //   }, 1000);
-  // }
-  //
-  // ngOnDestroy(): void {
-  //   clearInterval(this.interval);
-  // }
-  //
-  // markerDragStart($event: any, index: number): void {
-  //   const lat: number = $event.coords.lat;
-  //   const lng: number = $event.coords.lng;
-  //
-  //   this.routes[index].start = { lat, lng };
-  //   if (index > 0) {
-  //     this.routes[index - 1].end = { lat, lng };
-  //   }
-  //   this.changed = true;
-  // }
-  //
-  // markerDragEnd($event: any, index: number): void {
-  //   const lat: number = $event.coords.lat;
-  //   const lng: number = $event.coords.lng;
-  //
-  //   this.routes[index].end = { lat, lng };
-  //   if (index < this.routes.length - 1) {
-  //     this.routes[index + 1].start = { lat, lng };
-  //   }
-  //   this.changed = true;
-  // }
-  //
-  // convertPointsIntoRoutes(points: google.maps.LatLngLiteral[]): MapData[] {
-  //   const routes: MapData[] = [];
-  //   let tmp = points[0];
-  //   for (let i = 1; i < points.length; i++) {
-  //     routes.push({
-  //       start: tmp,
-  //       end: points[i],
-  //     });
-  //     tmp = points[i];
-  //   }
-  //   return routes;
-  // }
-  //
-  // convertRoutesIntoPoints(): google.maps.LatLngLiteral[] {
-  //   const points: google.maps.LatLngLiteral[] = [];
-  //   if (this.routes.length > 0) {
-  //     for (const route of this.routes) {
-  //       points.push(route.start);
-  //     }
-  //     points.push(this.routes[this.routes.length - 1].end);
-  //   }
-  //   return points;
-  // }
-  //
-  // addPoint(): void {
-  //   const newPoints = [
-  //     {
-  //       lat: +this.latInput.nativeElement.value,
-  //       lng: +this.lngInput.nativeElement.value,
-  //     },
-  //   ];
-  //   const oldPoints = this.convertRoutesIntoPoints();
-  //   if (oldPoints.length === 0) {
-  //     oldPoints.push(newPoints[0]);
-  //   }
-  //   this.routes = this.convertPointsIntoRoutes([...oldPoints, ...newPoints]);
-  //   this.changed = true;
-  // }
-  //
-  // removePoint(index?: number): void {
-  //   const oldPoints = this.convertRoutesIntoPoints();
-  //   if (index) {
-  //     oldPoints.splice(index, 1);
-  //   } else {
-  //     oldPoints.pop();
-  //   }
-  //   this.routes = this.convertPointsIntoRoutes(oldPoints);
-  //   this.changed = true;
-  // }
-  //
-  // getDefaultRoute(): any {
-  //   return [
-  //     {
-  //       lat: 49.84079607910464,
-  //       lng: 18.280282526428223,
-  //     },
-  //     {
-  //       lat: 49.83933753799882,
-  //       lng: 18.28155267354127,
-  //     },
-  //   ];
-  // }
-  //
-  // save(): void {
-  //   this.storageService.save(this.id, this.convertRoutesIntoPoints());
-  // }
+
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly storageService: StorageV2Service,
+    private readonly router: Router
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+    this.id = this.route.snapshot.paramMap.get('id');
+    if (!this.id) {
+      this.router.navigate(['/editor']);
+      return;
+    }
+    await this.storageService.waitUntilLoaded();
+    this.fileData = await this.storageService.getFile(this.id);
+    if (!this.fileData) {
+      this.router.navigate(['/editor']);
+      return;
+    }
+    this.loadDefaultMapPosition();
+  }
+
+  async ngOnDestroy(): Promise<void> {
+    await this.save();
+  }
+
+  async save(): Promise<void> {
+    if (this.id && this.fileData) {
+      await this.storageService.saveFile(this.id, this.fileData);
+      this.changed = false;
+    }
+  }
+
+  mapClick(event: any): void {
+    if (!this.fileData) {
+      return;
+    }
+    if (this.addPoint) {
+      this.addPoint = false;
+      this.changed = true;
+
+      const lat = event.coords.lat;
+      const lng = event.coords.lng;
+      if (this.selectedType === 'waypoints') {
+        this.fileData.waypoints.push({
+          lat,
+          lon: lng,
+          time: new Date(),
+          name: 'Test point ' + Math.round(Math.random() * 1000),
+          ele: 0,
+        });
+      } else if (this.selectedType === 'routes') {
+        this.fileData.routes[this.selectedIndex].points.push({
+          lat,
+          lon: lng,
+          time: new Date(),
+          ele: 0,
+        });
+      } else {
+        this.fileData.tracks[this.selectedIndex].points.push({
+          lat,
+          lon: lng,
+          time: new Date(),
+          ele: 0,
+        });
+      }
+    }
+  }
+
+  addIndex(): void {
+    if (!this.fileData) {
+      return;
+    }
+    if (this.selectedType === 'waypoints') {
+      return;
+    }
+    this.changed = true;
+    this.fileData[this.selectedType].push({
+      name: 'Test group' + Math.round(Math.random() * 1000),
+      points: [],
+      slopes: [],
+    });
+    this.setIndex(this.fileData[this.selectedType].length - 1);
+  }
+
+  removeIndex(): void {
+    if (!this.fileData) {
+      return;
+    }
+    if (this.selectedType === 'waypoints') {
+      return;
+    }
+    this.changed = true;
+    const index = this.selectedIndex;
+    this.setIndex(0);
+    this.fileData[this.selectedType].splice(index, 1);
+  }
+
+  changeAddPoint(): void {
+    this.addPoint = true;
+  }
+
+  removePoint(index: number): void {
+    if (!this.fileData) {
+      return;
+    }
+    this.changed = true;
+    if (this.selectedType === 'waypoints') {
+      this.fileData.waypoints.splice(index, 1);
+      return;
+    }
+    this.fileData[this.selectedType][this.selectedIndex].points.splice(
+      index,
+      1
+    );
+  }
+
+  waypointDrag(event: any, index: number): void {
+    const point = this.fileData?.waypoints[index];
+    if (point) {
+      point.lat = event.coords.lat;
+      point.lon = event.coords.lng;
+      this.changed = true;
+    }
+  }
+
+  trackPointDrag(event: any, index1: number, index2: number): void {
+    const point = this.fileData?.tracks[index1].points[index2];
+    if (point) {
+      // @ts-ignore
+      this.fileData.tracks[index1].points[index2] = {
+        ...point,
+        lat: event.coords.lat,
+        lon: event.coords.lng,
+      };
+      this.changed = true;
+    }
+  }
+
+  routePointDrag(event: any, index1: number, index2: number): void {
+    const point = this.fileData?.routes[index1].points[index2];
+    if (point) {
+      // @ts-ignore
+      this.fileData.routes[index1].points[index2] = {
+        ...point,
+        lat: event.coords.lat,
+        lon: event.coords.lng,
+      };
+      this.changed = true;
+    }
+  }
+
+  waypointClick(index: number): void {
+    this.selectedType = 'waypoints';
+    this.selectedIndex = index;
+    this.subSelectedIndex = 0;
+  }
+
+  trackPointClick(index1: number, index2: number): void {
+    this.selectedType = 'tracks';
+    this.setIndex(index1);
+    this.subSelectedIndex = index2;
+  }
+
+  routePointClick(index1: number, index2: number): void {
+    this.selectedType = 'routes';
+    this.setIndex(index1);
+    this.subSelectedIndex = index2;
+  }
+
+  trackLineClick(index: number): void {
+    this.selectedType = 'tracks';
+    this.setIndex(index);
+  }
+
+  routeLineClick(index: number): void {
+    this.selectedType = 'routes';
+    this.setIndex(index);
+  }
+
+  selectType(type: 'routes' | 'tracks' | 'waypoints' = 'waypoints'): void {
+    this.selectedIndex = 0;
+    this.subSelectedIndex = 0;
+    this.selectedType = type;
+  }
+
+  getIndexesToPrint(): number[] {
+    if (!this.fileData) {
+      return [];
+    }
+    if (this.selectedType === 'waypoints') {
+      return [];
+    }
+    const ret = [];
+    for (let i = 0; i < this.fileData[this.selectedType].length; i++) {
+      ret.push(i);
+    }
+    return ret;
+  }
+
+  getPointsToPrint(): GpxPoint[] {
+    if (!this.fileData) {
+      return [];
+    }
+    if (this.selectedType === 'waypoints') {
+      return this.fileData.waypoints;
+    }
+    if (this.fileData[this.selectedType].length <= 0) {
+      return [];
+    }
+    return this.fileData[this.selectedType][this.selectedIndex].points;
+  }
+
+  loadDefaultMapPosition(): void {
+    if (!this.fileData) {
+      return;
+    }
+    const allPoints = [];
+    for (const waypoint of this.fileData.waypoints) {
+      allPoints.push(waypoint);
+    }
+    for (const route of this.fileData.routes) {
+      for (const point of route.points) {
+        allPoints.push(point);
+      }
+    }
+    for (const track of this.fileData.routes) {
+      for (const point of track.points) {
+        allPoints.push(point);
+      }
+    }
+    this.lat =
+      allPoints
+        .map((p) => p.lat)
+        .reduce(
+          (previousValue, currentValue) => previousValue + currentValue,
+          0
+        ) / allPoints.length;
+    this.lng =
+      allPoints
+        .map((p) => p.lon)
+        .reduce(
+          (previousValue, currentValue) => previousValue + currentValue,
+          0
+        ) / allPoints.length;
+  }
+
+  indexChange(event: any): void {
+    this.selectedIndex = +event.target.value;
+    this.subSelectedIndex = 0;
+  }
+
+  setIndex(index: number): void {
+    this.selectedIndex = index;
+    this.subSelectedIndex = 0;
+    setTimeout(() => {
+      this.indexSelect.nativeElement.value = index + '';
+    }, 500);
+  }
 }

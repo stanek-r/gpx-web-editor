@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import {Observable} from "rxjs";
-import {PointGroupInfo, StorageV2Service} from "../../../services/storageV2.service";
+import { Observable } from 'rxjs';
+import {
+  PointGroupInfo,
+  StorageV2Service,
+} from '../../../services/storageV2.service';
 
 // @ts-ignore
 import createGpx from 'gps-to-gpx';
@@ -36,10 +39,17 @@ export class EditorListComponent implements OnInit {
     if (!file) {
       return;
     }
-    const gpx = createGpx(file.routes[0].points.map((point) => ({ latitude: point.lat, longitude: point.lon, elevation: 0 })), {
-      activityName: 'RUN',
-      startTime: '2016-07-06T12:36:00Z',
-    });
+    const gpx = createGpx(
+      file.routes[0].points.map((point) => ({
+        latitude: point.lat,
+        longitude: point.lon,
+        elevation: 0,
+      })),
+      {
+        activityName: 'RUN',
+        startTime: '2016-07-06T12:36:00Z',
+      }
+    );
     const blob = new Blob([gpx], { type: 'application/octet-stream' });
     const url = window.URL.createObjectURL(blob);
 

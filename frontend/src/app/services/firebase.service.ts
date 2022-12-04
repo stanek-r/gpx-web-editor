@@ -118,7 +118,6 @@ export class FirebaseService {
         .valueChanges()
         .subscribe(async () => {
           const token = await this.fireUser?.getIdToken();
-
         });
       this.fireDB
         .list(this.projectsBasePath + '/' + this.fireUser?.uid)

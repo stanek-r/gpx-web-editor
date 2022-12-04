@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
-import {GpxModel} from '../shared/models/gpx.model';
-import {FirebaseV2Service} from './firebaseV2.service';
-import {BehaviorSubject, Observable} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { GpxModel } from '../shared/models/gpx.model';
+import { FirebaseV2Service } from './firebaseV2.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface PointGroupInfo {
   id: string;
@@ -10,17 +10,16 @@ export interface PointGroupInfo {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StorageV2Service {
-
   private pointGroups?: PointGroupInfo[];
-  private pointGroupsSubject = new BehaviorSubject<PointGroupInfo[] | null>(null);
+  private pointGroupsSubject = new BehaviorSubject<PointGroupInfo[] | null>(
+    null
+  );
+  private loaded = new BehaviorSubject<boolean>(false);
 
-  constructor(
-    private readonly firebaseService: FirebaseV2Service
-  ) {
-
+  constructor(private readonly firebaseService: FirebaseV2Service) {
     this.firebaseService.getDBChangeEvent().subscribe((data) => {
       if (!data) {
         this.pointGroups = [];
@@ -36,6 +35,7 @@ export class StorageV2Service {
       }
       this.pointGroups = pointGroupsTmp;
       this.pointGroupsSubject.next(pointGroupsTmp);
+      this.loaded.next(true);
     });
   }
 
@@ -43,18 +43,38 @@ export class StorageV2Service {
     return this.pointGroupsSubject.asObservable();
   }
 
+  waitUntilLoaded(): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      const sub = this.loaded.subscribe((value) => {
+        if (value) {
+          resolve(true);
+          sub.unsubscribe();
+        }
+      });
+    });
+  }
+
   removeFile(id: string): void {
-    if (!this.pointGroups?.find(pg => pg.id === id)) {
+    if (!this.pointGroups?.find((pg) => pg.id === id)) {
       return;
     }
     this.firebaseService.deleteGPXFileData(id);
   }
 
   async getFile(id: string): Promise<GpxModel | null> {
-    if (!this.pointGroups?.find(pg => pg.id === id)) {
+    if (!this.pointGroups?.find((pg) => pg.id === id)) {
       return Promise.resolve(null);
     }
-    return this.firebaseService.loadGPXFileData(id);
+    const loadedFile = await this.firebaseService.loadGPXFileData(id);
+    if (!loadedFile) {
+      return null;
+    }
+    return {
+      metadata: loadedFile.metadata,
+      waypoints: loadedFile.waypoints ?? [],
+      tracks: loadedFile.tracks ?? [],
+      routes: loadedFile.routes ?? [],
+    } as GpxModel;
   }
 
   async saveFile(id: string, data: GpxModel): Promise<void> {

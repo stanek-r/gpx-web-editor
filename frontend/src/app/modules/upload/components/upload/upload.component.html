@@ -1,16 +1,16 @@
 <app-side-menu></app-side-menu> <a routerLink="/">BACK</a><br /><br />
 <div class="container" *ngIf="user$ | async as user">
-<!--  <div class="upload-process">{{ uploading$ | async | number: "1.0-0" }}</div>-->
+  <!--  <div class="upload-process">{{ uploading$ | async | number: "1.0-0" }}</div>-->
   <input type="file" (change)="onFileSelected($event)" /><br /><br />
-<!--  <div *ngIf="files$ | async as files" class="file-list">-->
-<!--    <p>Files:</p>-->
-<!--    <div *ngFor="let file of files" class="m-3">-->
-<!--      <p>-->
-<!--        {{ file.name }} | {{ file.userIP }} |-->
-<!--        <a [download]="file.name" [href]="file.downloadUrl" title="ImageName"-->
-<!--          >Download</a-->
-<!--        >-->
-<!--      </p>-->
-<!--    </div>-->
-<!--  </div>-->
+  <!--  <div *ngIf="files$ | async as files" class="file-list">-->
+  <!--    <p>Files:</p>-->
+  <!--    <div *ngFor="let file of files" class="m-3">-->
+  <!--      <p>-->
+  <!--        {{ file.name }} | {{ file.userIP }} |-->
+  <!--        <a [download]="file.name" [href]="file.downloadUrl" title="ImageName"-->
+  <!--          >Download</a-->
+  <!--        >-->
+  <!--      </p>-->
+  <!--    </div>-->
+  <!--  </div>-->
 </div>
