@@ -14,15 +14,11 @@
     [latitude]="lat"
     [longitude]="lng"
     [zoom]="zoom"
-    (mapClick)="mapClick($event)"
   >
     <agm-marker
       *ngFor="let point of fileData?.waypoints; let i = index"
       [latitude]="point.lat"
       [longitude]="point.lon"
-      (dragEnd)="waypointDrag($event, i)"
-      (markerClick)="waypointClick(i)"
-      [markerDraggable]="true"
       [opacity]="
         selectedType === 'waypoints' && selectedIndex === i ? 1.0 : 0.88
       "
@@ -32,8 +28,6 @@
         *ngFor="let point of track.points; let i2 = index"
         [latitude]="point.lat"
         [longitude]="point.lon"
-        (dragEnd)="trackPointDrag($event, i1, i2)"
-        (markerClick)="trackPointClick(i1, i2)"
         [opacity]="
           selectedType === 'tracks' &&
           selectedIndex === i1 &&
@@ -41,7 +35,6 @@
             ? 1.0
             : 0.88
         "
-        [markerDraggable]="true"
       ></agm-marker>
       <agm-polyline
         [strokeColor]="
@@ -52,7 +45,6 @@
         [strokeWeight]="
           selectedType === 'tracks' && selectedIndex === i1 ? 10 : 5
         "
-        (lineClick)="trackLineClick(i1)"
       >
         <agm-polyline-point
           *ngFor="let mapData of track.points"
@@ -66,8 +58,6 @@
         *ngFor="let point of route.points; let i2 = index"
         [latitude]="point.lat"
         [longitude]="point.lon"
-        (dragEnd)="routePointDrag($event, i1, i2)"
-        (markerClick)="routePointClick(i1, i2)"
         [opacity]="
           selectedType === 'routes' &&
           selectedIndex === i1 &&
@@ -75,7 +65,6 @@
             ? 1.0
             : 0.88
         "
-        [markerDraggable]="true"
       ></agm-marker>
       <agm-polyline
         [strokeColor]="
@@ -86,7 +75,6 @@
         [strokeWeight]="
           selectedType === 'routes' && selectedIndex === i1 ? 10 : 5
         "
-        (lineClick)="routeLineClick(i1)"
       >
         <agm-polyline-point
           *ngFor="let mapData of route.points"
@@ -108,86 +96,4 @@
   <!--        ></agm-direction>-->
   <!--      </agm-map>-->
   <!--    </ng-template>-->
-</div>
-<div class="point-info mt-3">
-  <div class="row">
-    <div class="col-6">
-      <div class="d-flex gap-2">
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="selectType('waypoints')"
-        >
-          Waypoints
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="selectType('tracks')"
-        >
-          Tracks
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="selectType('routes')"
-        >
-          Routes
-        </button>
-      </div>
-      <!--      <select [(ngModel)]="travelMode" class="mt-2">-->
-      <!--        <option value="">Connect points only</option>-->
-      <!--        <option value="WALKING">Walking</option>-->
-      <!--        <option value="DRIVING">Driving</option>-->
-      <!--        <option value="BICYCLING">Bicycling</option>-->
-      <!--      </select>-->
-    </div>
-    <div class="col-6">
-      <h5>Selected {{ selectedType }}</h5>
-      <select
-        *ngIf="selectedType !== 'waypoints'"
-        (change)="indexChange($event)"
-        #indexSelect
-      >
-        <option *ngFor="let i of getIndexesToPrint()" [value]="i">
-          {{ i }}
-        </option>
-      </select>
-      <button
-        type="button"
-        class="ms-1"
-        *ngIf="selectedType !== 'waypoints'"
-        (click)="addIndex()"
-      >
-        Add {{ selectedType }}
-      </button>
-      <button
-        type="button"
-        class="ms-1"
-        *ngIf="selectedType !== 'waypoints'"
-        (click)="removeIndex()"
-      >
-        Remove {{ selectedType }}
-      </button>
-      <button type="button" class="ms-1" (click)="changeAddPoint()">
-        Add point
-      </button>
-      <p *ngFor="let point of getPointsToPrint(); let i = index">
-        <span
-          [class]="
-            selectedType === 'waypoints'
-              ? selectedIndex === i
-                ? 'font-weight-bold'
-                : ''
-              : subSelectedIndex === i
-              ? 'font-weight-bold'
-              : ''
-          "
-        >
-          Point {{ i + 1 }}: {{ point.lat }} {{ point.lon }}
-        </span>
-        <button (click)="removePoint(i)">X</button>
-      </p>
-    </div>
-  </div>
 </div>

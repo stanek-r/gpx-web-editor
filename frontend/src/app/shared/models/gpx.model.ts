@@ -36,7 +36,7 @@ export interface GpxPointGroup {
   type?: string;
   distance?: Distance;
   elevation?: Elevation;
-  slopes: number[];
+  slopes?: number[];
 }
 
 export interface GpxMetaData {

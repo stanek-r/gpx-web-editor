@@ -5,9 +5,11 @@ import {
   PointGroupInfo,
   StorageV2Service,
 } from '../../../services/storageV2.service';
+import { parse } from 'js2xmlparser';
 
 // @ts-ignore
 import createGpx from 'gps-to-gpx';
+import { mapToGpxExport } from '../../../shared/gpx.mapper';
 
 @Component({
   selector: 'app-editor-list',
@@ -18,8 +20,7 @@ export class EditorListComponent implements OnInit {
   pointGroups$!: Observable<PointGroupInfo[] | null>;
 
   constructor(
-    private readonly storageService: StorageV2Service,
-    private readonly router: Router
+    private readonly storageService: StorageV2Service
   ) {}
 
   ngOnInit(): void {
@@ -39,22 +40,12 @@ export class EditorListComponent implements OnInit {
     if (!file) {
       return;
     }
-    const gpx = createGpx(
-      file.routes[0].points.map((point) => ({
-        latitude: point.lat,
-        longitude: point.lon,
-        elevation: 0,
-      })),
-      {
-        activityName: 'RUN',
-        startTime: '2016-07-06T12:36:00Z',
-      }
-    );
-    const blob = new Blob([gpx], { type: 'application/octet-stream' });
+    const exportedFileString = parse('gpx', mapToGpxExport(file));
+    const blob = new Blob([exportedFileString], { type: 'application/octet-stream' });
     const url = window.URL.createObjectURL(blob);
 
     const anchor = document.createElement('a');
-    anchor.download = id + '.gpx';
+    anchor.download = file.metadata.name + '.gpx';
     anchor.href = url;
     anchor.click();
   }
