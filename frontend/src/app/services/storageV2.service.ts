@@ -2,10 +2,13 @@ import { Injectable } from '@angular/core';
 import { GpxModel } from '../shared/models/gpx.model';
 import { FirebaseV2Service } from './firebaseV2.service';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { parse } from 'js2xmlparser';
+import { mapToGpxExport } from '../shared/gpx.mapper';
 
 export interface PointGroupInfo {
   id: string;
   name?: string;
+  description?: string;
   type?: string;
 }
 
@@ -31,6 +34,7 @@ export class StorageV2Service {
         pointGroupsTmp.push({
           id: key,
           name: data[key].metadata.name,
+          description: data[key].metadata.desc,
         });
       }
       this.pointGroups = pointGroupsTmp;
@@ -44,6 +48,9 @@ export class StorageV2Service {
   }
 
   waitUntilLoaded(): Promise<boolean> {
+    if (this.loaded.getValue()) {
+      return Promise.resolve(true);
+    }
     return new Promise<boolean>((resolve) => {
       const sub = this.loaded.subscribe((value) => {
         if (value) {
@@ -79,5 +86,22 @@ export class StorageV2Service {
 
   async saveFile(id: string, data: GpxModel): Promise<void> {
     this.firebaseService.saveGPXFileData(id, data);
+  }
+
+  async exportToFile(id: string): Promise<void> {
+    const file = await this.getFile(id);
+    if (!file) {
+      return;
+    }
+    const exportedFileString = parse('gpx', mapToGpxExport(file));
+    const blob = new Blob([exportedFileString], {
+      type: 'application/octet-stream',
+    });
+    const url = window.URL.createObjectURL(blob);
+
+    const anchor = document.createElement('a');
+    anchor.download = file.metadata.name + '.gpx';
+    anchor.href = url;
+    anchor.click();
   }
 }

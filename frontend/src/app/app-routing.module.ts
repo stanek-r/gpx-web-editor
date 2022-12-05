@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './modules/home/home.component';
-import { UploadComponent } from './modules/upload/components/upload/upload.component';
 import { MapComponent } from './modules/editor/map/map.component';
 import { EditorListComponent } from './modules/editor/list/editor-list.component';
 import { ProjectListComponent } from './modules/projects/list/project-list.component';
 import { ProjectDetailComponent } from './modules/projects/detail/project-detail.component';
+import { EditorDetailComponent } from './modules/editor/detail/editor-detail.component';
 
 const routes: Routes = [
   {
@@ -29,11 +29,11 @@ const routes: Routes = [
   },
   {
     path: 'editor/:id',
-    component: MapComponent,
+    component: EditorDetailComponent,
   },
   {
-    path: 'upload',
-    component: UploadComponent,
+    path: 'editor/map/:id',
+    component: MapComponent,
   },
   { path: '**', redirectTo: '/' },
 ];

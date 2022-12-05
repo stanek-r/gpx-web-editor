@@ -6,10 +6,15 @@ import { AgmDirectionModule } from 'agm-direction';
 import { AgmCoreModule } from '@agm/core';
 import { MapComponent } from './map/map.component';
 import { EditorListComponent } from './list/editor-list.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { EditorDetailComponent } from './detail/editor-detail.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
+import { UploadModule } from '../upload/upload.module';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
-  declarations: [MapComponent, EditorListComponent],
+  declarations: [MapComponent, EditorListComponent, EditorDetailComponent],
   imports: [
     SharedModule,
     RouterModule,
@@ -19,6 +24,11 @@ import { FormsModule } from '@angular/forms';
     }),
     AgmDirectionModule,
     FormsModule,
+    MatIconModule,
+    ReactiveFormsModule,
+    MatDividerModule,
+    UploadModule,
+    MatDialogModule,
   ],
   exports: [],
 })

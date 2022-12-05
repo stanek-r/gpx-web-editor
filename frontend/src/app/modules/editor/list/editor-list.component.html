@@ -8,33 +8,52 @@
   >
     Vytvořit novou skupinu bodů
   </button>
-  <button type="button" class="btn btn-primary" routerLink="/upload">
+  <button type="button" class="btn btn-primary" (click)="uploadFile()">
     Nahrát GPX soubor
   </button>
 </div>
+<mat-divider class="mt-2"></mat-divider>
+<h2 class="mt-3">Mé soubory</h2>
 <ng-container *ngIf="pointGroups$ | async as pointGroups">
   <div class="list" *ngIf="pointGroups.length > 0">
     <div *ngFor="let group of pointGroups">
-      <p>ID: {{ group.id }}</p>
-      <p>Name: {{ group.name }}</p>
-      <p>Type: {{ group.type }}</p>
-      <button type="button" class="btn btn-primary" [routerLink]="group.id">
-        Zobrazit
-      </button>
+      <p class="id-show m-0">ID: {{ group.id }}</p>
+      <p>{{ group.name }}</p>
+      <p class="description">{{ group.description }}</p>
+
       <button
         type="button"
-        class="btn btn-secondary mt-1"
-        (click)="exportToFile(group.id)"
+        class="btn btn-primary my-1"
+        [routerLink]="group.id"
       >
-        Exportovat
+        Detail
       </button>
-      <button
-        type="button"
-        class="btn btn-danger mt-1"
-        (click)="removeGroup(group.id)"
-      >
-        Odstranit
-      </button>
+
+      <div class="d-flex flex-row gap-2 mt-1">
+        <button
+          type="button"
+          class="btn btn-primary d-flex"
+          [routerLink]="'map/' + group.id"
+        >
+          <mat-icon>map</mat-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary d-flex"
+          (click)="exportToFile(group.id)"
+        >
+          <mat-icon>cloud_download</mat-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger d-flex"
+          (click)="removeGroup(group.id)"
+        >
+          <mat-icon>delete_forever</mat-icon>
+        </button>
+      </div>
     </div>
   </div>
 </ng-container>
+<mat-divider class="mt-5"></mat-divider>
+<h2 class="mt-3">Sdílené soubory</h2>

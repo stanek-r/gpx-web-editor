@@ -8,7 +8,6 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageV2Service } from '../../../services/storageV2.service';
 import { GpxModel, GpxPoint } from '../../../shared/models/gpx.model';
-import { TravelMode } from '../../../shared/models/map.model';
 
 @Component({
   selector: 'app-map',
@@ -21,6 +20,8 @@ export class MapComponent implements OnInit, OnDestroy {
   lat: number | undefined;
   lng: number | undefined;
   readonly zoom = 9;
+
+  backToDetail = false;
 
   // travelMode: TravelMode | undefined;
   id: string | null = null;
@@ -54,6 +55,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.id = this.route.snapshot.paramMap.get('id');
+    this.backToDetail = !!this.route.snapshot.queryParamMap.get('backToDetail');
     if (!this.id) {
       this.router.navigate(['/editor']);
       return;
@@ -275,6 +277,11 @@ export class MapComponent implements OnInit, OnDestroy {
       for (const point of track.points) {
         allPoints.push(point);
       }
+    }
+    if (allPoints.length <= 0) {
+      this.lat = 49.83815;
+      this.lng = 18.2838842;
+      return;
     }
     this.lat =
       allPoints

@@ -1,0 +1,45 @@
+<app-side-menu backUrl="/editor"></app-side-menu>
+<div class="container" *ngIf="id && fileData">
+  <p class="id-show m-0 mt-4">ID: {{ id }}</p>
+  <p>{{ fileData.metadata.name }}</p>
+  <div class="d-flex mt-2 gap-3">
+    <button
+      type="button"
+      class="btn btn-primary d-flex"
+      [routerLink]="'/editor/map/' + id"
+      [queryParams]="{ backToDetail: 'true' }"
+    >
+      <mat-icon class="me-1">map</mat-icon>Zobrazit na mapě
+    </button>
+    <button
+      type="button"
+      class="btn btn-secondary d-flex"
+      (click)="exportToFile(id)"
+    >
+      <mat-icon class="me-1">cloud_download</mat-icon>Stáhnout soubor
+    </button>
+    <button
+      type="button"
+      class="btn btn-danger d-flex"
+      (click)="removeGroup(id)"
+    >
+      <mat-icon class="me-1">delete_forever</mat-icon>Smazat
+    </button>
+  </div>
+  <form class="row gap-2 p-2 mt-3" (ngSubmit)="saveChanges()" [formGroup]="fg">
+    <input class="form-control" placeholder="Jméno" formControlName="name" />
+    <textarea
+      class="form-control"
+      placeholder="Popis"
+      formControlName="desc"
+    ></textarea>
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-primary" [disabled]="!changed">
+        Uložit
+      </button>
+      <button type="button" class="btn btn-dark" [disabled]="!changed">
+        Zrušit změny
+      </button>
+    </div>
+  </form>
+</div>
