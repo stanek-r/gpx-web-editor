@@ -1,0 +1,29 @@
+<app-side-menu backUrl="/projects"></app-side-menu>
+<div class="details" *ngIf="projectToShow">
+  {{ projectToShow.id }}<br />
+  {{ projectToShow.name }}<br />
+  {{ projectToShow.users | json }}
+  <div *ngFor="let group of pointGroups">
+    <p>ID: {{ group.id }}</p>
+    <ol>
+      <li *ngFor="let point of group.points">
+        Lat: {{ point.lat }}, Lng: {{ point.lng }}
+      </li>
+    </ol>
+    <button
+      type="button"
+      class="btn btn-secondary"
+      [routerLink]="'/editor/' + group.id"
+      [queryParams]="{ backProject: projectToShow.id }"
+    >
+      Show
+    </button>
+  </div>
+  <button
+    type="button"
+    class="btn btn-secondary"
+    [routerLink]="'/editor/' + projectToShow.id + '?project=true'"
+  >
+    Show all
+  </button>
+</div>

@@ -10,6 +10,7 @@ import firebase from 'firebase';
 })
 export class HomeComponent implements OnInit {
   fireUser$!: Observable<firebase.User | null>;
+
   constructor(private readonly firebaseService: FirebaseService) {}
 
   ngOnInit(): void {

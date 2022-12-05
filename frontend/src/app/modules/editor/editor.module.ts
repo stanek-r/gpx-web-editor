@@ -5,11 +5,11 @@ import { CommonModule } from '@angular/common';
 import { AgmDirectionModule } from 'agm-direction';
 import { AgmCoreModule } from '@agm/core';
 import { MapComponent } from './map/map.component';
-import { ListComponent } from './list/list.component';
+import { EditorListComponent } from './list/editor-list.component';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [MapComponent, ListComponent],
+  declarations: [MapComponent, EditorListComponent],
   imports: [
     SharedModule,
     RouterModule,

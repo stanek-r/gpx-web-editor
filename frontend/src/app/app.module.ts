@@ -12,6 +12,7 @@ import { environment } from '../environments/environment';
 import { BlockUiProviderComponent } from './shared/components/block-ui-provider/block-ui-provider.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ProjectsModule } from './modules/projects/projects.module';
 
 @NgModule({
   declarations: [AppComponent, BlockUiProviderComponent],
@@ -23,6 +24,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     SharedModule,
     HomeModule,
     EditorModule,
+    ProjectsModule,
     UploadModule,
     BrowserAnimationsModule,
     MatProgressSpinnerModule,

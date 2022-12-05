@@ -1,0 +1,40 @@
+<app-side-menu></app-side-menu>
+<div class="action-menu">
+  <button
+    type="button"
+    class="btn btn-primary"
+    (click)="addNewGroup()"
+    disabled
+  >
+    Vytvořit novou skupinu bodů
+  </button>
+  <button type="button" class="btn btn-primary" routerLink="/upload">
+    Nahrát GPX soubor
+  </button>
+</div>
+<ng-container *ngIf="pointGroups$ | async as pointGroups">
+  <div class="list" *ngIf="pointGroups.length > 0">
+    <div *ngFor="let group of pointGroups">
+      <p>ID: {{ group.id }}</p>
+      <p>Name: {{ group.name }}</p>
+      <p>Type: {{ group.type }}</p>
+      <button type="button" class="btn btn-primary" [routerLink]="group.id">
+        Zobrazit
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary mt-1"
+        (click)="exportToFile(group.id)"
+      >
+        Exportovat
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger mt-1"
+        (click)="removeGroup(group.id)"
+      >
+        Odstranit
+      </button>
+    </div>
+  </div>
+</ng-container>

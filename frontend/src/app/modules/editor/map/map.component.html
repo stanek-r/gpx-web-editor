@@ -1,88 +1,99 @@
-<app-side-menu backUrl="/editor" (clickedBackEvent)="save()"></app-side-menu>
+<app-side-menu [backUrl]="'/editor'"></app-side-menu>
 <div class="map-div">
+  <button
+    type="button"
+    class="save-button btn btn-primary"
+    *ngIf="changed"
+    (click)="save()"
+  >
+    Save
+  </button>
+  <!--    *ngIf="!travelMode; else otherModes"-->
   <agm-map
+    *ngIf="fileData && lat && lng"
     [latitude]="lat"
-    [longitude]="long"
+    [longitude]="lng"
     [zoom]="zoom"
-    *ngIf="!travelMode; else otherModes"
   >
     <agm-marker
-      *ngFor="let mapData of routes; let i = index"
-      [latitude]="mapData.start.lat"
-      [longitude]="mapData.start.lng"
-      (dragEnd)="markerDragStart($event, i)"
-      [markerDraggable]="true"
+      *ngFor="let point of fileData?.waypoints; let i = index"
+      [latitude]="point.lat"
+      [longitude]="point.lon"
+      [opacity]="
+        selectedType === 'waypoints' && selectedIndex === i ? 1.0 : 0.88
+      "
     ></agm-marker>
-    <agm-marker
-      *ngFor="let mapData of routes; let i = index"
-      [latitude]="mapData.end.lat"
-      [longitude]="mapData.end.lng"
-      (dragEnd)="markerDragEnd($event, i)"
-      [markerDraggable]="true"
-    ></agm-marker>
-    <agm-polyline *ngFor="let mapData of routes; let i = index">
-      <agm-polyline-point
-        [latitude]="mapData.start.lat"
-        [longitude]="mapData.start.lng"
-      ></agm-polyline-point>
-      <agm-polyline-point
-        [latitude]="mapData.end.lat"
-        [longitude]="mapData.end.lng"
-      ></agm-polyline-point>
-    </agm-polyline>
+    <ng-container *ngFor="let track of fileData?.tracks; let i1 = index">
+      <agm-marker
+        *ngFor="let point of track.points; let i2 = index"
+        [latitude]="point.lat"
+        [longitude]="point.lon"
+        [opacity]="
+          selectedType === 'tracks' &&
+          selectedIndex === i1 &&
+          subSelectedIndex === i2
+            ? 1.0
+            : 0.88
+        "
+      ></agm-marker>
+      <agm-polyline
+        [strokeColor]="
+          selectedType === 'tracks' && selectedIndex === i1
+            ? '#8B0000'
+            : '#556B2F'
+        "
+        [strokeWeight]="
+          selectedType === 'tracks' && selectedIndex === i1 ? 10 : 5
+        "
+      >
+        <agm-polyline-point
+          *ngFor="let mapData of track.points"
+          [latitude]="mapData.lat"
+          [longitude]="mapData.lon"
+        ></agm-polyline-point>
+      </agm-polyline>
+    </ng-container>
+    <ng-container *ngFor="let route of fileData?.routes; let i1 = index">
+      <agm-marker
+        *ngFor="let point of route.points; let i2 = index"
+        [latitude]="point.lat"
+        [longitude]="point.lon"
+        [opacity]="
+          selectedType === 'routes' &&
+          selectedIndex === i1 &&
+          subSelectedIndex === i2
+            ? 1.0
+            : 0.88
+        "
+      ></agm-marker>
+      <agm-polyline
+        [strokeColor]="
+          selectedType === 'routes' && selectedIndex === i1
+            ? '#8B0000'
+            : '#008B8B'
+        "
+        [strokeWeight]="
+          selectedType === 'routes' && selectedIndex === i1 ? 10 : 5
+        "
+      >
+        <agm-polyline-point
+          *ngFor="let mapData of route.points"
+          [latitude]="mapData.lat"
+          [longitude]="mapData.lon"
+        ></agm-polyline-point>
+      </agm-polyline>
+    </ng-container>
   </agm-map>
-  <ng-template #otherModes>
-    <agm-map>
-      <agm-direction
-        *ngFor="let mapData of routes; let i = index"
-        [origin]="mapData.start"
-        [destination]="mapData.end"
-        [markerOptions]="markerOptions"
-        [renderOptions]="renderOptions"
-        (originDrag)="markerDragStart($event, i)"
-        (destinationDrag)="markerDragEnd($event, i)"
-        [travelMode]="travelMode"
-      ></agm-direction>
-    </agm-map>
-  </ng-template>
-</div>
-<div class="point-info mt-3">
-  <div class="row">
-    <div class="col-6">
-      <label for="latitude">Latitude:</label>
-      <input
-        type="number"
-        id="latitude"
-        name="latitude"
-        value="49.83815"
-        #latitude
-      /><br />
-      <label for="longtitude">Longtitude:</label>
-      <input
-        type="number"
-        id="longtitude"
-        name="longtitude"
-        value="18.2838842"
-        #longtitude
-      /><br />
-      <button (click)="addPoint()">Add point</button>
-      <br /><br />
-      <button (click)="removePoint()">Remove last point</button>
-      <br /><br />
-      <select [(ngModel)]="travelMode">
-        <option value="">Air</option>
-        <option value="WALKING">Walking</option>
-        <option value="DRIVING">Driving</option>
-        <option value="TRANSIT">Transit</option>
-        <option value="TWO_WHEELER">Two wheeler</option>
-        <option value="BICYCLING">Bicycling</option>
-      </select>
-    </div>
-    <div class="col-6">
-      <p *ngFor="let point of this.convertRoutesIntoPoints(); let i = index">
-        Point {{ i + 1 }}: {{ point.lat }} {{ point.lng }}
-        <button (click)="removePoint(i)">X</button>
-      </p>
-    </div>
-  </div>
+  <!--    <ng-template #otherModes>-->
+  <!--      <agm-map>-->
+  <!--        <agm-direction-->
+  <!--          *ngFor="let mapData of routes; let i = index"-->
+  <!--          [origin]="mapData.start"-->
+  <!--          [destination]="mapData.end"-->
+  <!--          [markerOptions]="markerOptions"-->
+  <!--          [renderOptions]="renderOptions"-->
+  <!--          [travelMode]="travelMode"-->
+  <!--        ></agm-direction>-->
+  <!--      </agm-map>-->
+  <!--    </ng-template>-->
 </div>
