@@ -23,12 +23,16 @@ export function mapToGpxWaypoint(point: Waypoint): GpxWaypoint {
 export function mapToGpxTrackOrRoute<T>(
   trackOrRoute: Track | Route
 ): GpxPointGroup {
-  return {
+  const ret = {
     name: trackOrRoute.name ?? null,
     link: trackOrRoute.link ?? null,
     points: trackOrRoute.points.map((p) => mapToGpxPoint(p)),
-    slopes: trackOrRoute.slopes.map((s) => (isNaN(s) ? 0 : s)),
-  };
+  } as GpxPointGroup;
+
+  if (trackOrRoute.slopes) {
+    ret.slopes = trackOrRoute.slopes.map((s) => (isFinite(s) ? s : 0));
+  }
+  return ret;
 }
 
 export function mapToGpxMetadata(metadata: MetaData): GpxMetaData {
@@ -65,7 +69,7 @@ export function mapToGpxTrack(track: GpxPointGroup): any {
     desc: track.desc ?? '',
     trkseg: {
       trkpt: track.points.map((point) => mapToGpxPointExport(point)),
-    }
+    },
   } as any;
 
   if (track.distance) {
@@ -79,7 +83,7 @@ export function mapToGpxRoute(route: GpxPointGroup): any {
   const ret = {
     name: route.name ?? Math.floor(Math.random() * 1000),
     desc: route.desc ?? '',
-    rtept: route.points.map((point) => mapToGpxPointExport(point))
+    rtept: route.points.map((point) => mapToGpxPointExport(point)),
   } as any;
 
   if (route.distance) {
@@ -105,7 +109,7 @@ export function mapToGpxExport(data: GpxModel): any {
       },
       time: new Date(),
     },
-    wpt: data.waypoints.map(point => ({
+    wpt: data.waypoints.map((point) => ({
       ...mapToGpxPointExport(point),
       name: point.name ?? '',
       desc: point.desc ?? '',

@@ -19,9 +19,7 @@ import { mapToGpxExport } from '../../../shared/gpx.mapper';
 export class EditorListComponent implements OnInit {
   pointGroups$!: Observable<PointGroupInfo[] | null>;
 
-  constructor(
-    private readonly storageService: StorageV2Service
-  ) {}
+  constructor(private readonly storageService: StorageV2Service) {}
 
   ngOnInit(): void {
     this.pointGroups$ = this.storageService.getListOfFiles();
@@ -41,7 +39,9 @@ export class EditorListComponent implements OnInit {
       return;
     }
     const exportedFileString = parse('gpx', mapToGpxExport(file));
-    const blob = new Blob([exportedFileString], { type: 'application/octet-stream' });
+    const blob = new Blob([exportedFileString], {
+      type: 'application/octet-stream',
+    });
     const url = window.URL.createObjectURL(blob);
 
     const anchor = document.createElement('a');
