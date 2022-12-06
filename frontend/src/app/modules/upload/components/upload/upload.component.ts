@@ -1,11 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import firebase from 'firebase';
-import User = firebase.User;
+import { Component } from '@angular/core';
 import gpxParser from 'gpxparser';
-import { Router } from '@angular/router';
 import { StorageV2Service } from '../../../../services/storageV2.service';
-import { FirebaseV2Service } from '../../../../services/firebaseV2.service';
 import { GpxModel } from '../../../../shared/models/gpx.model';
 import { nanoid } from 'nanoid';
 import {
@@ -13,24 +8,17 @@ import {
   mapToGpxTrackOrRoute,
   mapToGpxWaypoint,
 } from '../../../../shared/gpx.mapper';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.scss'],
 })
-export class UploadComponent implements OnInit {
-  user$?: Observable<User | null>;
-
+export class UploadComponent {
   constructor(
-    private readonly router: Router,
-    private readonly firebaseService: FirebaseV2Service,
-    private readonly storageService: StorageV2Service
+    private readonly storageService: StorageV2Service,
+    private readonly dialogRef: MatDialogRef<UploadComponent>
   ) {}
-
-  ngOnInit(): void {
-    this.user$ = this.firebaseService.getFireUser();
-  }
 
   async onFileSelected(event: any): Promise<void> {
     if (event.target?.files.length > 0) {
@@ -40,15 +28,15 @@ export class UploadComponent implements OnInit {
         const gpxFileData = this.importFromFile(fileString);
         const id = nanoid(10);
         await this.storageService.saveFile(id, gpxFileData);
-        this.router.navigate(['/editor']);
+        this.dialogRef.close(id);
       }
     }
   }
 
   async readTextFile(file: any): Promise<string | undefined> {
-    return new Promise<string | undefined>((resolve, reject) => {
+    return new Promise<string | undefined>((resolve) => {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = () => {
         const text = reader.result?.toString().trim();
         resolve(text);
       };
@@ -64,6 +52,7 @@ export class UploadComponent implements OnInit {
     const tracks = gpx.tracks.map((t) => mapToGpxTrackOrRoute(t));
 
     return {
+      permissionData: {},
       metadata: mapToGpxMetadata(gpx.metadata),
       waypoints: gpx.waypoints.map((w) => mapToGpxWaypoint(w)),
       routes,

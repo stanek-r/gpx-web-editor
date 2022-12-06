@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import {
   PointGroupInfo,
   StorageV2Service,
 } from '../../../services/storageV2.service';
-import { parse } from 'js2xmlparser';
+import { nanoid } from 'nanoid';
+import { GpxModel } from '../../../shared/models/gpx.model';
 
 // @ts-ignore
 import createGpx from 'gps-to-gpx';
-import { mapToGpxExport } from '../../../shared/gpx.mapper';
+import { MatDialog } from '@angular/material/dialog';
+import { UploadComponent } from '../../upload/components/upload/upload.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-editor-list',
@@ -18,35 +20,55 @@ import { mapToGpxExport } from '../../../shared/gpx.mapper';
 })
 export class EditorListComponent implements OnInit {
   pointGroups$!: Observable<PointGroupInfo[] | null>;
+  sharedPointGroups$!: Observable<PointGroupInfo[] | null>;
 
-  constructor(private readonly storageService: StorageV2Service) {}
+  constructor(
+    private readonly storageService: StorageV2Service,
+    private readonly dialog: MatDialog,
+    private readonly router: Router
+  ) {}
 
   ngOnInit(): void {
     this.pointGroups$ = this.storageService.getListOfFiles();
+    this.sharedPointGroups$ = this.storageService.getListOfSharedFiles();
   }
 
   addNewGroup(): void {
-    // this.router.navigate(['/editor', nanoid(10)]);
+    const id = nanoid(10);
+    // @ts-ignore
+    this.storageService.saveFile(id, {
+      permissionData: {},
+      metadata: {
+        name: 'Soubor ' + id,
+        link: null,
+        desc: null,
+        time: new Date(),
+        author: null,
+      },
+      routes: [],
+      tracks: [],
+      waypoints: [],
+    } as GpxModel);
   }
 
   removeGroup(id: string): void {
     this.storageService.removeFile(id);
   }
 
-  async exportToFile(id: string): Promise<void> {
-    const file = await this.storageService.getFile(id);
-    if (!file) {
-      return;
-    }
-    const exportedFileString = parse('gpx', mapToGpxExport(file));
-    const blob = new Blob([exportedFileString], {
-      type: 'application/octet-stream',
-    });
-    const url = window.URL.createObjectURL(blob);
+  uploadFile(): void {
+    this.dialog
+      .open(UploadComponent, {
+        width: '400px',
+      })
+      .afterClosed()
+      .subscribe((value) => {
+        if (value) {
+          this.router.navigate(['/editor', value]);
+        }
+      });
+  }
 
-    const anchor = document.createElement('a');
-    anchor.download = file.metadata.name + '.gpx';
-    anchor.href = url;
-    anchor.click();
+  async exportToFile(id: string): Promise<void> {
+    await this.storageService.exportToFile(id);
   }
 }
