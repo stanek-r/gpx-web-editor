@@ -7,6 +7,7 @@ import { mapToGpxExport } from '../shared/gpx.mapper';
 
 export interface PointGroupInfo {
   id: string;
+  uid?: string;
   name?: string;
   description?: string;
   type?: string;
@@ -20,6 +21,12 @@ export class StorageV2Service {
   private pointGroupsSubject = new BehaviorSubject<PointGroupInfo[] | null>(
     null
   );
+
+  private sharedPointGroups?: PointGroupInfo[];
+  private sharedPointGroupsSubject = new BehaviorSubject<
+    PointGroupInfo[] | null
+  >(null);
+
   private loaded = new BehaviorSubject<boolean>(false);
 
   constructor(private readonly firebaseService: FirebaseV2Service) {
@@ -41,10 +48,34 @@ export class StorageV2Service {
       this.pointGroupsSubject.next(pointGroupsTmp);
       this.loaded.next(true);
     });
+    this.firebaseService.getSharedFiles().subscribe(async (data) => {
+      const sharedFilesTmp = [];
+      for (const sharedFile of data) {
+        const loadedFile = await this.firebaseService.loadGPXFileData(
+          sharedFile.id,
+          sharedFile.uid
+        );
+        if (!loadedFile) {
+          continue;
+        }
+        sharedFilesTmp.push({
+          id: sharedFile.id,
+          uid: sharedFile.uid,
+          name: loadedFile.metadata.name,
+          description: loadedFile.metadata.desc,
+        });
+      }
+      this.sharedPointGroupsSubject.next(sharedFilesTmp);
+      this.sharedPointGroups = sharedFilesTmp;
+    });
   }
 
   getListOfFiles(): Observable<PointGroupInfo[] | null> {
     return this.pointGroupsSubject.asObservable();
+  }
+
+  getListOfSharedFiles(): Observable<PointGroupInfo[] | null> {
+    return this.sharedPointGroupsSubject.asObservable();
   }
 
   waitUntilLoaded(): Promise<boolean> {
@@ -69,10 +100,17 @@ export class StorageV2Service {
   }
 
   async getFile(id: string): Promise<GpxModel | null> {
-    if (!this.pointGroups?.find((pg) => pg.id === id)) {
+    let loadedFile = null;
+    if (this.pointGroups?.find((pg) => pg.id === id)) {
+      loadedFile = await this.firebaseService.loadGPXFileData(id);
+    }
+    const tmp = this.sharedPointGroups?.find((pg) => pg.id === id);
+    if (tmp) {
+      loadedFile = await this.firebaseService.loadGPXFileData(id, tmp.uid);
+    }
+    if (!loadedFile) {
       return Promise.resolve(null);
     }
-    const loadedFile = await this.firebaseService.loadGPXFileData(id);
     if (!loadedFile) {
       return null;
     }
@@ -81,10 +119,16 @@ export class StorageV2Service {
       waypoints: loadedFile.waypoints ?? [],
       tracks: loadedFile.tracks ?? [],
       routes: loadedFile.routes ?? [],
+      permissionData: loadedFile.permissionData ?? {},
     } as GpxModel;
   }
 
   async saveFile(id: string, data: GpxModel): Promise<void> {
+    const tmp = this.sharedPointGroups?.find((pg) => pg.id === id);
+    if (tmp) {
+      this.firebaseService.saveGPXFileData(id, data, tmp.uid);
+      return;
+    }
     this.firebaseService.saveGPXFileData(id, data);
   }
 

@@ -20,6 +20,7 @@ import { Router } from '@angular/router';
 })
 export class EditorListComponent implements OnInit {
   pointGroups$!: Observable<PointGroupInfo[] | null>;
+  sharedPointGroups$!: Observable<PointGroupInfo[] | null>;
 
   constructor(
     private readonly storageService: StorageV2Service,
@@ -29,12 +30,14 @@ export class EditorListComponent implements OnInit {
 
   ngOnInit(): void {
     this.pointGroups$ = this.storageService.getListOfFiles();
+    this.sharedPointGroups$ = this.storageService.getListOfSharedFiles();
   }
 
   addNewGroup(): void {
     const id = nanoid(10);
     // @ts-ignore
     this.storageService.saveFile(id, {
+      permissionData: {},
       metadata: {
         name: 'Soubor ' + id,
         link: null,

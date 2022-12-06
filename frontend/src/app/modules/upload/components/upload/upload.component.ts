@@ -52,6 +52,7 @@ export class UploadComponent {
     const tracks = gpx.tracks.map((t) => mapToGpxTrackOrRoute(t));
 
     return {
+      permissionData: {},
       metadata: mapToGpxMetadata(gpx.metadata),
       waypoints: gpx.waypoints.map((w) => mapToGpxWaypoint(w)),
       routes,

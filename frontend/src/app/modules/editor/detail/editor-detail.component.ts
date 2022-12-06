@@ -18,6 +18,7 @@ export class EditorDetailComponent implements OnInit {
   fg = this.fb.group({
     name: new FormControl(),
     desc: new FormControl(),
+    sharing: new FormControl(),
   });
 
   constructor(
@@ -42,9 +43,14 @@ export class EditorDetailComponent implements OnInit {
     this.fg.setValue({
       name: this.fileData.metadata.name ?? '',
       desc: this.fileData.metadata.desc ?? '',
+      sharing: Object.keys(this.fileData.permissionData).join(','),
     });
     this.fg.valueChanges.subscribe(() => {
-      if (this.fg.controls.name.dirty || this.fg.controls.desc.dirty) {
+      if (
+        this.fg.controls.name.dirty ||
+        this.fg.controls.desc.dirty ||
+        this.fg.controls.sharing.dirty
+      ) {
         this.changed = true;
       }
     });
@@ -59,6 +65,13 @@ export class EditorDetailComponent implements OnInit {
       name: this.fg.value.name,
       desc: this.fg.value.desc,
     };
+    this.fileData.permissionData = {} as any;
+    if (this.fg.value.sharing.length > 0) {
+      for (const parsedElement of this.fg.value.sharing.split(',')) {
+        // @ts-ignore
+        this.fileData.permissionData[parsedElement] = true;
+      }
+    }
     this.changed = false;
     this.storageService.saveFile(this.id, this.fileData);
   }

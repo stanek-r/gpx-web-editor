@@ -5,10 +5,15 @@ import { HttpClient } from '@angular/common/http';
 import { BlockUiService } from './block-ui.service';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import firebase from 'firebase';
-import { filter, switchMap, take, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 import { GpxModel } from '../shared/models/gpx.model';
 import User = firebase.User;
+
+export interface SharedFileInfo {
+  uid: string;
+  id: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +21,8 @@ import User = firebase.User;
 export class FirebaseV2Service {
   private fireBaseDatabaseUrl =
     'https://gpx-web-editor-default-rtdb.europe-west1.firebasedatabase.app';
-  private filesBasePath = '/gpx-files';
+  private filesBasePath = '/gpxfiles';
+  private sharesBasePath = '/sharing';
 
   private fireUserSubject = new BehaviorSubject<User | null>(null);
 
@@ -33,12 +39,15 @@ export class FirebaseV2Service {
     });
   }
 
-  saveGPXFileData(id: string, data: GpxModel): void {
+  saveGPXFileData(id: string, data: GpxModel, uid?: string): void {
     const user = this.fireUserSubject.getValue();
     if (!user) {
       return;
     }
-    this.fireDB.list(this.filesBasePath + '/' + user.uid).set(id, data);
+    this.setFileSharing(id, Object.keys(data.permissionData ?? {}));
+    this.fireDB
+      .list(this.filesBasePath + '/' + (uid ?? user.uid))
+      .set(id, data);
   }
 
   deleteGPXFileData(id: string): void {
@@ -49,7 +58,17 @@ export class FirebaseV2Service {
     this.fireDB.list(this.filesBasePath + '/' + user?.uid).remove(id);
   }
 
-  async loadGPXFileData(id: string): Promise<GpxModel | null> {
+  setFileSharing(fileToShare: string, withWho: string[]): void {
+    const user = this.fireUserSubject.getValue();
+    if (!user) {
+      return;
+    }
+    this.fireDB
+      .list(this.sharesBasePath + '/' + user.uid)
+      .set(fileToShare, withWho);
+  }
+
+  async loadGPXFileData(id: string, uid?: string): Promise<GpxModel | null> {
     const user = this.fireUserSubject.getValue();
     if (!user) {
       return Promise.resolve(null);
@@ -58,11 +77,11 @@ export class FirebaseV2Service {
     if (!token) {
       return Promise.resolve(null);
     }
-    return new Promise<GpxModel | null>((resolve, reject) => {
+    return new Promise<GpxModel | null>((resolve) => {
       this.http
         .get(
           `${this.fireBaseDatabaseUrl + this.filesBasePath}/${
-            user.uid
+            uid ?? user.uid
           }/${id}.json?auth=${token}`
         )
         .subscribe({
@@ -99,6 +118,56 @@ export class FirebaseV2Service {
                       user.uid
                     }.json?auth=${token}`
                   );
+                })
+              );
+            })
+          );
+      })
+    );
+  }
+
+  getSharedFiles(): Observable<SharedFileInfo[]> {
+    return this.fireUserSubject.pipe(
+      switchMap((user) => {
+        if (!user) {
+          return of([]);
+        }
+        return this.fireDB
+          .list(`${this.sharesBasePath}`)
+          .valueChanges()
+          .pipe(
+            switchMap(() => {
+              return from(user.getIdToken()).pipe(
+                switchMap((token) => {
+                  if (!token) {
+                    return of([]);
+                  }
+                  return this.http
+                    .get<any>(
+                      `${
+                        this.fireBaseDatabaseUrl + this.sharesBasePath
+                      }.json?auth=${token}`
+                    )
+                    .pipe(
+                      map((value) => {
+                        const ret: SharedFileInfo[] = [];
+                        for (const key of Object.keys(value)) {
+                          // @ts-ignore
+                          for (const key2 of Object.keys(value[key])) {
+                            // @ts-ignore
+                            if (
+                              (value[key][key2] as any[]).includes(user.uid)
+                            ) {
+                              ret.push({
+                                uid: key,
+                                id: key2,
+                              });
+                            }
+                          }
+                        }
+                        return ret;
+                      })
+                    );
                 })
               );
             })
