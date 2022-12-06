@@ -1,0 +1,15 @@
+.container {
+  height: 100vh;
+  width: calc(100% - 60px);
+  margin-left: 60px;
+
+  p {
+    font-size: 30px;
+    text-align: start;
+  }
+
+  .id-show {
+    color: gray;
+    font-size: small;
+  }
+}

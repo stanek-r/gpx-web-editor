@@ -23,19 +23,23 @@ export function mapToGpxWaypoint(point: Waypoint): GpxWaypoint {
 export function mapToGpxTrackOrRoute<T>(
   trackOrRoute: Track | Route
 ): GpxPointGroup {
-  return {
+  const ret = {
     name: trackOrRoute.name ?? null,
     link: trackOrRoute.link ?? null,
     points: trackOrRoute.points.map((p) => mapToGpxPoint(p)),
-    slopes: trackOrRoute.slopes.map((s) => (isNaN(s) ? 0 : s)),
-  };
+  } as GpxPointGroup;
+
+  if (trackOrRoute.slopes) {
+    ret.slopes = trackOrRoute.slopes.map((s) => (isFinite(s) ? s : 0));
+  }
+  return ret;
 }
 
 export function mapToGpxMetadata(metadata: MetaData): GpxMetaData {
   return {
     name: metadata.name ?? null,
     link: metadata.link ?? null,
-    time: metadata.time ?? null,
+    time: new Date(),
     desc: metadata.desc ?? null,
     author: metadata.author ?? null,
   };
@@ -65,7 +69,7 @@ export function mapToGpxTrack(track: GpxPointGroup): any {
     desc: track.desc ?? '',
     trkseg: {
       trkpt: track.points.map((point) => mapToGpxPointExport(point)),
-    }
+    },
   } as any;
 
   if (track.distance) {
@@ -79,7 +83,7 @@ export function mapToGpxRoute(route: GpxPointGroup): any {
   const ret = {
     name: route.name ?? Math.floor(Math.random() * 1000),
     desc: route.desc ?? '',
-    rtept: route.points.map((point) => mapToGpxPointExport(point))
+    rtept: route.points.map((point) => mapToGpxPointExport(point)),
   } as any;
 
   if (route.distance) {
@@ -105,7 +109,7 @@ export function mapToGpxExport(data: GpxModel): any {
       },
       time: new Date(),
     },
-    wpt: data.waypoints.map(point => ({
+    wpt: data.waypoints.map((point) => ({
       ...mapToGpxPointExport(point),
       name: point.name ?? '',
       desc: point.desc ?? '',
@@ -114,11 +118,3 @@ export function mapToGpxExport(data: GpxModel): any {
     rte: data.routes.map((route) => mapToGpxRoute(route)),
   };
 }
-
-// 'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-//   xmlns: 'http://www.topografix.com/GPX/1/1',
-//   'xsi:schemaLocation':
-// 'http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.topografix.com/GPX/gpx_style/0/2 http://www.topografix.com/GPX/gpx_style/0/2/gpx_style.xsd',
-//   'xmlns:gpxtpx': 'http://www.garmin.com/xmlschemas/TrackPointExtension/v1',
-//   'xmlns:gpxx': 'http://www.garmin.com/xmlschemas/GpxExtensions/v3',
-//   'xmlns:gpx_style': 'http://www.topografix.com/GPX/gpx_style/0/2',

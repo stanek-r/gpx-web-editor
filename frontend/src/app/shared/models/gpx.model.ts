@@ -48,6 +48,7 @@ export interface GpxMetaData {
 }
 
 export interface GpxModel {
+  permissionData: {};
   metadata: GpxMetaData;
   waypoints: GpxWaypoint[];
   routes: GpxPointGroup[];
