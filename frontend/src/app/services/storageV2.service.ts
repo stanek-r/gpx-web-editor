@@ -126,10 +126,9 @@ export class StorageV2Service {
   async saveFile(id: string, data: GpxModel): Promise<void> {
     const tmp = this.sharedPointGroups?.find((pg) => pg.id === id);
     if (tmp) {
-      this.firebaseService.saveGPXFileData(id, data, tmp.uid);
-      return;
+      return this.firebaseService.saveGPXFileData(id, data, tmp.uid);
     }
-    this.firebaseService.saveGPXFileData(id, data);
+    await this.firebaseService.saveGPXFileData(id, data);
   }
 
   async exportToFile(id: string): Promise<void> {

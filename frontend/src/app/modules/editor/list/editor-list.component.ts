@@ -33,10 +33,10 @@ export class EditorListComponent implements OnInit {
     this.sharedPointGroups$ = this.storageService.getListOfSharedFiles();
   }
 
-  addNewGroup(): void {
+  async addNewGroup(): Promise<void> {
     const id = nanoid(10);
     // @ts-ignore
-    this.storageService.saveFile(id, {
+    await this.storageService.saveFile(id, {
       permissionData: {},
       metadata: {
         name: 'Soubor ' + id,
@@ -49,6 +49,10 @@ export class EditorListComponent implements OnInit {
       tracks: [],
       waypoints: [],
     } as GpxModel);
+
+    setTimeout(() => {
+      this.router.navigate(['/editor', id]);
+    }, 100);
   }
 
   removeGroup(id: string): void {

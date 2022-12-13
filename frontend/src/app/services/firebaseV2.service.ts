@@ -39,13 +39,13 @@ export class FirebaseV2Service {
     });
   }
 
-  saveGPXFileData(id: string, data: GpxModel, uid?: string): void {
+  async saveGPXFileData(id: string, data: GpxModel, uid?: string): Promise<void> {
     const user = this.fireUserSubject.getValue();
     if (!user) {
       return;
     }
     this.setFileSharing(id, Object.keys(data.permissionData ?? {}));
-    this.fireDB
+    return this.fireDB
       .list(this.filesBasePath + '/' + (uid ?? user.uid))
       .set(id, data);
   }
