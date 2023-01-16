@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   PointGroupInfo,
-  StorageV2Service,
-} from '../../../services/storageV2.service';
+  StorageService,
+} from '../../../services/storage.service';
 import { nanoid } from 'nanoid';
 import { GpxModel } from '../../../shared/models/gpx.model';
 
@@ -23,7 +23,7 @@ export class EditorListComponent implements OnInit {
   sharedPointGroups$!: Observable<PointGroupInfo[] | null>;
 
   constructor(
-    private readonly storageService: StorageV2Service,
+    private readonly storageService: StorageService,
     private readonly dialog: MatDialog,
     private readonly router: Router
   ) {}

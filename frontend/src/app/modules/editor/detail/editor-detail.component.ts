@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { StorageV2Service } from '../../../services/storageV2.service';
+import { StorageService } from '../../../services/storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GpxModel } from '../../../shared/models/gpx.model';
 import { FormBuilder, FormControl } from '@angular/forms';
@@ -24,7 +24,7 @@ export class EditorDetailComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly route: ActivatedRoute,
-    private readonly storageService: StorageV2Service,
+    private readonly storageService: StorageService,
     private readonly fb: FormBuilder
   ) {}
 

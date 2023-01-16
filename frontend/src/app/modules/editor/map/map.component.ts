@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StorageV2Service } from '../../../services/storageV2.service';
+import { StorageService } from '../../../services/storage.service';
 import { GpxModel, GpxPoint } from '../../../shared/models/gpx.model';
 
 @Component({
@@ -49,7 +49,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly storageService: StorageV2Service,
+    private readonly storageService: StorageService,
     private readonly router: Router
   ) {}
 

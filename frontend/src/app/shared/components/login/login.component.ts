@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FirebaseService } from '../../../services/firebase.service';
 import { BlockUiService } from '../../../services/block-ui.service';
+import { FirebaseService } from '../../../services/firebase.service';
 
 @Component({
   selector: 'app-login',
@@ -73,13 +73,6 @@ export class LoginComponent {
   loginGoogleClick(): void {
     const subscription = this.firebaseService
       .loginToGoogle()
-      .pipe(this.blockUiService.blockPipe())
-      .subscribe(() => subscription.unsubscribe());
-  }
-
-  loginFacebookClick(): void {
-    const subscription = this.firebaseService
-      .loginToFacebook()
       .pipe(this.blockUiService.blockPipe())
       .subscribe(() => subscription.unsubscribe());
   }

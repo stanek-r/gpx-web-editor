@@ -1,19 +1,14 @@
 <app-side-menu backUrl="/projects"></app-side-menu>
-<div class="details" *ngIf="projectToShow">
+<div class="details" *ngIf="projectToShow && gpxFiles">
   {{ projectToShow.id }}<br />
   {{ projectToShow.name }}<br />
   {{ projectToShow.users | json }}
-  <div *ngFor="let group of pointGroups">
-    <p>ID: {{ group.id }}</p>
-    <ol>
-      <li *ngFor="let point of group.points">
-        Lat: {{ point.lat }}, Lng: {{ point.lng }}
-      </li>
-    </ol>
+  <div *ngFor="let gpxFileId of projectToShow.gpxFileIds; let i = index">
+    <p>{{ gpxFiles[i].metadata.name }}</p>
     <button
       type="button"
       class="btn btn-secondary"
-      [routerLink]="'/editor/' + group.id"
+      [routerLink]="'/editor/' + gpxFileId"
       [queryParams]="{ backProject: projectToShow.id }"
     >
       Show

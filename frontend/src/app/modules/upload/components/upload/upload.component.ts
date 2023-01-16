@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import gpxParser from 'gpxparser';
-import { StorageV2Service } from '../../../../services/storageV2.service';
+import { StorageService } from '../../../../services/storage.service';
 import { GpxModel } from '../../../../shared/models/gpx.model';
 import { nanoid } from 'nanoid';
 import {
@@ -16,7 +16,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 })
 export class UploadComponent {
   constructor(
-    private readonly storageService: StorageV2Service,
+    private readonly storageService: StorageService,
     private readonly dialogRef: MatDialogRef<UploadComponent>
   ) {}
 
