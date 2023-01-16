@@ -30,7 +30,7 @@ export class StorageService {
   private loaded = new BehaviorSubject<boolean>(false);
 
   constructor(private readonly firebaseService: FirebaseService) {
-    this.firebaseService.getOwnedFiles().subscribe((data) => {
+    this.firebaseService.getOwnedFilesChanges().subscribe((data) => {
       if (!data) {
         this.pointGroups = [];
         this.pointGroupsSubject.next([]);
@@ -48,7 +48,7 @@ export class StorageService {
       this.pointGroupsSubject.next(pointGroupsTmp);
       this.loaded.next(true);
     });
-    this.firebaseService.getSharedFiles().subscribe(async (data) => {
+    this.firebaseService.getSharedFilesChanges().subscribe(async (data) => {
       const sharedFilesTmp = [];
       for (const sharedFile of data) {
         const loadedFile = await this.firebaseService.loadGPXFileData(

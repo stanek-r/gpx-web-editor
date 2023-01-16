@@ -1,4 +1,6 @@
-<app-side-menu backUrl="/editor"></app-side-menu>
+<app-side-menu
+  [backUrl]="backProject ? '/projects/' + backProject : '/editor'"
+></app-side-menu>
 <div class="container" *ngIf="id && fileData">
   <p class="id-show m-0 mt-4">ID: {{ id }}</p>
   <p>{{ fileData.metadata.name }}</p>
@@ -43,7 +45,12 @@
       <button type="submit" class="btn btn-primary" [disabled]="!changed">
         Uložit
       </button>
-      <button type="button" class="btn btn-dark" [disabled]="!changed">
+      <button
+        type="button"
+        class="btn btn-dark"
+        [disabled]="!changed"
+        (click)="cancelChanges()"
+      >
         Zrušit změny
       </button>
     </div>

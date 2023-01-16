@@ -1,23 +1,61 @@
 <app-side-menu backUrl="/projects"></app-side-menu>
-<div class="details" *ngIf="projectToShow && gpxFiles">
-  {{ projectToShow.id }}<br />
-  {{ projectToShow.name }}<br />
-  {{ projectToShow.users | json }}
-  <div *ngFor="let gpxFileId of projectToShow.gpxFileIds; let i = index">
+<div class="container" *ngIf="projectToShow && gpxFiles.length > 0">
+  <p class="id-show m-0 mt-4">ID: {{ projectToShow.id }}</p>
+  <p>{{ projectToShow.name }}</p>
+  <div class="w-100">
+    <form class="row gap-2 p-2 mt-3" [formGroup]="fg">
+      <input class="form-control" placeholder="Jméno" formControlName="name" />
+      <input
+        class="form-control"
+        placeholder="Soubory"
+        formControlName="gpxFileIds"
+      />
+      <input
+        class="form-control"
+        placeholder="Sdílení"
+        formControlName="userIds"
+        readonly
+      />
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary" [disabled]="!changed">
+          Uložit
+        </button>
+        <button
+          type="button"
+          class="btn btn-dark"
+          [disabled]="!changed"
+          (click)="cancelChanges()"
+        >
+          Zrušit změny
+        </button>
+      </div>
+    </form>
+  </div>
+  <div
+    *ngFor="let gpxFileId of projectToShow.gpxFileIds; let i = index"
+    class="d-flex flex-column align-items-center mt-4"
+  >
+    <p class="id-show m-0 mt-4">ID: {{ gpxFileId }}</p>
     <p>{{ gpxFiles[i].metadata.name }}</p>
-    <button
-      type="button"
-      class="btn btn-secondary"
-      [routerLink]="'/editor/' + gpxFileId"
-      [queryParams]="{ backProject: projectToShow.id }"
-    >
-      Show
-    </button>
+    <div class="d-flex gap-2">
+      <button
+        type="button"
+        class="btn btn-primary"
+        [routerLink]="'/editor/' + gpxFileId"
+        [queryParams]="{ backProject: projectToShow.id }"
+      >
+        Show
+      </button>
+      <button type="button" class="btn btn-secondary" disabled>
+        Remove from project
+      </button>
+    </div>
   </div>
   <button
     type="button"
-    class="btn btn-secondary"
+    class="btn btn-secondary mt-4"
     [routerLink]="'/editor/' + projectToShow.id + '?project=true'"
+    disabled
   >
     Show all
   </button>

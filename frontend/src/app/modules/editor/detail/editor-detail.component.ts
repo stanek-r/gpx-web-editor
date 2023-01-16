@@ -12,6 +12,7 @@ import { FormBuilder, FormControl } from '@angular/forms';
 export class EditorDetailComponent implements OnInit {
   id: string | null = null;
   fileData: GpxModel | null = null;
+  backProject: string | null = null;
 
   changed = false;
 
@@ -29,6 +30,8 @@ export class EditorDetailComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
+    this.backProject = this.route.snapshot.queryParamMap.get('backProject');
+
     this.id = this.route.snapshot.paramMap.get('id');
     if (!this.id) {
       this.router.navigate(['/editor']);
@@ -74,6 +77,15 @@ export class EditorDetailComponent implements OnInit {
     }
     this.changed = false;
     this.storageService.saveFile(this.id, this.fileData);
+  }
+
+  cancelChanges(): void {
+    this.fg.setValue({
+      name: this.fileData?.metadata.name ?? '',
+      desc: this.fileData?.metadata.desc ?? '',
+      sharing: Object.keys(this.fileData?.permissionData ?? {}).join(','),
+    });
+    this.changed = false;
   }
 
   removeGroup(id: string): void {

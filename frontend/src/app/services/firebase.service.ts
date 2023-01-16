@@ -5,10 +5,11 @@ import { HttpClient } from '@angular/common/http';
 import { BlockUiService } from './block-ui.service';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import firebase from 'firebase';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 import { GpxModel } from '../shared/models/gpx.model';
 import User = firebase.User;
+import { Project } from '../shared/models/project.model';
 
 export interface SharedFileInfo {
   uid: string;
@@ -63,16 +64,6 @@ export class FirebaseService {
     this.fireDB.list(this.filesBasePath + '/' + user?.uid).remove(id);
   }
 
-  setFileSharing(fileToShare: string, withWho: string[]): void {
-    const user = this.fireUserSubject.getValue();
-    if (!user) {
-      return;
-    }
-    this.fireDB
-      .list(this.sharesBasePath + '/' + user.uid)
-      .set(fileToShare, withWho);
-  }
-
   async loadGPXFileData(id: string, uid?: string): Promise<GpxModel | null> {
     const user = this.fireUserSubject.getValue();
     if (!user) {
@@ -98,7 +89,74 @@ export class FirebaseService {
     });
   }
 
-  getOwnedFiles(): Observable<any> {
+  setFileSharing(fileToShare: string, withWho: string[]): void {
+    const user = this.fireUserSubject.getValue();
+    if (!user) {
+      return;
+    }
+    this.fireDB
+      .list(this.sharesBasePath + '/' + user.uid)
+      .set(fileToShare, withWho);
+  }
+
+  getProject(id: string): Observable<any> {
+    const user = this.fireUserSubject.getValue();
+    if (!user) {
+      return of(null);
+    }
+    return from(user.getIdToken()).pipe(
+      switchMap((token) => {
+        if (!token) {
+          return of(null);
+        }
+        return this.http.get<any>(
+          `${this.fireBaseDatabaseUrl + this.projectsBasePath}/${
+            user.uid
+          }/${id}.json?auth=${token}`
+        );
+      })
+    );
+  }
+
+  getProjects(): Observable<any> {
+    const user = this.fireUserSubject.getValue();
+    if (!user) {
+      return of(null);
+    }
+    return from(user.getIdToken()).pipe(
+      switchMap((token) => {
+        if (!token) {
+          return of(null);
+        }
+        return this.http.get<any>(
+          `${this.fireBaseDatabaseUrl + this.projectsBasePath}/${
+            user.uid
+          }.json?auth=${token}`
+        );
+      }),
+      take(1)
+    );
+  }
+
+  async saveProject(id: string, project: Project): Promise<void> {
+    const user = this.fireUserSubject.getValue();
+    if (!user) {
+      return;
+    }
+    return this.fireDB
+      .list(this.projectsBasePath + '/' + user.uid)
+      .set(id, project);
+  }
+
+  async deleteProject(id: string): Promise<void> {
+    const user = this.fireUserSubject.getValue();
+    if (!user) {
+      return;
+    }
+    return this.fireDB.list(this.projectsBasePath + '/' + user?.uid).remove(id);
+  }
+
+  getOwnedFilesChanges(): Observable<any> {
     return this.fireUserSubject.pipe(
       switchMap((value) => {
         if (!value) {
@@ -131,7 +189,7 @@ export class FirebaseService {
     );
   }
 
-  getSharedFiles(): Observable<SharedFileInfo[]> {
+  getSharedFilesChanges(): Observable<SharedFileInfo[]> {
     return this.fireUserSubject.pipe(
       switchMap((user) => {
         if (!user) {
@@ -157,9 +215,7 @@ export class FirebaseService {
                       map((value) => {
                         const ret: SharedFileInfo[] = [];
                         for (const key of Object.keys(value)) {
-                          // @ts-ignore
                           for (const key2 of Object.keys(value[key])) {
-                            // @ts-ignore
                             if (
                               (value[key][key2] as any[]).includes(user.uid)
                             ) {
