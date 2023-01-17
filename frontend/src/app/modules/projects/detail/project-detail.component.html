@@ -1,15 +1,19 @@
 <app-side-menu backUrl="/projects"></app-side-menu>
-<div class="container" *ngIf="projectToShow && gpxFiles.length > 0">
+<div class="container" *ngIf="projectToShow">
   <p class="id-show m-0 mt-4">ID: {{ projectToShow.id }}</p>
   <p>{{ projectToShow.name }}</p>
   <div class="w-100">
-    <form class="row gap-2 p-2 mt-3" [formGroup]="fg">
+    <form
+      class="row gap-2 p-2 mt-3"
+      [formGroup]="fg"
+      (ngSubmit)="saveChanges()"
+    >
       <input class="form-control" placeholder="Jméno" formControlName="name" />
-      <input
+      <textarea
         class="form-control"
-        placeholder="Soubory"
-        formControlName="gpxFileIds"
-      />
+        placeholder="Popis"
+        formControlName="description"
+      ></textarea>
       <input
         class="form-control"
         placeholder="Sdílení"
@@ -31,32 +35,65 @@
       </div>
     </form>
   </div>
-  <div
-    *ngFor="let gpxFileId of projectToShow.gpxFileIds; let i = index"
-    class="d-flex flex-column align-items-center mt-4"
-  >
-    <p class="id-show m-0 mt-4">ID: {{ gpxFileId }}</p>
-    <p>{{ gpxFiles[i].metadata.name }}</p>
-    <div class="d-flex gap-2">
-      <button
-        type="button"
-        class="btn btn-primary"
-        [routerLink]="'/editor/' + gpxFileId"
-        [queryParams]="{ backProject: projectToShow.id }"
-      >
-        Show
-      </button>
-      <button type="button" class="btn btn-secondary" disabled>
-        Remove from project
-      </button>
+  <h2 class="mt-4">Soubory:</h2>
+  <div class="d-flex w-25 gap-3" *ngIf="pointGroups$ | async as pointGroups">
+    <select
+      class="form-control"
+      [(ngModel)]="addFileToProjectInput"
+      minlength="10"
+      maxlength="10"
+    >
+      <option value="">Vyberte bod pro přidání</option>
+      <option *ngFor="let pointGroup of pointGroups" [value]="pointGroup.id">
+        {{ pointGroup.name }}
+      </option>
+    </select>
+    <button type="button" class="btn btn-primary" (click)="addToProject()">
+      Přidat
+    </button>
+  </div>
+  <div class="d-flex" *ngIf="gpxFiles.length > 0">
+    <div
+      *ngFor="let gpxFileId of projectToShow.gpxFileIds; let i = index"
+      class="d-flex flex-column align-items-center"
+      style="margin: 40px 10px 0 10px"
+    >
+      <ng-container *ngIf="gpxFiles[i] as gpxFile">
+        <p class="id-show m-0 mt-4">ID: {{ gpxFileId }}</p>
+        <p>{{ gpxFile.metadata?.name }}</p>
+        <div class="d-flex gap-2">
+          <button
+            type="button"
+            class="btn btn-primary d-flex"
+            [routerLink]="'/editor/' + gpxFileId"
+            [queryParams]="{ backProject: projectToShow.id }"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary d-flex"
+            [routerLink]="'/editor/map/' + gpxFileId"
+            [queryParams]="{ backProject: projectToShow.id }"
+          >
+            <mat-icon>map</mat-icon>
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary d-flex"
+            (click)="exportToFile(gpxFileId)"
+          >
+            <mat-icon>cloud_download</mat-icon>
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger d-flex"
+            (click)="removeFromProject(gpxFileId)"
+          >
+            <mat-icon>delete_forever</mat-icon>
+          </button>
+        </div>
+      </ng-container>
     </div>
   </div>
-  <button
-    type="button"
-    class="btn btn-secondary mt-4"
-    [routerLink]="'/editor/' + projectToShow.id + '?project=true'"
-    disabled
-  >
-    Show all
-  </button>
 </div>

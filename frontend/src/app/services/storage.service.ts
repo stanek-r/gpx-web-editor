@@ -74,6 +74,10 @@ export class StorageService {
     return this.pointGroupsSubject.asObservable();
   }
 
+  getListOfFilesValue(): PointGroupInfo[] | null {
+    return this.pointGroupsSubject.getValue();
+  }
+
   getListOfSharedFiles(): Observable<PointGroupInfo[] | null> {
     return this.sharedPointGroupsSubject.asObservable();
   }

@@ -22,6 +22,7 @@ export class MapComponent implements OnInit, OnDestroy {
   readonly zoom = 9;
 
   backToDetail = false;
+  backProject: string | null = null;
 
   // travelMode: TravelMode | undefined;
   id: string | null = null;
@@ -56,6 +57,7 @@ export class MapComponent implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     this.id = this.route.snapshot.paramMap.get('id');
     this.backToDetail = !!this.route.snapshot.queryParamMap.get('backToDetail');
+    this.backProject = this.route.snapshot.queryParamMap.get('backProject');
     if (!this.id) {
       this.router.navigate(['/editor']);
       return;

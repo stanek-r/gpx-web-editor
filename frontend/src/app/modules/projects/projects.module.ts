@@ -4,11 +4,19 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProjectListComponent } from './list/project-list.component';
 import { ProjectDetailComponent } from './detail/project-detail.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [ProjectListComponent, ProjectDetailComponent],
-  imports: [CommonModule, RouterModule, SharedModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    SharedModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatIconModule,
+  ],
   exports: [],
 })
 export class ProjectsModule {}

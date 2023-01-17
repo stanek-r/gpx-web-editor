@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { StorageService } from '../../../services/storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GpxModel } from '../../../shared/models/gpx.model';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-editor-detail',
@@ -17,7 +17,7 @@ export class EditorDetailComponent implements OnInit {
   changed = false;
 
   fg = this.fb.group({
-    name: new FormControl(),
+    name: new FormControl('', [Validators.required, Validators.minLength(3)]),
     desc: new FormControl(),
     sharing: new FormControl(),
   });
