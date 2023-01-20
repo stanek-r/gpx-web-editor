@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { StorageV2Service } from '../../../services/storageV2.service';
+import { StorageService } from '../../../services/storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GpxModel } from '../../../shared/models/gpx.model';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-editor-detail',
@@ -12,11 +12,12 @@ import { FormBuilder, FormControl } from '@angular/forms';
 export class EditorDetailComponent implements OnInit {
   id: string | null = null;
   fileData: GpxModel | null = null;
+  backProject: string | null = null;
 
   changed = false;
 
   fg = this.fb.group({
-    name: new FormControl(),
+    name: new FormControl('', [Validators.required, Validators.minLength(3)]),
     desc: new FormControl(),
     sharing: new FormControl(),
   });
@@ -24,11 +25,13 @@ export class EditorDetailComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly route: ActivatedRoute,
-    private readonly storageService: StorageV2Service,
+    private readonly storageService: StorageService,
     private readonly fb: FormBuilder
   ) {}
 
   async ngOnInit(): Promise<void> {
+    this.backProject = this.route.snapshot.queryParamMap.get('backProject');
+
     this.id = this.route.snapshot.paramMap.get('id');
     if (!this.id) {
       this.router.navigate(['/editor']);
@@ -74,6 +77,15 @@ export class EditorDetailComponent implements OnInit {
     }
     this.changed = false;
     this.storageService.saveFile(this.id, this.fileData);
+  }
+
+  cancelChanges(): void {
+    this.fg.setValue({
+      name: this.fileData?.metadata.name ?? '',
+      desc: this.fileData?.metadata.desc ?? '',
+      sharing: Object.keys(this.fileData?.permissionData ?? {}).join(','),
+    });
+    this.changed = false;
   }
 
   removeGroup(id: string): void {

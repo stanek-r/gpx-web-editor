@@ -1,5 +1,11 @@
 <app-side-menu
-  [backUrl]="backToDetail ? '/editor/' + id : '/editor'"
+  [backUrl]="
+    backToDetail
+      ? '/editor/' + id
+      : backProject
+      ? '/projects/' + backProject
+      : '/editor'
+  "
 ></app-side-menu>
 <div class="map-div">
   <button

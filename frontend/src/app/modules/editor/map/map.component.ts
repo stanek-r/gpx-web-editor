@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StorageV2Service } from '../../../services/storageV2.service';
+import { StorageService } from '../../../services/storage.service';
 import { GpxModel, GpxPoint } from '../../../shared/models/gpx.model';
 
 @Component({
@@ -22,6 +22,7 @@ export class MapComponent implements OnInit, OnDestroy {
   readonly zoom = 9;
 
   backToDetail = false;
+  backProject: string | null = null;
 
   // travelMode: TravelMode | undefined;
   id: string | null = null;
@@ -49,13 +50,14 @@ export class MapComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly storageService: StorageV2Service,
+    private readonly storageService: StorageService,
     private readonly router: Router
   ) {}
 
   async ngOnInit(): Promise<void> {
     this.id = this.route.snapshot.paramMap.get('id');
     this.backToDetail = !!this.route.snapshot.queryParamMap.get('backToDetail');
+    this.backProject = this.route.snapshot.queryParamMap.get('backProject');
     if (!this.id) {
       this.router.navigate(['/editor']);
       return;

@@ -1,13 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from '../../../services/firebase.service';
-import { StorageService } from '../../../services/storage.service';
-
-export interface Project {
-  id: string;
-  name: string;
-  pointGroups: string[];
-  users: any[];
-}
+import { Project } from '../../../shared/models/project.model';
+import { nanoid } from 'nanoid';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-project-list',
@@ -17,31 +12,39 @@ export interface Project {
 export class ProjectListComponent implements OnInit {
   listOfProjects: Project[] = [];
 
-  constructor(
-    private readonly firebaseService: FirebaseService,
-    private readonly storageService: StorageService
-  ) {}
+  constructor(private readonly firebaseService: FirebaseService) {}
 
   ngOnInit(): void {
-    this.firebaseService.getProjects().subscribe((projects) => {
-      this.listOfProjects = [];
-      // tslint:disable-next-line:forin
-      for (const projectKey in projects) {
-        this.listOfProjects.push(projects[projectKey]);
-      }
-    });
+    this.fetchProjects();
   }
 
-  newProject(): void {
-    this.firebaseService.saveProject({
-      id: '321',
-      name: 'Test project',
-      users: [],
-      pointGroups: ['HD9SuOIFzb', 'rLNpd6JZq3'],
-    });
+  fetchProjects(): void {
+    this.listOfProjects = [];
+    this.firebaseService
+      .getProjects()
+      .pipe(take(1))
+      .subscribe((projects) => {
+        for (const projectKey of Object.keys(projects)) {
+          this.listOfProjects.push(projects[projectKey]);
+        }
+      });
   }
 
-  removeProject(id: string): void {
-    this.firebaseService.deleteProject(id);
+  async newProject(): Promise<void> {
+    const id = nanoid(10);
+    await this.firebaseService.saveProject(id, {
+      id,
+      name: 'Project ' + id,
+      description: '',
+      userIds: [],
+      gpxFileIds: [],
+    });
+    this.fetchProjects();
+  }
+
+  async deleteProject(id: string): Promise<void> {
+    await this.firebaseService.deleteProject(id);
+
+    this.fetchProjects();
   }
 }

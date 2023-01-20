@@ -19,11 +19,23 @@
     display: flex;
     justify-content: center;
     flex-direction: column;
-    margin: 40px;
+    width: 300px;
+    margin: 40px 10px 0 10px;
 
     p {
       font-size: 30px;
       text-align: center;
+    }
+
+    .id-show {
+      color: gray;
+      font-size: small;
+    }
+
+    .description {
+      color: gray;
+      font-size: small;
+      margin-top: -15px;
     }
   }
 }

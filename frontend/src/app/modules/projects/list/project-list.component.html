@@ -1,21 +1,23 @@
 <app-side-menu></app-side-menu>
 <div class="action-menu">
   <button type="button" class="btn btn-primary" (click)="newProject()">
-    Add new project
+    Přidat nový projekt
   </button>
 </div>
 <div class="list" *ngIf="listOfProjects.length > 0">
   <div *ngFor="let project of listOfProjects">
+    <p class="id-show m-0 mt-4">ID: {{ project.id }}</p>
     <p>{{ project.name }}</p>
-    <button type="button" class="btn btn-secondary" [routerLink]="project.id">
-      Show
+    <p class="description">{{ project.description }}</p>
+    <button type="button" class="btn btn-primary" [routerLink]="project.id">
+      Detail
     </button>
     <button
       type="button"
       class="btn btn-danger mt-1"
-      (click)="removeProject(project.id)"
+      (click)="deleteProject(project.id)"
     >
-      Remove
+      Odstranit
     </button>
   </div>
 </div>
