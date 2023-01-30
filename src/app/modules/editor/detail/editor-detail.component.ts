@@ -46,7 +46,10 @@ export class EditorDetailComponent implements OnInit {
     this.fg.setValue({
       name: this.fileData.metadata.name ?? '',
       desc: this.fileData.metadata.desc ?? '',
-      sharing: Object.keys(this.fileData.permissionData).join(','),
+      sharing: Object.keys(this.fileData.permissionData)
+        .join(',')
+        .replace('AT', '@')
+        .replace('DOT', '.'),
     });
     this.fg.valueChanges.subscribe(() => {
       if (
@@ -70,9 +73,14 @@ export class EditorDetailComponent implements OnInit {
     };
     this.fileData.permissionData = {} as any;
     if (this.fg.value.sharing.length > 0) {
-      for (const parsedElement of this.fg.value.sharing.split(',')) {
+      for (const email of this.fg.value.sharing.split(',') as string) {
+        const fixedEmail = email
+          .trim()
+          .toLowerCase()
+          .replace('@', 'AT')
+          .replace('.', 'DOT');
         // @ts-ignore
-        this.fileData.permissionData[parsedElement] = true;
+        this.fileData.permissionData[fixedEmail] = true;
       }
     }
     this.changed = false;
@@ -83,7 +91,10 @@ export class EditorDetailComponent implements OnInit {
     this.fg.setValue({
       name: this.fileData?.metadata.name ?? '',
       desc: this.fileData?.metadata.desc ?? '',
-      sharing: Object.keys(this.fileData?.permissionData ?? {}).join(','),
+      sharing: Object.keys(this.fileData?.permissionData ?? {})
+        .join(',')
+        .replace('AT', '@')
+        .replace('DOT', '.'),
     });
     this.changed = false;
   }

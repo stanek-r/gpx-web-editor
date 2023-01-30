@@ -16,7 +16,7 @@
       ></textarea>
       <input
         class="form-control"
-        placeholder="Sdílení"
+        placeholder="Sdílení, zadejte email uživatelů, rozdělené čárkou"
         formControlName="userIds"
         readonly
       />
@@ -36,7 +36,7 @@
     </form>
   </div>
   <h2 class="mt-4">Soubory:</h2>
-  <div class="d-flex w-25 gap-3" *ngIf="pointGroups$ | async as pointGroups">
+  <div class="d-flex w-50 gap-3" *ngIf="pointGroups$ | async as pointGroups">
     <select
       class="form-control"
       [(ngModel)]="addFileToProjectInput"

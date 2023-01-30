@@ -217,7 +217,12 @@ export class FirebaseService {
                         for (const key of Object.keys(value)) {
                           for (const key2 of Object.keys(value[key])) {
                             if (
-                              (value[key][key2] as any[]).includes(user.uid)
+                              user.email &&
+                              (value[key][key2] as any[]).includes(
+                                user.email
+                                  .replace('@', 'AT')
+                                  .replace('.', 'DOT')
+                              )
                             ) {
                               ret.push({
                                 uid: key,
