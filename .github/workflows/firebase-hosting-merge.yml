@@ -12,9 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          cd frontend/
-          npm ci
-          npm run build
+          yarn install --frozen-lockfile
+          yarn build
           cd ..
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:

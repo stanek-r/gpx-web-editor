@@ -56,6 +56,7 @@ export class BlockUiService {
 /**
  * Pipe operator for UI blocking during async requests.
  * @param blockUiService UI blocking service
+ * @param options Settings for ui block
  */
 // tslint:disable-next-line:typedef
 export function blockUi(

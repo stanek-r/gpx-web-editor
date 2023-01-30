@@ -112,11 +112,12 @@ export class ProjectDetailComponent implements OnInit {
     this.changed = false;
     await this.firebaseService.saveProject(this.projectToShow.id, {
       id: this.projectToShow.id,
-      name: this.fg.value.name,
-      description: this.fg.value.description,
+      name: this.fg.value.name ?? '',
+      description: this.fg.value.description ?? '',
       userIds: this.projectToShow.userIds, // TODO: adding of users
       gpxFileIds: this.projectToShow.gpxFileIds,
     });
+    // @ts-ignore
     this.projectToShow = {
       ...this.projectToShow,
       ...{

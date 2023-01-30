@@ -37,7 +37,7 @@ export class ImageComponent implements OnInit, OnDestroy {
   showImage(): void {
     this.imageUrl = this.lowUrl;
     this.isLoaded = true;
-    this.imageService.smallLoaded$.next();
+    this.imageService.smallLoaded$.next(null);
   }
 
   isSmallLoaded(): boolean {

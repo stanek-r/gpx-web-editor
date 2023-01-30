@@ -65,7 +65,7 @@ export class EditorDetailComponent implements OnInit {
     }
     this.fileData.metadata = {
       ...this.fileData.metadata,
-      name: this.fg.value.name,
+      name: this.fg.value.name ?? '',
       desc: this.fg.value.desc,
     };
     this.fileData.permissionData = {} as any;
