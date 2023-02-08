@@ -12,7 +12,7 @@ import { BlockUiProviderComponent } from './shared/components/block-ui-provider/
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProjectsModule } from './modules/projects/projects.module';
-import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireModule } from '@angular/fire';
 
 @NgModule({
   declarations: [AppComponent, BlockUiProviderComponent],

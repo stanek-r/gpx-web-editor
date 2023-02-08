@@ -3,6 +3,7 @@ import { FirebaseService } from '../../../services/firebase.service';
 import { Project } from '../../../shared/models/project.model';
 import { nanoid } from 'nanoid';
 import { take } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-project-list',
@@ -12,7 +13,10 @@ import { take } from 'rxjs/operators';
 export class ProjectListComponent implements OnInit {
   listOfProjects: Project[] = [];
 
-  constructor(private readonly firebaseService: FirebaseService) {}
+  constructor(
+    private readonly firebaseService: FirebaseService,
+    private readonly router: Router
+  ) {}
 
   ngOnInit(): void {
     this.fetchProjects();
@@ -24,6 +28,9 @@ export class ProjectListComponent implements OnInit {
       .getProjects()
       .pipe(take(1))
       .subscribe((projects) => {
+        if (!projects) {
+          return;
+        }
         for (const projectKey of Object.keys(projects)) {
           this.listOfProjects.push(projects[projectKey]);
         }
@@ -39,7 +46,7 @@ export class ProjectListComponent implements OnInit {
       userIds: [],
       gpxFileIds: [],
     });
-    this.fetchProjects();
+    this.router.navigate(['projects', id]);
   }
 
   async deleteProject(id: string): Promise<void> {
