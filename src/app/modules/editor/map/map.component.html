@@ -16,6 +16,78 @@
   >
     Save
   </button>
+  <div class="information-table" *ngIf="getSelectedPoint() as selectedPoint">
+    <div class="d-flex justify-content-center">
+      <h4 *ngIf="selectedType === 'waypoints'">Bod {{ selectedIndex + 1 }}</h4>
+      <h4 *ngIf="selectedType === 'tracks'">Trasa {{ selectedIndex + 1 }}</h4>
+      <h4 *ngIf="selectedType === 'routes'">Cesta {{ selectedIndex + 1 }}</h4>
+    </div>
+    <ng-container *ngIf="getSelectedSection() as selectedSection">
+      <span>Jméno: {{ selectedSection.name }}</span>
+      <span>Popis: {{ selectedSection.desc }}</span>
+      <span>Typ: {{ selectedSection.type }}</span>
+      <span>Počet bodů: {{ selectedSection.points.length }}</span>
+    </ng-container>
+    <div
+      class="d-flex justify-content-center mt-3"
+      *ngIf="selectedType !== 'waypoints'"
+    >
+      <h6>Bod {{ subSelectedIndex + 1 }}</h6>
+    </div>
+    <ng-container *ngIf="selectedType === 'waypoints'">
+      <span>Jméno {{ selectedPoint["name"] }}</span>
+      <span>Popis: {{ selectedPoint["desc"] }}</span>
+      <span>Komentář: {{ selectedPoint["cmt"] }}</span>
+    </ng-container>
+    <span>Lat: {{ selectedPoint.lat }}</span>
+    <span>Lon: {{ selectedPoint.lon }}</span>
+    <span *ngIf="selectedPoint.ele && selectedPoint.ele > 0"
+      >Ele: {{ selectedPoint.ele }}</span
+    >
+    <span *ngIf="selectedPoint.time"
+      >Time: {{ selectedPoint.time | date }}</span
+    >
+    <div
+      class="d-flex justify-content-center mt-3"
+      *ngIf="selectedType === 'waypoints'"
+    >
+      <button
+        type="button"
+        class="btn btn-warning"
+        (click)="removePoint(selectedIndex)"
+      >
+        Smazat bod
+      </button>
+    </div>
+    <div
+      class="d-flex gap-2 justify-content-center mt-3"
+      *ngIf="selectedType !== 'waypoints'"
+    >
+      <button
+        type="button"
+        class="btn btn-warning"
+        (click)="removePoint(subSelectedIndex)"
+      >
+        Smazat bod
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        *ngIf="selectedType === 'routes'"
+        (click)="RemoveGroup()"
+      >
+        Smazat cestu
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        *ngIf="selectedType === 'tracks'"
+        (click)="RemoveGroup()"
+      >
+        Smazat trasu
+      </button>
+    </div>
+  </div>
   <!--    *ngIf="!travelMode; else otherModes"-->
   <agm-map
     *ngIf="fileData && lat && lng"
@@ -32,7 +104,9 @@
       (markerClick)="waypointClick(i)"
       [markerDraggable]="true"
       [opacity]="
-        selectedType === 'waypoints' && selectedIndex === i ? 1.0 : 0.88
+        showPointInfo && selectedType === 'waypoints' && selectedIndex === i
+          ? 1.0
+          : 0.88
       "
     ></agm-marker>
     <ng-container *ngFor="let track of fileData?.tracks; let i1 = index">
@@ -43,6 +117,7 @@
         (dragEnd)="trackPointDrag($event, i1, i2)"
         (markerClick)="trackPointClick(i1, i2)"
         [opacity]="
+          showPointInfo &&
           selectedType === 'tracks' &&
           selectedIndex === i1 &&
           subSelectedIndex === i2
@@ -53,12 +128,14 @@
       ></agm-marker>
       <agm-polyline
         [strokeColor]="
-          selectedType === 'tracks' && selectedIndex === i1
+          showPointInfo && selectedType === 'tracks' && selectedIndex === i1
             ? '#8B0000'
             : '#556B2F'
         "
         [strokeWeight]="
-          selectedType === 'tracks' && selectedIndex === i1 ? 10 : 5
+          showPointInfo && selectedType === 'tracks' && selectedIndex === i1
+            ? 10
+            : 5
         "
         (lineClick)="trackLineClick(i1)"
       >
@@ -77,6 +154,7 @@
         (dragEnd)="routePointDrag($event, i1, i2)"
         (markerClick)="routePointClick(i1, i2)"
         [opacity]="
+          showPointInfo &&
           selectedType === 'routes' &&
           selectedIndex === i1 &&
           subSelectedIndex === i2
@@ -87,12 +165,14 @@
       ></agm-marker>
       <agm-polyline
         [strokeColor]="
-          selectedType === 'routes' && selectedIndex === i1
+          showPointInfo && selectedType === 'routes' && selectedIndex === i1
             ? '#8B0000'
             : '#008B8B'
         "
         [strokeWeight]="
-          selectedType === 'routes' && selectedIndex === i1 ? 10 : 5
+          showPointInfo && selectedType === 'routes' && selectedIndex === i1
+            ? 10
+            : 5
         "
         (lineClick)="routeLineClick(i1)"
       >
@@ -117,85 +197,85 @@
   <!--      </agm-map>-->
   <!--    </ng-template>-->
 </div>
-<div class="point-info mt-3">
-  <div class="row">
-    <div class="col-6">
-      <div class="d-flex gap-2">
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="selectType('waypoints')"
-        >
-          Waypoints
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="selectType('tracks')"
-        >
-          Tracks
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="selectType('routes')"
-        >
-          Routes
-        </button>
-      </div>
-      <!--      <select [(ngModel)]="travelMode" class="mt-2">-->
-      <!--        <option value="">Connect points only</option>-->
-      <!--        <option value="WALKING">Walking</option>-->
-      <!--        <option value="DRIVING">Driving</option>-->
-      <!--        <option value="BICYCLING">Bicycling</option>-->
-      <!--      </select>-->
-    </div>
-    <div class="col-6">
-      <h5>Selected {{ selectedType }}</h5>
-      <select
-        *ngIf="selectedType !== 'waypoints'"
-        (change)="indexChange($event)"
-        #indexSelect
-      >
-        <option *ngFor="let i of getIndexesToPrint()" [value]="i">
-          {{ i }}
-        </option>
-      </select>
-      <button
-        type="button"
-        class="ms-1"
-        *ngIf="selectedType !== 'waypoints'"
-        (click)="addIndex()"
-      >
-        Add {{ selectedType }}
-      </button>
-      <button
-        type="button"
-        class="ms-1"
-        *ngIf="selectedType !== 'waypoints'"
-        (click)="removeIndex()"
-      >
-        Remove {{ selectedType }}
-      </button>
-      <button type="button" class="ms-1" (click)="changeAddPoint()">
-        Add point
-      </button>
-      <p *ngFor="let point of getPointsToPrint(); let i = index">
-        <span
-          [class]="
-            selectedType === 'waypoints'
-              ? selectedIndex === i
-                ? 'font-weight-bold'
-                : ''
-              : subSelectedIndex === i
-              ? 'font-weight-bold'
-              : ''
-          "
-        >
-          Point {{ i + 1 }}: {{ point.lat }} {{ point.lon }}
-        </span>
-        <button (click)="removePoint(i)">X</button>
-      </p>
-    </div>
-  </div>
-</div>
+<!--<div class="point-info mt-3">-->
+<!--  <div class="row">-->
+<!--    <div class="col-6">-->
+<!--      <div class="d-flex gap-2">-->
+<!--        <button-->
+<!--          type="button"-->
+<!--          class="btn btn-primary"-->
+<!--          (click)="selectType('waypoints')"-->
+<!--        >-->
+<!--          Waypoints-->
+<!--        </button>-->
+<!--        <button-->
+<!--          type="button"-->
+<!--          class="btn btn-primary"-->
+<!--          (click)="selectType('tracks')"-->
+<!--        >-->
+<!--          Tracks-->
+<!--        </button>-->
+<!--        <button-->
+<!--          type="button"-->
+<!--          class="btn btn-primary"-->
+<!--          (click)="selectType('routes')"-->
+<!--        >-->
+<!--          Routes-->
+<!--        </button>-->
+<!--      </div>-->
+<!--      &lt;!&ndash;      <select [(ngModel)]="travelMode" class="mt-2">&ndash;&gt;-->
+<!--      &lt;!&ndash;        <option value="">Connect points only</option>&ndash;&gt;-->
+<!--      &lt;!&ndash;        <option value="WALKING">Walking</option>&ndash;&gt;-->
+<!--      &lt;!&ndash;        <option value="DRIVING">Driving</option>&ndash;&gt;-->
+<!--      &lt;!&ndash;        <option value="BICYCLING">Bicycling</option>&ndash;&gt;-->
+<!--      &lt;!&ndash;      </select>&ndash;&gt;-->
+<!--    </div>-->
+<!--    <div class="col-6">-->
+<!--      <h5>Selected {{ selectedType }}</h5>-->
+<!--      <select-->
+<!--        *ngIf="selectedType !== 'waypoints'"-->
+<!--        (change)="indexChange($event)"-->
+<!--        #indexSelect-->
+<!--      >-->
+<!--        <option *ngFor="let i of getIndexesToPrint()" [value]="i">-->
+<!--          {{ i }}-->
+<!--        </option>-->
+<!--      </select>-->
+<!--      <button-->
+<!--        type="button"-->
+<!--        class="ms-1"-->
+<!--        *ngIf="selectedType !== 'waypoints'"-->
+<!--        (click)="addIndex()"-->
+<!--      >-->
+<!--        Add {{ selectedType }}-->
+<!--      </button>-->
+<!--      <button-->
+<!--        type="button"-->
+<!--        class="ms-1"-->
+<!--        *ngIf="selectedType !== 'waypoints'"-->
+<!--        (click)="removeIndex()"-->
+<!--      >-->
+<!--        Remove {{ selectedType }}-->
+<!--      </button>-->
+<!--      <button type="button" class="ms-1" (click)="changeAddPoint()">-->
+<!--        Add point-->
+<!--      </button>-->
+<!--      <p *ngFor="let point of getPointsToPrint(); let i = index">-->
+<!--        <span-->
+<!--          [class]="-->
+<!--            selectedType === 'waypoints'-->
+<!--              ? selectedIndex === i-->
+<!--                ? 'font-weight-bold'-->
+<!--                : ''-->
+<!--              : subSelectedIndex === i-->
+<!--              ? 'font-weight-bold'-->
+<!--              : ''-->
+<!--          "-->
+<!--        >-->
+<!--          Point {{ i + 1 }}: {{ point.lat }} {{ point.lon }}-->
+<!--        </span>-->
+<!--        <button (click)="removePoint(i)">X</button>-->
+<!--      </p>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->

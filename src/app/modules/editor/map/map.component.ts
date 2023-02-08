@@ -7,7 +7,12 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../../../services/storage.service';
-import { GpxModel, GpxPoint } from '../../../shared/models/gpx.model';
+import {
+  GpxModel,
+  GpxPoint,
+  GpxPointGroup,
+  GpxWaypoint,
+} from '../../../shared/models/gpx.model';
 
 @Component({
   selector: 'app-map',
@@ -15,7 +20,7 @@ import { GpxModel, GpxPoint } from '../../../shared/models/gpx.model';
   styleUrls: ['./map.component.scss'],
 })
 export class MapComponent implements OnInit, OnDestroy {
-  @ViewChild('indexSelect') indexSelect!: ElementRef<HTMLSelectElement>;
+  // @ViewChild('indexSelect') indexSelect!: ElementRef<HTMLSelectElement>;
 
   lat: number | undefined;
   lng: number | undefined;
@@ -33,6 +38,7 @@ export class MapComponent implements OnInit, OnDestroy {
   selectedType: 'routes' | 'tracks' | 'waypoints' = 'waypoints';
   selectedIndex = 0;
   subSelectedIndex = 0;
+  showPointInfo = false;
 
   // readonly markerOptions = {
   //   origin: {
@@ -87,7 +93,6 @@ export class MapComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.addPoint) {
-      this.addPoint = false;
       this.changed = true;
 
       const lat = event.coords.lat;
@@ -115,10 +120,12 @@ export class MapComponent implements OnInit, OnDestroy {
           ele: 0,
         });
       }
+    } else {
+      this.showPointInfo = false;
     }
   }
 
-  addIndex(): void {
+  addGroup(): void {
     if (!this.fileData) {
       return;
     }
@@ -134,7 +141,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.setIndex(this.fileData[this.selectedType].length - 1);
   }
 
-  removeIndex(): void {
+  RemoveGroup(): void {
     if (!this.fileData) {
       return;
     }
@@ -145,10 +152,6 @@ export class MapComponent implements OnInit, OnDestroy {
     const index = this.selectedIndex;
     this.setIndex(0);
     this.fileData[this.selectedType].splice(index, 1);
-  }
-
-  changeAddPoint(): void {
-    this.addPoint = true;
   }
 
   removePoint(index: number): void {
@@ -201,66 +204,73 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
+  setIndex(index: number, index2?: number): void {
+    this.selectedIndex = index;
+    this.subSelectedIndex = index2 !== undefined ? index2 : 0;
+  }
+
   waypointClick(index: number): void {
     this.selectedType = 'waypoints';
-    this.selectedIndex = index;
-    this.subSelectedIndex = 0;
+    this.setIndex(index);
+    this.showPointInfo = true;
   }
 
   trackPointClick(index1: number, index2: number): void {
     this.selectedType = 'tracks';
-    this.setIndex(index1);
-    this.subSelectedIndex = index2;
+    this.setIndex(index1, index2);
+    this.showPointInfo = true;
   }
 
   routePointClick(index1: number, index2: number): void {
     this.selectedType = 'routes';
-    this.setIndex(index1);
-    this.subSelectedIndex = index2;
+    this.setIndex(index1, index2);
+    this.showPointInfo = true;
   }
 
   trackLineClick(index: number): void {
     this.selectedType = 'tracks';
     this.setIndex(index);
+    this.showPointInfo = true;
   }
 
   routeLineClick(index: number): void {
     this.selectedType = 'routes';
     this.setIndex(index);
+    this.showPointInfo = true;
   }
 
-  selectType(type: 'routes' | 'tracks' | 'waypoints' = 'waypoints'): void {
-    this.selectedIndex = 0;
-    this.subSelectedIndex = 0;
-    this.selectedType = type;
-  }
+  // selectType(type: 'routes' | 'tracks' | 'waypoints' = 'waypoints'): void {
+  //   this.selectedIndex = 0;
+  //   this.subSelectedIndex = 0;
+  //   this.selectedType = type;
+  // }
 
-  getIndexesToPrint(): number[] {
-    if (!this.fileData) {
-      return [];
-    }
-    if (this.selectedType === 'waypoints') {
-      return [];
-    }
-    const ret = [];
-    for (let i = 0; i < this.fileData[this.selectedType].length; i++) {
-      ret.push(i);
-    }
-    return ret;
-  }
-
-  getPointsToPrint(): GpxPoint[] {
-    if (!this.fileData) {
-      return [];
-    }
-    if (this.selectedType === 'waypoints') {
-      return this.fileData.waypoints;
-    }
-    if (this.fileData[this.selectedType].length <= 0) {
-      return [];
-    }
-    return this.fileData[this.selectedType][this.selectedIndex].points;
-  }
+  // getIndexesToPrint(): number[] {
+  //   if (!this.fileData) {
+  //     return [];
+  //   }
+  //   if (this.selectedType === 'waypoints') {
+  //     return [];
+  //   }
+  //   const ret = [];
+  //   for (let i = 0; i < this.fileData[this.selectedType].length; i++) {
+  //     ret.push(i);
+  //   }
+  //   return ret;
+  // }
+  //
+  // getPointsToPrint(): GpxPoint[] {
+  //   if (!this.fileData) {
+  //     return [];
+  //   }
+  //   if (this.selectedType === 'waypoints') {
+  //     return this.fileData.waypoints;
+  //   }
+  //   if (this.fileData[this.selectedType].length <= 0) {
+  //     return [];
+  //   }
+  //   return this.fileData[this.selectedType][this.selectedIndex].points;
+  // }
 
   loadDefaultMapPosition(): void {
     if (!this.fileData) {
@@ -301,16 +311,38 @@ export class MapComponent implements OnInit, OnDestroy {
         ) / allPoints.length;
   }
 
-  indexChange(event: any): void {
-    this.selectedIndex = +event.target.value;
-    this.subSelectedIndex = 0;
+  // indexChange(event: any): void {
+  //   this.selectedIndex = +event.target.value;
+  //   this.subSelectedIndex = 0;
+  // }
+
+  getSelectedSection(): GpxPointGroup | undefined {
+    if (!this.showPointInfo) {
+      return undefined;
+    }
+    if (!this.fileData) {
+      return undefined;
+    }
+    if (this.selectedType === 'waypoints') {
+      return undefined;
+    }
+    return this.fileData[this.selectedType][this.selectedIndex];
   }
 
-  setIndex(index: number): void {
-    this.selectedIndex = index;
-    this.subSelectedIndex = 0;
-    setTimeout(() => {
-      this.indexSelect.nativeElement.value = index + '';
-    }, 500);
+  getSelectedPoint(): GpxPoint | undefined {
+    if (!this.showPointInfo) {
+      return undefined;
+    }
+    if (!this.fileData) {
+      return undefined;
+    }
+    if (this.selectedType === 'waypoints') {
+      return this.fileData.waypoints[this.selectedIndex];
+    }
+    const selectedSection = this.getSelectedSection();
+    if (!selectedSection) {
+      return undefined;
+    }
+    return selectedSection.points[this.subSelectedIndex];
   }
 }
