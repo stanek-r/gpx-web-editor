@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BlockUiService } from './block-ui.service';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
-import firebase from 'firebase/compat/app';
+import firebase from 'firebase';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 import { GpxModel } from '../shared/models/gpx.model';
 import User = firebase.User;
 import { Project } from '../shared/models/project.model';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFireDatabase } from '@angular/fire/compat/database';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireDatabase } from '@angular/fire/database';
 
 export interface SharedFileInfo {
   uid: string;
@@ -124,6 +124,7 @@ export class FirebaseService {
       return of(null);
     }
     return from(user.getIdToken()).pipe(
+      take(1),
       switchMap((token) => {
         if (!token) {
           return of(null);
@@ -133,8 +134,7 @@ export class FirebaseService {
             user.uid
           }.json?auth=${token}`
         );
-      }),
-      take(1)
+      })
     );
   }
 

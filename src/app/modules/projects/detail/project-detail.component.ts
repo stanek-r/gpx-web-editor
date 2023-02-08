@@ -10,6 +10,8 @@ import { Project } from '../../../shared/models/project.model';
 import { take } from 'rxjs/operators';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
+import { UploadComponent } from '../../upload/components/upload/upload.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-project-detail',
@@ -35,6 +37,7 @@ export class ProjectDetailComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly storageService: StorageService,
     private readonly firebaseService: FirebaseService,
+    private readonly dialog: MatDialog,
     private readonly fb: FormBuilder
   ) {}
 
@@ -139,16 +142,20 @@ export class ProjectDetailComponent implements OnInit {
   }
 
   addToProject(): void {
+    if (this.addFileToProjectInput !== '') {
+      this.addFileToProject(this.addFileToProjectInput);
+    }
+    this.addFileToProjectInput = '';
+  }
+
+  async addFileToProject(fileId: string): Promise<void> {
     if (!this.projectToShow) {
       return;
     }
-    if (this.addFileToProjectInput !== '') {
-      this.projectToShow.gpxFileIds.push(this.addFileToProjectInput);
-      this.fetchFiles();
-      this.cancelChanges();
-      this.saveChanges();
-    }
-    this.addFileToProjectInput = '';
+    this.projectToShow.gpxFileIds.push(fileId);
+    await this.fetchFiles();
+    this.cancelChanges();
+    await this.saveChanges();
   }
 
   async removeFromProject(id: string): Promise<void> {
@@ -167,5 +174,14 @@ export class ProjectDetailComponent implements OnInit {
 
   async exportToFile(id: string): Promise<void> {
     await this.storageService.exportToFile(id);
+  }
+
+  uploadFile(): void {
+    this.dialog
+      .open(UploadComponent, {
+        width: '400px',
+      })
+      .afterClosed()
+      .subscribe((value) => this.addFileToProject(value));
   }
 }

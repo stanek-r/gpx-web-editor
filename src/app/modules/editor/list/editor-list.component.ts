@@ -6,9 +6,6 @@ import {
 } from '../../../services/storage.service';
 import { nanoid } from 'nanoid';
 import { GpxModel } from '../../../shared/models/gpx.model';
-
-// @ts-ignore
-import createGpx from 'gps-to-gpx';
 import { MatDialog } from '@angular/material/dialog';
 import { UploadComponent } from '../../upload/components/upload/upload.component';
 import { Router } from '@angular/router';
