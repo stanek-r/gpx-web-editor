@@ -10,7 +10,7 @@
 <div class="map-div">
   <button
     type="button"
-    class="save-button btn btn-primary"
+    class="save-button btn btn-primary btn-lg"
     *ngIf="changed"
     (click)="save()"
   >
@@ -88,6 +88,90 @@
       </button>
     </div>
   </div>
+  <button
+    *ngIf="!showSideMenu; else sideMenuOpened"
+    (click)="toggleSideMenu()"
+    class="btn btn-primary side-menu-button"
+    style="z-index: 100"
+  >
+    <
+  </button>
+  <ng-template #sideMenuOpened>
+    <div class="side-menu gap-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <h4>Informace</h4>
+        <button (click)="toggleSideMenu()" class="btn btn-primary">></button>
+      </div>
+      <select
+        class="form-select"
+        [(ngModel)]="selectedType"
+        (ngModelChange)="showPointInfo = false"
+      >
+        <option value="waypoints">Body</option>
+        <option value="tracks">Trasy</option>
+        <option value="routes">Cesty</option>
+      </select>
+      <mat-slide-toggle [(ngModel)]="addPoint"
+        >Mód přidávání bodů</mat-slide-toggle
+      >
+      <button
+        (click)="addGroup()"
+        class="btn btn-primary"
+        *ngIf="selectedType !== 'waypoints'"
+      >
+        Přidat {{ selectedType === "tracks" ? "trasu" : "cestu" }}
+      </button>
+      <div class="d-flex flex-column gap-2">
+        <ng-container *ngIf="selectedType === 'waypoints'">
+          <div
+            *ngFor="let point of fileData?.waypoints; let i = index"
+            class="d-flex flex-column cursor-pointer"
+            (click)="waypointClick(i)"
+          >
+            <span
+              [ngClass]="
+                selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''
+              "
+              >Bod {{ i + 1 }}</span
+            >
+            <span>Jméno: {{ point.name }}</span>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="selectedType === 'tracks'">
+          <div
+            *ngFor="let group of fileData?.tracks; let i = index"
+            class="d-flex flex-column cursor-pointer"
+            (click)="trackPointClick(i, 0)"
+          >
+            <span
+              [ngClass]="
+                selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''
+              "
+              >Trasa {{ i + 1 }}</span
+            >
+            <span>Jméno: {{ group.name }}</span>
+            <span>Počet bodů: {{ group.points.length }}</span>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="selectedType === 'routes'">
+          <div
+            *ngFor="let group of fileData?.routes; let i = index"
+            class="d-flex flex-column cursor-pointer"
+            (click)="routePointClick(i, 0)"
+          >
+            <span
+              [ngClass]="
+                selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''
+              "
+              >Cesta {{ i + 1 }}</span
+            >
+            <span>Jméno: {{ group.name }}</span>
+            <span>Počet bodů: {{ group.points.length }}</span>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </ng-template>
   <!--    *ngIf="!travelMode; else otherModes"-->
   <agm-map
     *ngIf="fileData && lat && lng"
@@ -95,6 +179,8 @@
     [longitude]="lng"
     [zoom]="zoom"
     (mapClick)="mapClick($event)"
+    (mapRightClick)="mapRightClick($event)"
+    [streetViewControl]="false"
   >
     <agm-marker
       *ngFor="let point of fileData?.waypoints; let i = index"

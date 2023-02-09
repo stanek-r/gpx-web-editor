@@ -1,9 +1,7 @@
 import {
   Component,
-  ElementRef,
   OnDestroy,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../../../services/storage.service';
@@ -11,7 +9,6 @@ import {
   GpxModel,
   GpxPoint,
   GpxPointGroup,
-  GpxWaypoint,
 } from '../../../shared/models/gpx.model';
 
 @Component({
@@ -38,7 +35,9 @@ export class MapComponent implements OnInit, OnDestroy {
   selectedType: 'routes' | 'tracks' | 'waypoints' = 'waypoints';
   selectedIndex = 0;
   subSelectedIndex = 0;
+
   showPointInfo = false;
+  showSideMenu = false;
 
   // readonly markerOptions = {
   //   origin: {
@@ -82,6 +81,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   async save(): Promise<void> {
+    this.addPoint = false;
     if (this.id && this.fileData) {
       await this.storageService.saveFile(this.id, this.fileData);
       this.changed = false;
@@ -123,6 +123,10 @@ export class MapComponent implements OnInit, OnDestroy {
     } else {
       this.showPointInfo = false;
     }
+  }
+
+  mapRightClick(event: any): void {
+    this.toggleAddingOfPoints();
   }
 
   addGroup(): void {
@@ -344,5 +348,13 @@ export class MapComponent implements OnInit, OnDestroy {
       return undefined;
     }
     return selectedSection.points[this.subSelectedIndex];
+  }
+
+  toggleSideMenu(): void {
+    this.showSideMenu = !this.showSideMenu;
+  }
+
+  toggleAddingOfPoints(): void {
+    this.addPoint = !this.addPoint;
   }
 }
