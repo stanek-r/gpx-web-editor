@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   PointGroupInfo,
   StorageService,
@@ -38,31 +38,37 @@ export class ProjectDetailComponent implements OnInit {
     private readonly storageService: StorageService,
     private readonly firebaseService: FirebaseService,
     private readonly dialog: MatDialog,
+    private readonly router: Router,
     private readonly fb: FormBuilder
   ) {}
 
   async ngOnInit(): Promise<void> {
     const projectId = this.route.snapshot.paramMap.get('id');
     if (!projectId) {
+      this.router.navigate(['/projects']);
       return;
     }
     await this.storageService.waitUntilLoaded();
     this.firebaseService
       .getProject(projectId)
       .pipe(take(1))
-      .subscribe(async (value) => {
+      .subscribe(async (project) => {
+        if (!project) {
+          this.router.navigate(['/projects']);
+          return;
+        }
         this.projectToShow = {
-          id: value.id,
-          name: value.name ?? '',
-          description: value.description ?? '',
-          gpxFileIds: value.gpxFileIds ?? [],
-          userIds: value.userIds ?? [],
+          id: project.id,
+          name: project.name ?? '',
+          description: project.description ?? '',
+          gpxFileIds: project.gpxFileIds ?? [],
+          userIds: project.userIds ?? [],
         };
-        this.fg.controls.name.setValue(value.name);
+        this.fg.controls.name.setValue(project.name);
         this.fg.setValue({
-          name: value.name ?? '',
-          description: value.description ?? '',
-          userIds: value.userIds?.join(',') ?? [],
+          name: project.name ?? '',
+          description: project.description ?? '',
+          userIds: project.userIds?.join(',') ?? [],
         });
 
         this.fg.valueChanges.subscribe(() => {

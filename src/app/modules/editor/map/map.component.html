@@ -1,18 +1,13 @@
-<app-side-menu
-  [backUrl]="
-    backToDetail
-      ? '/editor/' + id
-      : backProject
-      ? '/projects/' + backProject
-      : '/editor'
-  "
-></app-side-menu>
-<div class="map-div">
+<app-side-menu [backUrl]="getBackUrl()"></app-side-menu>
+<div class="map-div" *ngIf="files.length > 0">
   <div class="information-table" *ngIf="getSelectedPoint() as selectedPoint">
     <div class="d-flex justify-content-center">
-      <h4 *ngIf="selectedType === 'waypoints'">Bod {{ selectedIndex + 1 }}</h4>
-      <h4 *ngIf="selectedType === 'tracks'">Trasa {{ selectedIndex + 1 }}</h4>
-      <h4 *ngIf="selectedType === 'routes'">Cesta {{ selectedIndex + 1 }}</h4>
+      <h4>{{ files[selectedFile].metadata?.name }}</h4>
+    </div>
+    <div class="d-flex justify-content-center mt-2">
+      <h5 *ngIf="selectedType === 'waypoints'">Bod {{ selectedIndex + 1 }}</h5>
+      <h5 *ngIf="selectedType === 'tracks'">Trasa {{ selectedIndex + 1 }}</h5>
+      <h5 *ngIf="selectedType === 'routes'">Cesta {{ selectedIndex + 1 }}</h5>
     </div>
     <ng-container *ngIf="getSelectedSection() as selectedSection">
       <span>Jméno: {{ selectedSection.name }}</span>
@@ -86,6 +81,15 @@
     </div>
     <select
       class="form-select"
+      [(ngModel)]="selectedFile"
+      (ngModelChange)="showPointInfo = false"
+    >
+      <option *ngFor="let file of files; let i = index" [value]="i">
+        {{ file.metadata?.name }}
+      </option>
+    </select>
+    <select
+      class="form-select"
       [(ngModel)]="selectedType"
       (ngModelChange)="showPointInfo = false"
     >
@@ -106,9 +110,9 @@
     <div class="d-flex flex-column gap-2">
       <ng-container *ngIf="selectedType === 'waypoints'">
         <div
-          *ngFor="let point of fileData?.waypoints; let i = index"
+          *ngFor="let point of files[selectedFile].waypoints; let i = index"
           class="d-flex flex-column cursor-pointer"
-          (click)="waypointClick(i)"
+          (click)="waypointClick(selectedFile, i)"
         >
           <span
             [ngClass]="
@@ -121,9 +125,9 @@
       </ng-container>
       <ng-container *ngIf="selectedType === 'tracks'">
         <div
-          *ngFor="let group of fileData?.tracks; let i = index"
+          *ngFor="let group of files[selectedFile].tracks; let i = index"
           class="d-flex flex-column cursor-pointer"
-          (click)="trackPointClick(i, 0)"
+          (click)="trackPointClick(selectedFile, i, 0)"
         >
           <span
             [ngClass]="
@@ -137,9 +141,9 @@
       </ng-container>
       <ng-container *ngIf="selectedType === 'routes'">
         <div
-          *ngFor="let group of fileData?.routes; let i = index"
+          *ngFor="let group of files[selectedFile].routes; let i = index"
           class="d-flex flex-column cursor-pointer"
-          (click)="routePointClick(i, 0)"
+          (click)="routePointClick(selectedFile, i, 0)"
         >
           <span
             [ngClass]="
@@ -154,7 +158,7 @@
     </div>
   </div>
   <agm-map
-    *ngIf="fileData && lat && lng"
+    *ngIf="lat && lng"
     [latitude]="lat"
     [longitude]="lng"
     [zoom]="zoom"
@@ -162,95 +166,97 @@
     (mapRightClick)="mapRightClick()"
     [streetViewControl]="false"
   >
-    <agm-marker
-      *ngFor="let point of fileData?.waypoints; let i = index"
-      [latitude]="point.lat"
-      [longitude]="point.lon"
-      (dragEnd)="waypointDrag($event, i)"
-      (markerClick)="waypointClick(i)"
-      (markerRightClick)="waypointRightClick(i)"
-      [markerDraggable]="true"
-      [opacity]="
-        showPointInfo && selectedType === 'waypoints' && selectedIndex === i
-          ? 1.0
-          : 0.88
-      "
-    ></agm-marker>
-    <ng-container *ngFor="let track of fileData?.tracks; let i1 = index">
+    <ng-container *ngFor="let file of files; let fileIndex = index">
       <agm-marker
-        *ngFor="let point of track.points; let i2 = index"
+        *ngFor="let point of file.waypoints; let i = index"
         [latitude]="point.lat"
         [longitude]="point.lon"
-        (dragEnd)="trackPointDrag($event, i1, i2)"
-        (markerClick)="trackPointClick(i1, i2)"
-        (markerRightClick)="trackPointRightClick(i1, i2)"
+        (dragEnd)="waypointDrag($event, fileIndex, i)"
+        (markerClick)="waypointClick(fileIndex, i)"
+        (markerRightClick)="waypointRightClick(fileIndex, i)"
+        [markerDraggable]="true"
         [opacity]="
-          showPointInfo &&
-          selectedType === 'tracks' &&
-          selectedIndex === i1 &&
-          subSelectedIndex === i2
+          showPointInfo && selectedType === 'waypoints' && selectedIndex === i
             ? 1.0
             : 0.88
         "
-        [markerDraggable]="true"
       ></agm-marker>
-      <agm-polyline
-        [strokeColor]="
-          showPointInfo && selectedType === 'tracks' && selectedIndex === i1
-            ? '#8B0000'
-            : '#556B2F'
-        "
-        [strokeWeight]="
-          showPointInfo && selectedType === 'tracks' && selectedIndex === i1
-            ? 10
-            : 5
-        "
-        (lineClick)="trackLineClick(i1)"
-      >
-        <agm-polyline-point
-          *ngFor="let mapData of track.points"
-          [latitude]="mapData.lat"
-          [longitude]="mapData.lon"
-        ></agm-polyline-point>
-      </agm-polyline>
-    </ng-container>
-    <ng-container *ngFor="let route of fileData?.routes; let i1 = index">
-      <agm-marker
-        *ngFor="let point of route.points; let i2 = index"
-        [latitude]="point.lat"
-        [longitude]="point.lon"
-        (dragEnd)="routePointDrag($event, i1, i2)"
-        (markerClick)="routePointClick(i1, i2)"
-        (markerRightClick)="routePointRightClick(i1, i2)"
-        [opacity]="
-          showPointInfo &&
-          selectedType === 'routes' &&
-          selectedIndex === i1 &&
-          subSelectedIndex === i2
-            ? 1.0
-            : 0.88
-        "
-        [markerDraggable]="true"
-      ></agm-marker>
-      <agm-polyline
-        [strokeColor]="
-          showPointInfo && selectedType === 'routes' && selectedIndex === i1
-            ? '#8B0000'
-            : '#008B8B'
-        "
-        [strokeWeight]="
-          showPointInfo && selectedType === 'routes' && selectedIndex === i1
-            ? 10
-            : 5
-        "
-        (lineClick)="routeLineClick(i1)"
-      >
-        <agm-polyline-point
-          *ngFor="let mapData of route.points"
-          [latitude]="mapData.lat"
-          [longitude]="mapData.lon"
-        ></agm-polyline-point>
-      </agm-polyline>
+      <ng-container *ngFor="let track of file.tracks; let i1 = index">
+        <agm-marker
+          *ngFor="let point of track.points; let i2 = index"
+          [latitude]="point.lat"
+          [longitude]="point.lon"
+          (dragEnd)="trackPointDrag($event, fileIndex, i1, i2)"
+          (markerClick)="trackPointClick(fileIndex, i1, i2)"
+          (markerRightClick)="trackPointRightClick(fileIndex, i1, i2)"
+          [opacity]="
+            showPointInfo &&
+            selectedType === 'tracks' &&
+            selectedIndex === i1 &&
+            subSelectedIndex === i2
+              ? 1.0
+              : 0.88
+          "
+          [markerDraggable]="true"
+        ></agm-marker>
+        <agm-polyline
+          [strokeColor]="
+            showPointInfo && selectedType === 'tracks' && selectedIndex === i1
+              ? '#8B0000'
+              : '#556B2F'
+          "
+          [strokeWeight]="
+            showPointInfo && selectedType === 'tracks' && selectedIndex === i1
+              ? 10
+              : 5
+          "
+          (lineClick)="trackLineClick(fileIndex, i1)"
+        >
+          <agm-polyline-point
+            *ngFor="let mapData of track.points"
+            [latitude]="mapData.lat"
+            [longitude]="mapData.lon"
+          ></agm-polyline-point>
+        </agm-polyline>
+      </ng-container>
+      <ng-container *ngFor="let route of file.routes; let i1 = index">
+        <agm-marker
+          *ngFor="let point of route.points; let i2 = index"
+          [latitude]="point.lat"
+          [longitude]="point.lon"
+          (dragEnd)="routePointDrag($event, fileIndex, i1, i2)"
+          (markerClick)="routePointClick(fileIndex, i1, i2)"
+          (markerRightClick)="routePointRightClick(fileIndex, i1, i2)"
+          [opacity]="
+            showPointInfo &&
+            selectedType === 'routes' &&
+            selectedIndex === i1 &&
+            subSelectedIndex === i2
+              ? 1.0
+              : 0.88
+          "
+          [markerDraggable]="true"
+        ></agm-marker>
+        <agm-polyline
+          [strokeColor]="
+            showPointInfo && selectedType === 'routes' && selectedIndex === i1
+              ? '#8B0000'
+              : '#008B8B'
+          "
+          [strokeWeight]="
+            showPointInfo && selectedType === 'routes' && selectedIndex === i1
+              ? 10
+              : 5
+          "
+          (lineClick)="routeLineClick(fileIndex, i1)"
+        >
+          <agm-polyline-point
+            *ngFor="let mapData of route.points"
+            [latitude]="mapData.lat"
+            [longitude]="mapData.lon"
+          ></agm-polyline-point>
+        </agm-polyline>
+      </ng-container>
     </ng-container>
   </agm-map>
 </div>

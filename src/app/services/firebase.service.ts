@@ -99,7 +99,7 @@ export class FirebaseService {
       .set(fileToShare, withWho);
   }
 
-  getProject(id: string): Observable<any> {
+  getProject(id: string): Observable<Project | null> {
     const user = this.fireUserSubject.getValue();
     if (!user) {
       return of(null);
@@ -118,7 +118,7 @@ export class FirebaseService {
     );
   }
 
-  getProjects(): Observable<any> {
+  getProjects(): Observable<Project[] | null> {
     const user = this.fireUserSubject.getValue();
     if (!user) {
       return of(null);

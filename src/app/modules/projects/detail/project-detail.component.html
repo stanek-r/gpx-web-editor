@@ -59,6 +59,12 @@
       Nahrát soubor
     </button>
   </div>
+  <button
+    class="btn btn-primary mt-4 d-flex gap-2"
+    [routerLink]="'/editor/map/project/' + projectToShow.id"
+  >
+    <mat-icon>map</mat-icon><span>Zobrazit všechny soubory na mapě</span>
+  </button>
   <div class="d-flex" *ngIf="gpxFiles.length > 0">
     <div
       *ngFor="let gpxFileId of projectToShow.gpxFileIds; let i = index"
