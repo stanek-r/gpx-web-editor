@@ -74,6 +74,7 @@
       <ng-container *ngIf="gpxFiles[i] as gpxFile">
         <p class="id-show m-0 mt-4">ID: {{ gpxFileId }}</p>
         <p>{{ gpxFile.metadata.name }}</p>
+        <p class="description">{{ gpxFile.metadata.desc }}</p>
         <div class="d-flex gap-2">
           <button
             type="button"

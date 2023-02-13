@@ -1,10 +1,13 @@
 <app-side-menu [backUrl]="getBackUrl()"></app-side-menu>
 <div class="map-div" *ngIf="files.length > 0">
   <div class="information-table" *ngIf="getSelectedPoint() as selectedPoint">
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center" *ngIf="files.length > 1">
       <h4>{{ files[selectedFile].metadata?.name }}</h4>
     </div>
-    <div class="d-flex justify-content-center mt-2">
+    <div
+      class="d-flex justify-content-center"
+      [ngClass]="files.length > 1 ? 'mt-2' : ''"
+    >
       <h5 *ngIf="selectedType === 'waypoints'">Bod {{ selectedIndex + 1 }}</h5>
       <h5 *ngIf="selectedType === 'tracks'">Trasa {{ selectedIndex + 1 }}</h5>
       <h5 *ngIf="selectedType === 'routes'">Cesta {{ selectedIndex + 1 }}</h5>
@@ -79,15 +82,17 @@
     <div class="d-flex justify-content-center align-items-center">
       <h4>Informace</h4>
     </div>
-    <select
-      class="form-select"
-      [(ngModel)]="selectedFile"
-      (ngModelChange)="showPointInfo = false"
-    >
-      <option *ngFor="let file of files; let i = index" [value]="i">
-        {{ file.metadata?.name }}
-      </option>
-    </select>
+    <ng-container *ngIf="files.length > 1">
+      <select
+        class="form-select"
+        [(ngModel)]="selectedFile"
+        (ngModelChange)="showPointInfo = false"
+      >
+        <option *ngFor="let file of files; let i = index" [value]="i">
+          {{ file.metadata?.name }}
+        </option>
+      </select>
+    </ng-container>
     <select
       class="form-select"
       [(ngModel)]="selectedType"
