@@ -8,14 +8,6 @@
   "
 ></app-side-menu>
 <div class="map-div">
-  <button
-    type="button"
-    class="save-button btn btn-primary btn-lg"
-    *ngIf="changed"
-    (click)="save()"
-  >
-    Save
-  </button>
   <div class="information-table" *ngIf="getSelectedPoint() as selectedPoint">
     <div class="d-flex justify-content-center">
       <h4 *ngIf="selectedType === 'waypoints'">Bod {{ selectedIndex + 1 }}</h4>
@@ -88,98 +80,86 @@
       </button>
     </div>
   </div>
-  <button
-    *ngIf="!showSideMenu; else sideMenuOpened"
-    (click)="toggleSideMenu()"
-    class="btn btn-primary side-menu-button"
-    style="z-index: 100"
-  >
-    <
-  </button>
-  <ng-template #sideMenuOpened>
-    <div class="side-menu gap-3">
-      <div class="d-flex justify-content-between align-items-center">
-        <h4>Informace</h4>
-        <button (click)="toggleSideMenu()" class="btn btn-primary">></button>
-      </div>
-      <select
-        class="form-select"
-        [(ngModel)]="selectedType"
-        (ngModelChange)="showPointInfo = false"
-      >
-        <option value="waypoints">Body</option>
-        <option value="tracks">Trasy</option>
-        <option value="routes">Cesty</option>
-      </select>
-      <mat-slide-toggle [(ngModel)]="addPoint"
-        >Mód přidávání bodů</mat-slide-toggle
-      >
-      <button
-        (click)="addGroup()"
-        class="btn btn-primary"
-        *ngIf="selectedType !== 'waypoints'"
-      >
-        Přidat {{ selectedType === "tracks" ? "trasu" : "cestu" }}
-      </button>
-      <div class="d-flex flex-column gap-2">
-        <ng-container *ngIf="selectedType === 'waypoints'">
-          <div
-            *ngFor="let point of fileData?.waypoints; let i = index"
-            class="d-flex flex-column cursor-pointer"
-            (click)="waypointClick(i)"
-          >
-            <span
-              [ngClass]="
-                selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''
-              "
-              >Bod {{ i + 1 }}</span
-            >
-            <span>Jméno: {{ point.name }}</span>
-          </div>
-        </ng-container>
-        <ng-container *ngIf="selectedType === 'tracks'">
-          <div
-            *ngFor="let group of fileData?.tracks; let i = index"
-            class="d-flex flex-column cursor-pointer"
-            (click)="trackPointClick(i, 0)"
-          >
-            <span
-              [ngClass]="
-                selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''
-              "
-              >Trasa {{ i + 1 }}</span
-            >
-            <span>Jméno: {{ group.name }}</span>
-            <span>Počet bodů: {{ group.points.length }}</span>
-          </div>
-        </ng-container>
-        <ng-container *ngIf="selectedType === 'routes'">
-          <div
-            *ngFor="let group of fileData?.routes; let i = index"
-            class="d-flex flex-column cursor-pointer"
-            (click)="routePointClick(i, 0)"
-          >
-            <span
-              [ngClass]="
-                selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''
-              "
-              >Cesta {{ i + 1 }}</span
-            >
-            <span>Jméno: {{ group.name }}</span>
-            <span>Počet bodů: {{ group.points.length }}</span>
-          </div>
-        </ng-container>
-      </div>
+  <div class="side-menu gap-3">
+    <div class="d-flex justify-content-center align-items-center">
+      <h4>Informace</h4>
     </div>
-  </ng-template>
-  <!--    *ngIf="!travelMode; else otherModes"-->
+    <select
+      class="form-select"
+      [(ngModel)]="selectedType"
+      (ngModelChange)="showPointInfo = false"
+    >
+      <option value="waypoints">Body</option>
+      <option value="tracks">Trasy</option>
+      <option value="routes">Cesty</option>
+    </select>
+    <mat-slide-toggle [(ngModel)]="addPoint"
+      >Mód přidávání bodů</mat-slide-toggle
+    >
+    <button
+      (click)="addGroup()"
+      class="btn btn-primary"
+      *ngIf="selectedType !== 'waypoints'"
+    >
+      Přidat {{ selectedType === "tracks" ? "trasu" : "cestu" }}
+    </button>
+    <div class="d-flex flex-column gap-2">
+      <ng-container *ngIf="selectedType === 'waypoints'">
+        <div
+          *ngFor="let point of fileData?.waypoints; let i = index"
+          class="d-flex flex-column cursor-pointer"
+          (click)="waypointClick(i)"
+        >
+          <span
+            [ngClass]="
+              selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''
+            "
+            >Bod {{ i + 1 }}</span
+          >
+          <span>Jméno: {{ point.name }}</span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="selectedType === 'tracks'">
+        <div
+          *ngFor="let group of fileData?.tracks; let i = index"
+          class="d-flex flex-column cursor-pointer"
+          (click)="trackPointClick(i, 0)"
+        >
+          <span
+            [ngClass]="
+              selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''
+            "
+            >Trasa {{ i + 1 }}</span
+          >
+          <span>Jméno: {{ group.name }}</span>
+          <span>Počet bodů: {{ group.points.length }}</span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="selectedType === 'routes'">
+        <div
+          *ngFor="let group of fileData?.routes; let i = index"
+          class="d-flex flex-column cursor-pointer"
+          (click)="routePointClick(i, 0)"
+        >
+          <span
+            [ngClass]="
+              selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''
+            "
+            >Cesta {{ i + 1 }}</span
+          >
+          <span>Jméno: {{ group.name }}</span>
+          <span>Počet bodů: {{ group.points.length }}</span>
+        </div>
+      </ng-container>
+    </div>
+  </div>
   <agm-map
     *ngIf="fileData && lat && lng"
     [latitude]="lat"
     [longitude]="lng"
     [zoom]="zoom"
     (mapClick)="mapClick($event)"
-    (mapRightClick)="mapRightClick($event)"
+    (mapRightClick)="mapRightClick()"
     [streetViewControl]="false"
   >
     <agm-marker
@@ -188,6 +168,7 @@
       [longitude]="point.lon"
       (dragEnd)="waypointDrag($event, i)"
       (markerClick)="waypointClick(i)"
+      (markerRightClick)="waypointRightClick(i)"
       [markerDraggable]="true"
       [opacity]="
         showPointInfo && selectedType === 'waypoints' && selectedIndex === i
@@ -202,6 +183,7 @@
         [longitude]="point.lon"
         (dragEnd)="trackPointDrag($event, i1, i2)"
         (markerClick)="trackPointClick(i1, i2)"
+        (markerRightClick)="trackPointRightClick(i1, i2)"
         [opacity]="
           showPointInfo &&
           selectedType === 'tracks' &&
@@ -239,6 +221,7 @@
         [longitude]="point.lon"
         (dragEnd)="routePointDrag($event, i1, i2)"
         (markerClick)="routePointClick(i1, i2)"
+        (markerRightClick)="routePointRightClick(i1, i2)"
         [opacity]="
           showPointInfo &&
           selectedType === 'routes' &&
@@ -270,98 +253,4 @@
       </agm-polyline>
     </ng-container>
   </agm-map>
-  <!--    <ng-template #otherModes>-->
-  <!--      <agm-map>-->
-  <!--        <agm-direction-->
-  <!--          *ngFor="let mapData of routes; let i = index"-->
-  <!--          [origin]="mapData.start"-->
-  <!--          [destination]="mapData.end"-->
-  <!--          [markerOptions]="markerOptions"-->
-  <!--          [renderOptions]="renderOptions"-->
-  <!--          [travelMode]="travelMode"-->
-  <!--        ></agm-direction>-->
-  <!--      </agm-map>-->
-  <!--    </ng-template>-->
 </div>
-<!--<div class="point-info mt-3">-->
-<!--  <div class="row">-->
-<!--    <div class="col-6">-->
-<!--      <div class="d-flex gap-2">-->
-<!--        <button-->
-<!--          type="button"-->
-<!--          class="btn btn-primary"-->
-<!--          (click)="selectType('waypoints')"-->
-<!--        >-->
-<!--          Waypoints-->
-<!--        </button>-->
-<!--        <button-->
-<!--          type="button"-->
-<!--          class="btn btn-primary"-->
-<!--          (click)="selectType('tracks')"-->
-<!--        >-->
-<!--          Tracks-->
-<!--        </button>-->
-<!--        <button-->
-<!--          type="button"-->
-<!--          class="btn btn-primary"-->
-<!--          (click)="selectType('routes')"-->
-<!--        >-->
-<!--          Routes-->
-<!--        </button>-->
-<!--      </div>-->
-<!--      &lt;!&ndash;      <select [(ngModel)]="travelMode" class="mt-2">&ndash;&gt;-->
-<!--      &lt;!&ndash;        <option value="">Connect points only</option>&ndash;&gt;-->
-<!--      &lt;!&ndash;        <option value="WALKING">Walking</option>&ndash;&gt;-->
-<!--      &lt;!&ndash;        <option value="DRIVING">Driving</option>&ndash;&gt;-->
-<!--      &lt;!&ndash;        <option value="BICYCLING">Bicycling</option>&ndash;&gt;-->
-<!--      &lt;!&ndash;      </select>&ndash;&gt;-->
-<!--    </div>-->
-<!--    <div class="col-6">-->
-<!--      <h5>Selected {{ selectedType }}</h5>-->
-<!--      <select-->
-<!--        *ngIf="selectedType !== 'waypoints'"-->
-<!--        (change)="indexChange($event)"-->
-<!--        #indexSelect-->
-<!--      >-->
-<!--        <option *ngFor="let i of getIndexesToPrint()" [value]="i">-->
-<!--          {{ i }}-->
-<!--        </option>-->
-<!--      </select>-->
-<!--      <button-->
-<!--        type="button"-->
-<!--        class="ms-1"-->
-<!--        *ngIf="selectedType !== 'waypoints'"-->
-<!--        (click)="addIndex()"-->
-<!--      >-->
-<!--        Add {{ selectedType }}-->
-<!--      </button>-->
-<!--      <button-->
-<!--        type="button"-->
-<!--        class="ms-1"-->
-<!--        *ngIf="selectedType !== 'waypoints'"-->
-<!--        (click)="removeIndex()"-->
-<!--      >-->
-<!--        Remove {{ selectedType }}-->
-<!--      </button>-->
-<!--      <button type="button" class="ms-1" (click)="changeAddPoint()">-->
-<!--        Add point-->
-<!--      </button>-->
-<!--      <p *ngFor="let point of getPointsToPrint(); let i = index">-->
-<!--        <span-->
-<!--          [class]="-->
-<!--            selectedType === 'waypoints'-->
-<!--              ? selectedIndex === i-->
-<!--                ? 'font-weight-bold'-->
-<!--                : ''-->
-<!--              : subSelectedIndex === i-->
-<!--              ? 'font-weight-bold'-->
-<!--              : ''-->
-<!--          "-->
-<!--        >-->
-<!--          Point {{ i + 1 }}: {{ point.lat }} {{ point.lon }}-->
-<!--        </span>-->
-<!--        <button (click)="removePoint(i)">X</button>-->
-<!--      </p>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
