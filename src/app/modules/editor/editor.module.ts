@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { UploadModule } from '../upload/upload.module';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [MapComponent, EditorListComponent, EditorDetailComponent],
@@ -29,6 +30,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatDividerModule,
     UploadModule,
     MatDialogModule,
+    MatSlideToggleModule,
   ],
   exports: [],
 })

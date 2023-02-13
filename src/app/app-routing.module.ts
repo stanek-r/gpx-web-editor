@@ -35,6 +35,10 @@ const routes: Routes = [
     path: 'editor/map/:id',
     component: MapComponent,
   },
+  {
+    path: 'editor/map/project/:projectId',
+    component: MapComponent,
+  },
   { path: '**', redirectTo: '/' },
 ];
 

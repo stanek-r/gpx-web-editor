@@ -1,25 +1,59 @@
 .map-div {
-  height: 78vh;
+  height: 100vh;
   width: calc(100% - 60px);
   margin-left: 60px;
 
   .save-button {
     position: absolute;
     top: 10px;
+    right: 45vw;
+    z-index: 110;
+  }
+
+  .information-table {
+    position: absolute;
+    top: 10px;
+    left: 70px;
+    z-index: 100;
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+  }
+
+  .side-menu {
+    position: absolute;
+    top: 10px;
     right: 10px;
+    z-index: 100;
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+  }
+
+  .side-menu-button {
+    position: absolute;
+    top: 25px;
+    right: 25px;
     z-index: 100;
   }
 
   agm-map {
     height: 100%;
     width: 100%;
+    z-index: 90;
   }
 }
-.point-info {
-  width: 80%;
-  padding-left: 80px;
 
-  .font-weight-bold {
-    font-weight: bold;
-  }
+.font-weight-bold {
+  font-weight: bold;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
