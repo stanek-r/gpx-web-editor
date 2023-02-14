@@ -1,10 +1,10 @@
 <app-side-menu></app-side-menu>
-<div class="action-menu">
+<div class="action-menu flex-column flex-md-row">
   <button type="button" class="btn btn-primary" (click)="newProject()">Přidat nový projekt</button>
 </div>
 <mat-divider class="mt-2"></mat-divider>
 <h2 class="mt-3">Mé projekty</h2>
-<div class="list" *ngIf="listOfProjects.length > 0">
+<div class="list justify-content-center justify-content-md-start" *ngIf="listOfProjects.length > 0">
   <div class="list-item" *ngFor="let project of listOfProjects">
     <p class="id-show m-0">ID: {{ project.id }}</p>
     <p>{{ project.name }}</p>
@@ -21,5 +21,5 @@
     </div>
   </div>
 </div>
-<!--<mat-divider class="mt-5"></mat-divider>-->
-<!--<h2 class="mt-3">Sdílené soubory</h2>-->
+<mat-divider class="mt-5"></mat-divider>
+<h2 class="mt-3">Sdílené soubory</h2>

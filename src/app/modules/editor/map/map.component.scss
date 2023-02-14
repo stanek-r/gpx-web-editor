@@ -12,21 +12,28 @@
 
   .information-table {
     position: absolute;
-    top: 10px;
-    left: 70px;
-    z-index: 100;
+    z-index: 101;
     background-color: white;
     border-radius: 10px;
     padding: 15px;
     display: flex;
     flex-direction: column;
-    max-width: 300px;
+
+    @media (max-width: 540px) {
+      max-width: 100%;
+      width: calc(100% - 60px);
+      bottom: 0;
+      left: 60px;
+      overflow-y: auto;
+    }
+    @media (min-width: 541px) {
+      top: 10px;
+      left: 70px;
+    }
   }
 
   .side-menu {
     position: absolute;
-    top: 10px;
-    right: 10px;
     z-index: 100;
     background-color: white;
     border-radius: 10px;
@@ -34,6 +41,19 @@
     display: flex;
     flex-direction: column;
     max-width: 300px;
+
+    @media (max-width: 540px) {
+      max-width: 100%;
+      width: calc(100% - 60px);
+      right: 0;
+      top: 0;
+      max-height: 30%;
+      overflow-y: auto;
+    }
+    @media (min-width: 541px) {
+      right: 10px;
+      top: 10px;
+    }
   }
 
   .side-menu-button {

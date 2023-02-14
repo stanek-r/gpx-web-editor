@@ -1,14 +1,14 @@
 <app-side-menu></app-side-menu>
-<div class="action-menu">
+<div class="action-menu flex-column flex-md-row">
   <button type="button" class="btn btn-primary" (click)="addNewGroup()">Vytvořit novou skupinu bodů</button>
-  <button type="button" class="btn btn-dark d-flex gap-2" (click)="uploadFile()">
+  <button type="button" class="btn btn-dark d-flex justify-content-center gap-2" (click)="uploadFile()">
     <mat-icon>cloud_upload</mat-icon><span>Nahrát GPX soubor</span>
   </button>
 </div>
 <mat-divider class="mt-2"></mat-divider>
 <h2 class="mt-3">Mé soubory</h2>
 <ng-container *ngIf="pointGroups$ | async as pointGroups">
-  <div class="list" *ngIf="pointGroups.length > 0">
+  <div class="list justify-content-center justify-content-md-start" *ngIf="pointGroups.length > 0">
     <div *ngFor="let group of pointGroups">
       <p class="id-show m-0">ID: {{ group.id }}</p>
       <p>{{ group.name }}</p>
@@ -33,7 +33,7 @@
 <mat-divider class="mt-5"></mat-divider>
 <ng-container *ngIf="sharedPointGroups$ | async as sharedPointGroups">
   <h2 class="mt-3">Sdílené soubory</h2>
-  <div class="list">
+  <div class="list justify-content-center justify-content-md-start">
     <div *ngFor="let group of sharedPointGroups">
       <p class="id-show m-0">ID: {{ group.id }}</p>
       <p>{{ group.name }}</p>
