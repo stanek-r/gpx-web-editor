@@ -13,10 +13,7 @@ export class SideMenuComponent {
   @Input() backUrl?: string;
   @Output() clickedBackEvent = new EventEmitter<void>();
 
-  constructor(
-    private readonly firebaseService: FirebaseService,
-    private readonly router: Router
-  ) {}
+  constructor(private readonly firebaseService: FirebaseService, private readonly router: Router) {}
 
   toggleSideMenu(): void {
     this.sideMenuExpanded = !this.sideMenuExpanded;

@@ -15,10 +15,7 @@ export class LoginComponent {
   registerSwitch = false;
   error?: string;
 
-  constructor(
-    private readonly firebaseService: FirebaseService,
-    private readonly blockUiService: BlockUiService
-  ) {}
+  constructor(private readonly firebaseService: FirebaseService, private readonly blockUiService: BlockUiService) {}
 
   loginEmailClick(): void {
     const email = this.email.nativeElement.value;

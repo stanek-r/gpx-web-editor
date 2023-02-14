@@ -26,20 +26,10 @@
     </div>
     <div class="input-group mt-2 d-flex justify-content-center">
       <button type="submit" class="btn btn-dark btn-lg">Přihlásit se</button>
-      <button
-        type="button"
-        class="btn btn-secondary btn-lg"
-        (click)="switchRegister(true)"
-      >
-        Registrovat se
-      </button>
+      <button type="button" class="btn btn-secondary btn-lg" (click)="switchRegister(true)">Registrovat se</button>
     </div>
   </form>
-  <button
-    type="button"
-    class="btn btn-dark btn-lg mt-2"
-    (click)="loginGoogleClick()"
-  >
+  <button type="button" class="btn btn-dark btn-lg mt-2" (click)="loginGoogleClick()">
     Přihlásit se pomocí Google
   </button>
   <!--  <button-->
@@ -88,17 +78,9 @@
         {{ error }}
       </div>
       <div class="input-group mt-2 d-flex justify-content-center">
-        <button type="submit" class="btn btn-secondary btn-lg">
-          Registrovat se
-        </button>
+        <button type="submit" class="btn btn-secondary btn-lg">Registrovat se</button>
       </div>
     </form>
-    <button
-      type="button"
-      class="btn btn-dark btn-lg mt-2"
-      (click)="switchRegister(false)"
-    >
-      Zpět na přihlášení
-    </button>
+    <button type="button" class="btn btn-dark btn-lg mt-2" (click)="switchRegister(false)">Zpět na přihlášení</button>
   </div>
 </ng-template>

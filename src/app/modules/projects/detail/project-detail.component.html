@@ -2,18 +2,21 @@
 <div class="container" *ngIf="projectToShow">
   <p class="id-show m-0 mt-4">ID: {{ projectToShow.id }}</p>
   <p>{{ projectToShow.name }}</p>
+  <div class="d-flex mt-2 gap-3">
+    <button class="btn btn-primary d-flex gap-2" [routerLink]="'/editor/map/project/' + projectToShow.id">
+      <mat-icon>map</mat-icon><span>Zobrazit všechny soubory na mapě</span>
+    </button>
+    <button class="btn btn-secondary d-flex gap-2" (click)="exportAllToFile()">
+      <mat-icon>cloud_download</mat-icon><span>Exportovat do jednoho GPX souboru</span>
+    </button>
+    <button type="button" class="btn btn-danger d-flex gap-2" (click)="deleteProject()">
+      <mat-icon>delete_forever</mat-icon>Smazat
+    </button>
+  </div>
   <div class="w-100">
-    <form
-      class="row gap-2 p-2 mt-3"
-      [formGroup]="fg"
-      (ngSubmit)="saveChanges()"
-    >
+    <form class="row gap-2 p-2 mt-3" [formGroup]="fg" (ngSubmit)="saveChanges()">
       <input class="form-control" placeholder="Jméno" formControlName="name" />
-      <textarea
-        class="form-control"
-        placeholder="Popis"
-        formControlName="description"
-      ></textarea>
+      <textarea class="form-control" placeholder="Popis" formControlName="description"></textarea>
       <input
         class="form-control"
         placeholder="Sdílení, zadejte email uživatelů, rozdělené čárkou"
@@ -21,50 +24,24 @@
         readonly
       />
       <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-primary" [disabled]="!changed">
-          Uložit
-        </button>
-        <button
-          type="button"
-          class="btn btn-dark"
-          [disabled]="!changed"
-          (click)="cancelChanges()"
-        >
-          Zrušit změny
-        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="!changed">Uložit</button>
+        <button type="button" class="btn btn-dark" [disabled]="!changed" (click)="cancelChanges()">Zrušit změny</button>
       </div>
     </form>
   </div>
   <h2 class="mt-4">Soubory:</h2>
   <div class="d-flex w-50 gap-3" *ngIf="pointGroups$ | async as pointGroups">
-    <select
-      class="form-control"
-      [(ngModel)]="addFileToProjectInput"
-      minlength="10"
-      maxlength="10"
-    >
+    <select class="form-control" [(ngModel)]="addFileToProjectInput" minlength="10" maxlength="10">
       <option value="">Vyberte soubor pro přidání</option>
       <option *ngFor="let pointGroup of pointGroups" [value]="pointGroup.id">
         {{ pointGroup.name }}
       </option>
     </select>
-    <button type="button" class="btn btn-primary" (click)="addToProject()">
-      Přidat
-    </button>
-    <button
-      type="button"
-      class="btn btn-dark text-nowrap"
-      (click)="uploadFile()"
-    >
-      Nahrát soubor
+    <button type="button" class="btn btn-primary" (click)="addToProject()">Přidat</button>
+    <button type="button" class="btn btn-dark text-nowrap d-flex gap-2" (click)="uploadFile()">
+      <mat-icon>cloud_upload</mat-icon><span>Nahrát GPX soubor</span>
     </button>
   </div>
-  <button
-    class="btn btn-primary mt-4 d-flex gap-2"
-    [routerLink]="'/editor/map/project/' + projectToShow.id"
-  >
-    <mat-icon>map</mat-icon><span>Zobrazit všechny soubory na mapě</span>
-  </button>
   <div class="d-flex" *ngIf="gpxFiles.length > 0">
     <div
       *ngFor="let gpxFileId of projectToShow.gpxFileIds; let i = index"
@@ -92,19 +69,11 @@
           >
             <mat-icon>map</mat-icon>
           </button>
-          <button
-            type="button"
-            class="btn btn-secondary d-flex"
-            (click)="exportToFile(gpxFileId)"
-          >
+          <button type="button" class="btn btn-secondary d-flex" (click)="exportToFile(gpxFileId)">
             <mat-icon>cloud_download</mat-icon>
           </button>
-          <button
-            type="button"
-            class="btn btn-danger d-flex"
-            (click)="removeFromProject(gpxFileId)"
-          >
-            <mat-icon>delete_forever</mat-icon>
+          <button type="button" class="btn btn-danger d-flex" (click)="removeFromProject(gpxFileId)">
+            <mat-icon>remove_circle_outline</mat-icon>
           </button>
         </div>
       </ng-container>

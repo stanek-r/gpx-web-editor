@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import {
-  PointGroupInfo,
-  StorageService,
-} from '../../../services/storage.service';
+import { PointGroupInfo, StorageService } from '../../../services/storage.service';
 import { nanoid } from 'nanoid';
 import { GpxModel } from '../../../shared/models/gpx.model';
 import { MatDialog } from '@angular/material/dialog';
 import { UploadComponent } from '../../upload/components/upload/upload.component';
 import { Router } from '@angular/router';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-editor-list',
@@ -53,7 +51,17 @@ export class EditorListComponent implements OnInit {
   }
 
   removeGroup(id: string): void {
-    this.storageService.removeFile(id);
+    this.dialog
+      .open(ConfirmationDialogComponent, {
+        width: '35%',
+        data: { title: 'Smazat soubor?', confirmButtonText: 'Smazat' },
+      })
+      .afterClosed()
+      .subscribe(async (value) => {
+        if (value) {
+          this.storageService.removeFile(id);
+        }
+      });
   }
 
   uploadFile(): void {

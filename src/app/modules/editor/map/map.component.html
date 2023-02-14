@@ -4,10 +4,7 @@
     <div class="d-flex justify-content-center" *ngIf="files.length > 1">
       <h4>{{ files[selectedFile].metadata?.name }}</h4>
     </div>
-    <div
-      class="d-flex justify-content-center"
-      [ngClass]="files.length > 1 ? 'mt-2' : ''"
-    >
+    <div class="d-flex justify-content-center" [ngClass]="files.length > 1 ? 'mt-2' : ''">
       <h5 *ngIf="selectedType === 'waypoints'">Bod {{ selectedIndex + 1 }}</h5>
       <h5 *ngIf="selectedType === 'tracks'">Trasa {{ selectedIndex + 1 }}</h5>
       <h5 *ngIf="selectedType === 'routes'">Cesta {{ selectedIndex + 1 }}</h5>
@@ -18,62 +15,27 @@
       <span>Typ: {{ selectedSection.type }}</span>
       <span>Počet bodů: {{ selectedSection.points.length }}</span>
     </ng-container>
-    <div
-      class="d-flex justify-content-center mt-3"
-      *ngIf="selectedType !== 'waypoints'"
-    >
+    <div class="d-flex justify-content-center mt-3" *ngIf="selectedType !== 'waypoints'">
       <h6>Bod {{ subSelectedIndex + 1 }}</h6>
     </div>
     <ng-container *ngIf="selectedType === 'waypoints'">
-      <span>Jméno {{ selectedPoint["name"] }}</span>
-      <span>Popis: {{ selectedPoint["desc"] }}</span>
-      <span>Komentář: {{ selectedPoint["cmt"] }}</span>
+      <span>Jméno {{ selectedPoint['name'] }}</span>
+      <span>Popis: {{ selectedPoint['desc'] }}</span>
+      <span>Komentář: {{ selectedPoint['cmt'] }}</span>
     </ng-container>
     <span>Lat: {{ selectedPoint.lat }}</span>
     <span>Lon: {{ selectedPoint.lon }}</span>
-    <span *ngIf="selectedPoint.ele && selectedPoint.ele > 0"
-      >Ele: {{ selectedPoint.ele }}</span
-    >
-    <span *ngIf="selectedPoint.time"
-      >Time: {{ selectedPoint.time | date }}</span
-    >
-    <div
-      class="d-flex justify-content-center mt-3"
-      *ngIf="selectedType === 'waypoints'"
-    >
-      <button
-        type="button"
-        class="btn btn-warning"
-        (click)="removePoint(selectedIndex)"
-      >
-        Smazat bod
-      </button>
+    <span *ngIf="selectedPoint.ele && selectedPoint.ele > 0">Ele: {{ selectedPoint.ele }}</span>
+    <span *ngIf="selectedPoint.time">Time: {{ selectedPoint.time | date }}</span>
+    <div class="d-flex justify-content-center mt-3" *ngIf="selectedType === 'waypoints'">
+      <button type="button" class="btn btn-warning" (click)="removePoint(selectedIndex)">Smazat bod</button>
     </div>
-    <div
-      class="d-flex gap-2 justify-content-center mt-3"
-      *ngIf="selectedType !== 'waypoints'"
-    >
-      <button
-        type="button"
-        class="btn btn-warning"
-        (click)="removePoint(subSelectedIndex)"
-      >
-        Smazat bod
-      </button>
-      <button
-        type="button"
-        class="btn btn-danger"
-        *ngIf="selectedType === 'routes'"
-        (click)="RemoveGroup()"
-      >
+    <div class="d-flex gap-2 justify-content-center mt-3" *ngIf="selectedType !== 'waypoints'">
+      <button type="button" class="btn btn-warning" (click)="removePoint(subSelectedIndex)">Smazat bod</button>
+      <button type="button" class="btn btn-danger" *ngIf="selectedType === 'routes'" (click)="RemoveGroup()">
         Smazat cestu
       </button>
-      <button
-        type="button"
-        class="btn btn-danger"
-        *ngIf="selectedType === 'tracks'"
-        (click)="RemoveGroup()"
-      >
+      <button type="button" class="btn btn-danger" *ngIf="selectedType === 'tracks'" (click)="RemoveGroup()">
         Smazat trasu
       </button>
     </div>
@@ -83,34 +45,20 @@
       <h4>Informace</h4>
     </div>
     <ng-container *ngIf="files.length > 1">
-      <select
-        class="form-select"
-        [(ngModel)]="selectedFile"
-        (ngModelChange)="showPointInfo = false"
-      >
+      <select class="form-select" [(ngModel)]="selectedFile" (ngModelChange)="showPointInfo = false">
         <option *ngFor="let file of files; let i = index" [value]="i">
           {{ file.metadata?.name }}
         </option>
       </select>
     </ng-container>
-    <select
-      class="form-select"
-      [(ngModel)]="selectedType"
-      (ngModelChange)="showPointInfo = false"
-    >
+    <select class="form-select" [(ngModel)]="selectedType" (ngModelChange)="showPointInfo = false">
       <option value="waypoints">Body</option>
       <option value="tracks">Trasy</option>
       <option value="routes">Cesty</option>
     </select>
-    <mat-slide-toggle [(ngModel)]="addPoint"
-      >Mód přidávání bodů</mat-slide-toggle
-    >
-    <button
-      (click)="addGroup()"
-      class="btn btn-primary"
-      *ngIf="selectedType !== 'waypoints'"
-    >
-      Přidat {{ selectedType === "tracks" ? "trasu" : "cestu" }}
+    <mat-slide-toggle [(ngModel)]="addPoint">Mód přidávání bodů</mat-slide-toggle>
+    <button (click)="addGroup()" class="btn btn-primary" *ngIf="selectedType !== 'waypoints'">
+      Přidat {{ selectedType === 'tracks' ? 'trasu' : 'cestu' }}
     </button>
     <div class="d-flex flex-column gap-2">
       <ng-container *ngIf="selectedType === 'waypoints'">
@@ -119,12 +67,7 @@
           class="d-flex flex-column cursor-pointer"
           (click)="waypointClick(selectedFile, i)"
         >
-          <span
-            [ngClass]="
-              selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''
-            "
-            >Bod {{ i + 1 }}</span
-          >
+          <span [ngClass]="selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''">Bod {{ i + 1 }}</span>
           <span>Jméno: {{ point.name }}</span>
         </div>
       </ng-container>
@@ -134,12 +77,7 @@
           class="d-flex flex-column cursor-pointer"
           (click)="trackPointClick(selectedFile, i, 0)"
         >
-          <span
-            [ngClass]="
-              selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''
-            "
-            >Trasa {{ i + 1 }}</span
-          >
+          <span [ngClass]="selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''">Trasa {{ i + 1 }}</span>
           <span>Jméno: {{ group.name }}</span>
           <span>Počet bodů: {{ group.points.length }}</span>
         </div>
@@ -150,12 +88,7 @@
           class="d-flex flex-column cursor-pointer"
           (click)="routePointClick(selectedFile, i, 0)"
         >
-          <span
-            [ngClass]="
-              selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''
-            "
-            >Cesta {{ i + 1 }}</span
-          >
+          <span [ngClass]="selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''">Cesta {{ i + 1 }}</span>
           <span>Jméno: {{ group.name }}</span>
           <span>Počet bodů: {{ group.points.length }}</span>
         </div>
@@ -180,11 +113,7 @@
         (markerClick)="waypointClick(fileIndex, i)"
         (markerRightClick)="waypointRightClick(fileIndex, i)"
         [markerDraggable]="true"
-        [opacity]="
-          showPointInfo && selectedType === 'waypoints' && selectedIndex === i
-            ? 1.0
-            : 0.88
-        "
+        [opacity]="showPointInfo && selectedType === 'waypoints' && selectedIndex === i ? 1.0 : 0.88"
       ></agm-marker>
       <ng-container *ngFor="let track of file.tracks; let i1 = index">
         <agm-marker
@@ -195,26 +124,13 @@
           (markerClick)="trackPointClick(fileIndex, i1, i2)"
           (markerRightClick)="trackPointRightClick(fileIndex, i1, i2)"
           [opacity]="
-            showPointInfo &&
-            selectedType === 'tracks' &&
-            selectedIndex === i1 &&
-            subSelectedIndex === i2
-              ? 1.0
-              : 0.88
+            showPointInfo && selectedType === 'tracks' && selectedIndex === i1 && subSelectedIndex === i2 ? 1.0 : 0.88
           "
           [markerDraggable]="true"
         ></agm-marker>
         <agm-polyline
-          [strokeColor]="
-            showPointInfo && selectedType === 'tracks' && selectedIndex === i1
-              ? '#8B0000'
-              : '#556B2F'
-          "
-          [strokeWeight]="
-            showPointInfo && selectedType === 'tracks' && selectedIndex === i1
-              ? 10
-              : 5
-          "
+          [strokeColor]="showPointInfo && selectedType === 'tracks' && selectedIndex === i1 ? '#8B0000' : '#556B2F'"
+          [strokeWeight]="showPointInfo && selectedType === 'tracks' && selectedIndex === i1 ? 10 : 5"
           (lineClick)="trackLineClick(fileIndex, i1)"
         >
           <agm-polyline-point
@@ -233,26 +149,13 @@
           (markerClick)="routePointClick(fileIndex, i1, i2)"
           (markerRightClick)="routePointRightClick(fileIndex, i1, i2)"
           [opacity]="
-            showPointInfo &&
-            selectedType === 'routes' &&
-            selectedIndex === i1 &&
-            subSelectedIndex === i2
-              ? 1.0
-              : 0.88
+            showPointInfo && selectedType === 'routes' && selectedIndex === i1 && subSelectedIndex === i2 ? 1.0 : 0.88
           "
           [markerDraggable]="true"
         ></agm-marker>
         <agm-polyline
-          [strokeColor]="
-            showPointInfo && selectedType === 'routes' && selectedIndex === i1
-              ? '#8B0000'
-              : '#008B8B'
-          "
-          [strokeWeight]="
-            showPointInfo && selectedType === 'routes' && selectedIndex === i1
-              ? 10
-              : 5
-          "
+          [strokeColor]="showPointInfo && selectedType === 'routes' && selectedIndex === i1 ? '#8B0000' : '#008B8B'"
+          [strokeWeight]="showPointInfo && selectedType === 'routes' && selectedIndex === i1 ? 10 : 5"
           (lineClick)="routeLineClick(fileIndex, i1)"
         >
           <agm-polyline-point

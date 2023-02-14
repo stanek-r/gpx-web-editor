@@ -6,6 +6,7 @@ import { ProjectListComponent } from './list/project-list.component';
 import { ProjectDetailComponent } from './detail/project-detail.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
   declarations: [ProjectListComponent, ProjectDetailComponent],
@@ -16,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
     ReactiveFormsModule,
     FormsModule,
     MatIconModule,
+    MatDividerModule,
   ],
   exports: [],
 })

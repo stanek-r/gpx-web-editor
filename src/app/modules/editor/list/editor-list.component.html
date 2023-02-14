@@ -1,10 +1,8 @@
 <app-side-menu></app-side-menu>
 <div class="action-menu">
-  <button type="button" class="btn btn-primary" (click)="addNewGroup()">
-    Vytvořit novou skupinu bodů
-  </button>
-  <button type="button" class="btn btn-primary" (click)="uploadFile()">
-    Nahrát GPX soubor
+  <button type="button" class="btn btn-primary" (click)="addNewGroup()">Vytvořit novou skupinu bodů</button>
+  <button type="button" class="btn btn-dark d-flex gap-2" (click)="uploadFile()">
+    <mat-icon>cloud_upload</mat-icon><span>Nahrát GPX soubor</span>
   </button>
 </div>
 <mat-divider class="mt-2"></mat-divider>
@@ -16,34 +14,16 @@
       <p>{{ group.name }}</p>
       <p class="description">{{ group.description }}</p>
 
-      <button
-        type="button"
-        class="btn btn-primary my-1"
-        [routerLink]="group.id"
-      >
-        Detail
-      </button>
+      <button type="button" class="btn btn-primary my-1" [routerLink]="group.id">Detail</button>
 
       <div class="d-flex flex-row gap-2 mt-1">
-        <button
-          type="button"
-          class="btn btn-primary d-flex"
-          [routerLink]="'map/' + group.id"
-        >
+        <button type="button" class="btn btn-primary d-flex" [routerLink]="'map/' + group.id">
           <mat-icon>map</mat-icon>
         </button>
-        <button
-          type="button"
-          class="btn btn-secondary d-flex"
-          (click)="exportToFile(group.id)"
-        >
+        <button type="button" class="btn btn-secondary d-flex" (click)="exportToFile(group.id)">
           <mat-icon>cloud_download</mat-icon>
         </button>
-        <button
-          type="button"
-          class="btn btn-danger d-flex"
-          (click)="removeGroup(group.id)"
-        >
+        <button type="button" class="btn btn-danger d-flex" (click)="removeGroup(group.id)">
           <mat-icon>delete_forever</mat-icon>
         </button>
       </div>
@@ -59,34 +39,16 @@
       <p>{{ group.name }}</p>
       <p class="description">{{ group.description }}</p>
 
-      <button
-        type="button"
-        class="btn btn-primary my-1"
-        [routerLink]="group.id"
-      >
-        Detail
-      </button>
+      <button type="button" class="btn btn-primary my-1" [routerLink]="group.id">Detail</button>
 
       <div class="d-flex flex-row gap-2 mt-1">
-        <button
-          type="button"
-          class="btn btn-primary d-flex"
-          [routerLink]="'map/' + group.id"
-        >
+        <button type="button" class="btn btn-primary d-flex" [routerLink]="'map/' + group.id">
           <mat-icon>map</mat-icon>
         </button>
-        <button
-          type="button"
-          class="btn btn-secondary d-flex"
-          (click)="exportToFile(group.id)"
-        >
+        <button type="button" class="btn btn-secondary d-flex" (click)="exportToFile(group.id)">
           <mat-icon>cloud_download</mat-icon>
         </button>
-        <button
-          type="button"
-          class="btn btn-danger d-flex"
-          (click)="removeGroup(group.id)"
-        >
+        <button type="button" class="btn btn-danger d-flex" (click)="removeGroup(group.id)">
           <mat-icon>delete_forever</mat-icon>
         </button>
       </div>

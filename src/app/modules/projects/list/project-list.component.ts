@@ -4,6 +4,8 @@ import { Project } from '../../../shared/models/project.model';
 import { nanoid } from 'nanoid';
 import { take } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-project-list',
@@ -15,7 +17,8 @@ export class ProjectListComponent implements OnInit {
 
   constructor(
     private readonly firebaseService: FirebaseService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -50,8 +53,17 @@ export class ProjectListComponent implements OnInit {
   }
 
   async deleteProject(id: string): Promise<void> {
-    await this.firebaseService.deleteProject(id);
-
-    this.fetchProjects();
+    this.dialog
+      .open(ConfirmationDialogComponent, {
+        width: '35%',
+        data: { title: 'Smazat projekt?', confirmButtonText: 'Smazat' },
+      })
+      .afterClosed()
+      .subscribe(async (value) => {
+        if (value) {
+          await this.firebaseService.deleteProject(id);
+          this.fetchProjects();
+        }
+      });
   }
 }

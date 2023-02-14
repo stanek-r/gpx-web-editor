@@ -20,8 +20,7 @@ export interface SharedFileInfo {
   providedIn: 'root',
 })
 export class FirebaseService {
-  private fireBaseDatabaseUrl =
-    'https://gpx-web-editor-default-rtdb.europe-west1.firebasedatabase.app';
+  private fireBaseDatabaseUrl = 'https://gpx-web-editor-default-rtdb.europe-west1.firebasedatabase.app';
   private filesBasePath = '/gpxfiles';
   private sharesBasePath = '/sharing';
   private projectsBasePath = '/project';
@@ -41,19 +40,13 @@ export class FirebaseService {
     });
   }
 
-  async saveGPXFileData(
-    id: string,
-    data: GpxModel,
-    uid?: string
-  ): Promise<void> {
+  async saveGPXFileData(id: string, data: GpxModel, uid?: string): Promise<void> {
     const user = this.fireUserSubject.getValue();
     if (!user) {
       return;
     }
     this.setFileSharing(id, Object.keys(data.permissionData ?? {}));
-    return this.fireDB
-      .list(this.filesBasePath + '/' + (uid ?? user.uid))
-      .set(id, data);
+    return this.fireDB.list(this.filesBasePath + '/' + (uid ?? user.uid)).set(id, data);
   }
 
   deleteGPXFileData(id: string): void {
@@ -75,11 +68,7 @@ export class FirebaseService {
     }
     return new Promise<GpxModel | null>((resolve) => {
       this.http
-        .get(
-          `${this.fireBaseDatabaseUrl + this.filesBasePath}/${
-            uid ?? user.uid
-          }/${id}.json?auth=${token}`
-        )
+        .get(`${this.fireBaseDatabaseUrl + this.filesBasePath}/${uid ?? user.uid}/${id}.json?auth=${token}`)
         .subscribe({
           next: (data) => {
             resolve(data as GpxModel);
@@ -94,9 +83,7 @@ export class FirebaseService {
     if (!user) {
       return;
     }
-    this.fireDB
-      .list(this.sharesBasePath + '/' + user.uid)
-      .set(fileToShare, withWho);
+    this.fireDB.list(this.sharesBasePath + '/' + user.uid).set(fileToShare, withWho);
   }
 
   getProject(id: string): Observable<Project | null> {
@@ -110,9 +97,7 @@ export class FirebaseService {
           return of(null);
         }
         return this.http.get<any>(
-          `${this.fireBaseDatabaseUrl + this.projectsBasePath}/${
-            user.uid
-          }/${id}.json?auth=${token}`
+          `${this.fireBaseDatabaseUrl + this.projectsBasePath}/${user.uid}/${id}.json?auth=${token}`
         );
       })
     );
@@ -129,11 +114,7 @@ export class FirebaseService {
         if (!token) {
           return of(null);
         }
-        return this.http.get<any>(
-          `${this.fireBaseDatabaseUrl + this.projectsBasePath}/${
-            user.uid
-          }.json?auth=${token}`
-        );
+        return this.http.get<any>(`${this.fireBaseDatabaseUrl + this.projectsBasePath}/${user.uid}.json?auth=${token}`);
       })
     );
   }
@@ -143,9 +124,7 @@ export class FirebaseService {
     if (!user) {
       return;
     }
-    return this.fireDB
-      .list(this.projectsBasePath + '/' + user.uid)
-      .set(id, project);
+    return this.fireDB.list(this.projectsBasePath + '/' + user.uid).set(id, project);
   }
 
   async deleteProject(id: string): Promise<void> {
@@ -177,9 +156,7 @@ export class FirebaseService {
                     return of(null);
                   }
                   return this.http.get<any>(
-                    `${this.fireBaseDatabaseUrl + this.filesBasePath}/${
-                      user.uid
-                    }.json?auth=${token}`
+                    `${this.fireBaseDatabaseUrl + this.filesBasePath}/${user.uid}.json?auth=${token}`
                   );
                 })
               );
@@ -206,11 +183,7 @@ export class FirebaseService {
                     return of([]);
                   }
                   return this.http
-                    .get<any>(
-                      `${
-                        this.fireBaseDatabaseUrl + this.sharesBasePath
-                      }.json?auth=${token}`
-                    )
+                    .get<any>(`${this.fireBaseDatabaseUrl + this.sharesBasePath}.json?auth=${token}`)
                     .pipe(
                       map((value) => {
                         const ret: SharedFileInfo[] = [];
@@ -218,11 +191,7 @@ export class FirebaseService {
                           for (const key2 of Object.keys(value[key])) {
                             if (
                               user.email &&
-                              (value[key][key2] as any[]).includes(
-                                user.email
-                                  .replace('@', 'AT')
-                                  .replace('.', 'DOT')
-                              )
+                              (value[key][key2] as any[]).includes(user.email.replace('@', 'AT').replace('.', 'DOT'))
                             ) {
                               ret.push({
                                 uid: key,
@@ -259,9 +228,7 @@ export class FirebaseService {
   }
 
   registerWithEmail(email: string, password: string): Observable<any> {
-    return from(
-      this.fireAuth.createUserWithEmailAndPassword(email, password)
-    ).pipe(
+    return from(this.fireAuth.createUserWithEmailAndPassword(email, password)).pipe(
       tap((credentials) => {
         if (credentials?.user && !credentials.user.emailVerified) {
           credentials.user.sendEmailVerification();

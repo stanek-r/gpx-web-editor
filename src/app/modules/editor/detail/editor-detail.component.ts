@@ -3,6 +3,8 @@ import { StorageService } from '../../../services/storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GpxModel } from '../../../shared/models/gpx.model';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-editor-detail',
@@ -25,6 +27,7 @@ export class EditorDetailComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly route: ActivatedRoute,
+    private readonly dialog: MatDialog,
     private readonly storageService: StorageService,
     private readonly fb: FormBuilder
   ) {}
@@ -46,17 +49,10 @@ export class EditorDetailComponent implements OnInit {
     this.fg.setValue({
       name: this.fileData.metadata.name ?? '',
       desc: this.fileData.metadata.desc ?? '',
-      sharing: Object.keys(this.fileData.permissionData)
-        .join(',')
-        .replace('AT', '@')
-        .replace('DOT', '.'),
+      sharing: Object.keys(this.fileData.permissionData).join(',').replace('AT', '@').replace('DOT', '.'),
     });
     this.fg.valueChanges.subscribe(() => {
-      if (
-        this.fg.controls.name.dirty ||
-        this.fg.controls.desc.dirty ||
-        this.fg.controls.sharing.dirty
-      ) {
+      if (this.fg.controls.name.dirty || this.fg.controls.desc.dirty || this.fg.controls.sharing.dirty) {
         this.changed = true;
       }
     });
@@ -74,11 +70,7 @@ export class EditorDetailComponent implements OnInit {
     this.fileData.permissionData = {} as any;
     if (this.fg.value.sharing.length > 0) {
       for (const email of this.fg.value.sharing.split(',') as string) {
-        const fixedEmail = email
-          .trim()
-          .toLowerCase()
-          .replace('@', 'AT')
-          .replace('.', 'DOT');
+        const fixedEmail = email.trim().toLowerCase().replace('@', 'AT').replace('.', 'DOT');
         // @ts-ignore
         this.fileData.permissionData[fixedEmail] = true;
       }
@@ -100,8 +92,18 @@ export class EditorDetailComponent implements OnInit {
   }
 
   removeGroup(id: string): void {
-    this.storageService.removeFile(id);
-    this.router.navigate(['/editor']);
+    this.dialog
+      .open(ConfirmationDialogComponent, {
+        width: '35%',
+        data: { title: 'Smazat soubor?', confirmButtonText: 'Smazat' },
+      })
+      .afterClosed()
+      .subscribe(async (value) => {
+        if (value) {
+          this.storageService.removeFile(id);
+          this.router.navigate(['/editor']);
+        }
+      });
   }
 
   async exportToFile(id: string): Promise<void> {

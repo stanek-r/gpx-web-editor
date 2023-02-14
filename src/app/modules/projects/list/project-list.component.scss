@@ -9,13 +9,21 @@
   }
 }
 
+h2 {
+  font-weight: bold;
+  margin-left: 60px;
+  width: calc(100% - 60px);
+  text-align: center;
+}
+
 .list {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  margin-left: 60px;
+  margin-left: 70px;
+  margin-right: 10px;
+  width: calc(100% - 80px);
 
-  div {
+  .list-item {
     display: flex;
     justify-content: center;
     flex-direction: column;

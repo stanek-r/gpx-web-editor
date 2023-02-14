@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  PointGroupInfo,
-  StorageService,
-} from '../../../services/storage.service';
+import { PointGroupInfo, StorageService } from '../../../services/storage.service';
 import { FirebaseService } from '../../../services/firebase.service';
 import { GpxModel } from '../../../shared/models/gpx.model';
 import { Project } from '../../../shared/models/project.model';
@@ -12,6 +9,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { UploadComponent } from '../../upload/components/upload/upload.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-project-detail',
@@ -72,11 +70,7 @@ export class ProjectDetailComponent implements OnInit {
         });
 
         this.fg.valueChanges.subscribe(() => {
-          if (
-            this.fg.controls.name.dirty ||
-            this.fg.controls.description.dirty ||
-            this.fg.controls.userIds.dirty
-          ) {
+          if (this.fg.controls.name.dirty || this.fg.controls.description.dirty || this.fg.controls.userIds.dirty) {
             this.changed = true;
           }
         });
@@ -106,11 +100,7 @@ export class ProjectDetailComponent implements OnInit {
   fetchPointGroups(): void {
     const pointGroups = this.storageService.getListOfFilesValue();
     this.pointGroups$.next(
-      !pointGroups
-        ? null
-        : pointGroups.filter(
-            (spg) => !this.projectToShow?.gpxFileIds.includes(spg.id)
-          )
+      !pointGroups ? null : pointGroups.filter((spg) => !this.projectToShow?.gpxFileIds.includes(spg.id))
     );
   }
 
@@ -182,6 +172,13 @@ export class ProjectDetailComponent implements OnInit {
     await this.storageService.exportToFile(id);
   }
 
+  async exportAllToFile(): Promise<void> {
+    if (!this.projectToShow) {
+      return;
+    }
+    await this.storageService.exportProjectToFile(this.projectToShow);
+  }
+
   uploadFile(): void {
     this.dialog
       .open(UploadComponent, {
@@ -189,5 +186,20 @@ export class ProjectDetailComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((value) => this.addFileToProject(value));
+  }
+
+  async deleteProject(): Promise<void> {
+    this.dialog
+      .open(ConfirmationDialogComponent, {
+        width: '35%',
+        data: { title: 'Smazat projekt?', confirmButtonText: 'Smazat' },
+      })
+      .afterClosed()
+      .subscribe(async (value) => {
+        if (value && this.projectToShow) {
+          await this.firebaseService.deleteProject(this.projectToShow.id);
+          this.router.navigate(['/projects']);
+        }
+      });
   }
 }
