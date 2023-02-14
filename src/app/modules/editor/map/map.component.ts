@@ -152,15 +152,24 @@ export class MapComponent implements OnInit, OnDestroy {
     this.setIndex(this.selectedFile, file[this.selectedType].length - 1);
   }
 
-  RemoveGroup(): void {
+  removeGroup(displayTitle: string): void {
     const file = this.files[this.selectedFile];
-
     if (this.selectedType === 'waypoints') {
       return;
     }
-    const index = this.selectedIndex;
-    this.setIndex(this.selectedFile, 0);
-    file[this.selectedType].splice(index, 1);
+    this.dialog
+      .open(ConfirmationDialogComponent, {
+        width: '35%',
+        data: { title: displayTitle, confirmButtonText: 'Smazat' },
+      })
+      .afterClosed()
+      .subscribe((value) => {
+        if (value) {
+          const index = this.selectedIndex;
+          this.setIndex(this.selectedFile, 0);
+          file[this.selectedType].splice(index, 1);
+        }
+      });
   }
 
   removePoint(index: number): void {
