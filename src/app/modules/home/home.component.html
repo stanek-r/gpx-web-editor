@@ -2,23 +2,29 @@
 <div class="ms-5 ps-5 pt-5 w-75">
   <h2>GPX Web editor</h2>
   <p>
-    Webová aplikace pro ukládání, úpravu a sdílení souborů GPX. Projekt je určen
-    k nasazení na Firebase. Lze je však exportovat do jednoduchého formátu
-    jednostránkové webové stránky.
+    Webová aplikace pro ukládání, úpravu a sdílení souborů GPX. Projekt je určen k nasazení na Firebase. Lze je však
+    exportovat do jednoduchého formátu jednostránkové webové stránky.
   </p>
   <p>
     GitHub repozitář:
-    <a href="https://github.com/stanek-r/gpx-web-editor"
-      >https://github.com/stanek-r/gpx-web-editor</a
-    >
+    <a href="https://github.com/stanek-r/gpx-web-editor">https://github.com/stanek-r/gpx-web-editor</a>
   </p>
   <div class="mt-5">
     <h3>Editor:</h3>
     <p>
-      V současné době je možnost nahrávat/stahovat/editovat a vytvářet
-      jednotlivé GPX soubory a následně je zobrazit na mapě
+      V současné době je možnost nahrávat/stahovat/editovat a vytvářet jednotlivé GPX soubory a následně je zobrazit na
+      mapě
     </p>
+    <p>Možnost je také jednotlivé GPX soubory nasdílet jiným uživatelům pomocí emailové adresy</p>
     <a class="btn btn-primary" routerLink="/editor">Přejít do editoru</a>
+  </div>
+  <div class="mt-5">
+    <h3>Projekty:</h3>
+    <p>
+      Slouží pro sjednocení GPX souborů do většího celku. Projekt může být zobrazen na mapě a jednotlivé GPX soubory
+      budou editovatelné najednou. Celý projekt zle následně exportovat do jednoho GPX souboru.
+    </p>
+    <a class="btn btn-primary" routerLink="/projects">Přejít na projekty</a>
   </div>
   <div *ngIf="fireUser$ | async as fireUser" class="mt-5">
     <h3>Současný uživatel:</h3>

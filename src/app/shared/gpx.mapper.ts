@@ -1,10 +1,4 @@
-import {
-  GpxMetaData,
-  GpxModel,
-  GpxPoint,
-  GpxPointGroup,
-  GpxWaypoint,
-} from './models/gpx.model';
+import { GpxMetaData, GpxModel, GpxPoint, GpxPointGroup, GpxWaypoint } from './models/gpx.model';
 import { MetaData, Point, Route, Track, Waypoint } from 'gpxparser';
 
 export function mapToGpxPoint(point: Point): GpxPoint {
@@ -20,9 +14,7 @@ export function mapToGpxWaypoint(point: Waypoint): GpxWaypoint {
   };
 }
 
-export function mapToGpxTrackOrRoute<T>(
-  trackOrRoute: Track | Route
-): GpxPointGroup {
+export function mapToGpxTrackOrRoute<T>(trackOrRoute: Track | Route): GpxPointGroup {
   const ret = {
     name: trackOrRoute.name ?? null,
     link: trackOrRoute.link ?? null,

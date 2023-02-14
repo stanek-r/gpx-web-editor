@@ -3,11 +3,7 @@ import gpxParser from 'gpxparser';
 import { StorageService } from '../../../../services/storage.service';
 import { GpxModel } from '../../../../shared/models/gpx.model';
 import { nanoid } from 'nanoid';
-import {
-  mapToGpxMetadata,
-  mapToGpxTrackOrRoute,
-  mapToGpxWaypoint,
-} from '../../../../shared/gpx.mapper';
+import { mapToGpxMetadata, mapToGpxTrackOrRoute, mapToGpxWaypoint } from '../../../../shared/gpx.mapper';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({

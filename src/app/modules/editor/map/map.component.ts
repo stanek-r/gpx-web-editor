@@ -1,11 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../../../services/storage.service';
-import {
-  GpxModel,
-  GpxPoint,
-  GpxPointGroup,
-} from '../../../shared/models/gpx.model';
+import { GpxModel, GpxPoint, GpxPointGroup } from '../../../shared/models/gpx.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { FirebaseService } from '../../../services/firebase.service';
@@ -199,12 +195,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
-  trackPointDrag(
-    event: any,
-    fileIndex: number,
-    index1: number,
-    index2: number
-  ): void {
+  trackPointDrag(event: any, fileIndex: number, index1: number, index2: number): void {
     const file = this.files[this.selectedFile];
 
     const point = file.tracks[index1].points[index2];
@@ -217,12 +208,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
-  routePointDrag(
-    event: any,
-    fileIndex: number,
-    index1: number,
-    index2: number
-  ): void {
+  routePointDrag(event: any, fileIndex: number, index1: number, index2: number): void {
     const file = this.files[this.selectedFile];
 
     const point = file.routes[index1].points[index2];
@@ -259,11 +245,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.showPointInfo = true;
   }
 
-  trackPointRightClick(
-    fileIndex: number,
-    index1: number,
-    index2: number
-  ): void {
+  trackPointRightClick(fileIndex: number, index1: number, index2: number): void {
     this.trackPointClick(fileIndex, index1, index2);
     this.showPointInfo = false;
     this.removePoint(this.subSelectedIndex);
@@ -275,11 +257,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.showPointInfo = true;
   }
 
-  routePointRightClick(
-    fileIndex: number,
-    index1: number,
-    index2: number
-  ): void {
+  routePointRightClick(fileIndex: number, index1: number, index2: number): void {
     this.routePointClick(fileIndex, index1, index2);
     this.showPointInfo = false;
     this.removePoint(this.subSelectedIndex);
@@ -320,19 +298,11 @@ export class MapComponent implements OnInit, OnDestroy {
       return;
     }
     this.lat =
-      allPoints
-        .map((p) => p.lat)
-        .reduce(
-          (previousValue, currentValue) => previousValue + currentValue,
-          0
-        ) / allPoints.length;
+      allPoints.map((p) => p.lat).reduce((previousValue, currentValue) => previousValue + currentValue, 0) /
+      allPoints.length;
     this.lng =
-      allPoints
-        .map((p) => p.lon)
-        .reduce(
-          (previousValue, currentValue) => previousValue + currentValue,
-          0
-        ) / allPoints.length;
+      allPoints.map((p) => p.lon).reduce((previousValue, currentValue) => previousValue + currentValue, 0) /
+      allPoints.length;
   }
 
   getSelectedSection(): GpxPointGroup | undefined {

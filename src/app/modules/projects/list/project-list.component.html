@@ -1,23 +1,25 @@
 <app-side-menu></app-side-menu>
-<div class="action-menu">
-  <button type="button" class="btn btn-primary" (click)="newProject()">
-    Přidat nový projekt
-  </button>
+<div class="action-menu flex-column flex-md-row">
+  <button type="button" class="btn btn-primary" (click)="newProject()">Přidat nový projekt</button>
 </div>
-<div class="list" *ngIf="listOfProjects.length > 0">
-  <div *ngFor="let project of listOfProjects">
-    <p class="id-show m-0 mt-4">ID: {{ project.id }}</p>
+<mat-divider class="mt-2"></mat-divider>
+<h2 class="mt-3">Mé projekty</h2>
+<div class="list justify-content-center justify-content-md-start" *ngIf="listOfProjects.length > 0">
+  <div class="list-item" *ngFor="let project of listOfProjects">
+    <p class="id-show m-0">ID: {{ project.id }}</p>
     <p>{{ project.name }}</p>
     <p class="description">{{ project.description }}</p>
-    <button type="button" class="btn btn-primary" [routerLink]="project.id">
-      Detail
-    </button>
-    <button
-      type="button"
-      class="btn btn-danger mt-1"
-      (click)="deleteProject(project.id)"
-    >
-      Odstranit
-    </button>
+    <div class="d-flex flex-column gap-2">
+      <button type="button" class="btn btn-primary" [routerLink]="project.id">Detail</button>
+      <button
+        type="button"
+        class="btn btn-danger d-flex justify-content-center gap-2"
+        (click)="deleteProject(project.id)"
+      >
+        <mat-icon>delete_forever</mat-icon><span>Smazat</span>
+      </button>
+    </div>
   </div>
 </div>
+<mat-divider class="mt-5"></mat-divider>
+<h2 class="mt-3">Sdílené soubory</h2>

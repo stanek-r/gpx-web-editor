@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import {
-  BlockUiInstance,
-  BlockUiService,
-} from '../../../services/block-ui.service';
+import { BlockUiInstance, BlockUiService } from '../../../services/block-ui.service';
 
 @Component({
   selector: 'app-block-ui-provider',

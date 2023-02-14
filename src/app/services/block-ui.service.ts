@@ -59,10 +59,7 @@ export class BlockUiService {
  * @param options Settings for ui block
  */
 // tslint:disable-next-line:typedef
-export function blockUi(
-  blockUiService: BlockUiService,
-  options?: Partial<BlockUiOptions>
-) {
+export function blockUi(blockUiService: BlockUiService, options?: Partial<BlockUiOptions>) {
   return <T>(source: Observable<T>) =>
     defer(() => {
       const block = blockUiService.block(options);
