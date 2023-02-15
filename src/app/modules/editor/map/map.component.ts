@@ -1,10 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../../../services/storage.service';
-import { GpxModel, GpxPoint, GpxPointGroup } from '../../../shared/models/gpx.model';
+import { GpxModel, GpxPoint, GpxPointGroup, GpxWaypoint } from '../../../shared/models/gpx.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { FirebaseService } from '../../../services/firebase.service';
+import { ExportData, SplitFileDialogComponent } from './split-file-dialog/split-file-dialog.component';
+import { nanoid } from 'nanoid';
+import { Project } from '../../../shared/models/project.model';
 
 @Component({
   selector: 'app-map',
@@ -18,6 +21,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   backToDetail = false;
   backProject: string | null = null;
+  project: Project | null = null;
 
   ids: string[] = [];
   files: GpxModel[] = [];
@@ -60,6 +64,7 @@ export class MapComponent implements OnInit, OnDestroy {
           this.router.navigate(['/projects']);
           return;
         }
+        this.project = project;
         this.ids.push(...project.gpxFileIds);
         await this.loadFiles();
       });
@@ -352,5 +357,75 @@ export class MapComponent implements OnInit, OnDestroy {
       return '/projects/' + this.backProject;
     }
     return '/editor';
+  }
+
+  splitFile(): void {
+    this.dialog
+      .open(SplitFileDialogComponent, {
+        width: '50%',
+        data: { file: this.files[this.selectedFile] },
+      })
+      .afterClosed()
+      .subscribe(async (value: ExportData | undefined) => {
+        if (!value || !this.project) {
+          return;
+        }
+        const file = this.files[this.selectedFile];
+
+        const waypointsToExport: GpxWaypoint[] = [];
+        const waypointsToRemove: number[] = [];
+        for (const waypointExport of value.waypoints) {
+          if (waypointExport.isExported) {
+            waypointsToExport.push(file.waypoints[waypointExport.index]);
+            waypointsToRemove.push(waypointExport.index);
+          }
+        }
+
+        const tracksToExport: GpxPointGroup[] = [];
+        const tracksToRemove: number[] = [];
+        for (const trackExport of value.tracks) {
+          if (trackExport.isExported) {
+            tracksToExport.push(file.tracks[trackExport.index]);
+            tracksToRemove.push(trackExport.index);
+          }
+        }
+
+        const routesToExport: GpxPointGroup[] = [];
+        const routesToRemove: number[] = [];
+        for (const routeExport of value.routes) {
+          if (routeExport.isExported) {
+            routesToExport.push(file.routes[routeExport.index]);
+            routesToRemove.push(routeExport.index);
+          }
+        }
+
+        file.waypoints = file.waypoints.filter((_, index) => !waypointsToRemove.includes(index));
+        file.tracks = file.tracks.filter((_, index) => !tracksToRemove.includes(index));
+        file.routes = file.routes.filter((_, index) => !routesToRemove.includes(index));
+
+        const newFileId = nanoid(10);
+        const newFile = {
+          permissionData: {},
+          metadata: {
+            name: value.newFileName,
+            link: null,
+            desc: null,
+            time: new Date(),
+            author: null,
+          },
+          routes: routesToExport,
+          tracks: tracksToExport,
+          waypoints: waypointsToExport,
+        } as unknown as GpxModel;
+
+        this.ids.push(newFileId);
+        this.files.push(newFile);
+
+        await this.save();
+        await this.firebaseService.saveProject(this.project.id, {
+          ...this.project,
+          gpxFileIds: [...this.project.gpxFileIds, newFileId],
+        });
+      });
   }
 }

@@ -104,6 +104,15 @@
         </div>
       </ng-container>
     </div>
+    <button
+      type="button"
+      class="btn btn-secondary d-flex justify-content-center gap-2"
+      *ngIf="files.length > 1"
+      (click)="splitFile()"
+    >
+      <mat-icon>queue_play_next</mat-icon>
+      <span>Rozdělit soubor</span>
+    </button>
   </div>
   <agm-map
     *ngIf="lat && lng"
@@ -123,7 +132,11 @@
         (markerClick)="waypointClick(fileIndex, i)"
         (markerRightClick)="waypointRightClick(fileIndex, i)"
         [markerDraggable]="true"
-        [opacity]="showPointInfo && selectedType === 'waypoints' && selectedIndex === i ? 1.0 : 0.88"
+        [opacity]="
+          showPointInfo && selectedType === 'waypoints' && selectedFile === fileIndex && selectedIndex === i
+            ? 1.0
+            : 0.88
+        "
       ></agm-marker>
       <ng-container *ngFor="let track of file.tracks; let i1 = index">
         <agm-marker
@@ -134,13 +147,25 @@
           (markerClick)="trackPointClick(fileIndex, i1, i2)"
           (markerRightClick)="trackPointRightClick(fileIndex, i1, i2)"
           [opacity]="
-            showPointInfo && selectedType === 'tracks' && selectedIndex === i1 && subSelectedIndex === i2 ? 1.0 : 0.88
+            showPointInfo &&
+            selectedType === 'tracks' &&
+            selectedFile === fileIndex &&
+            selectedIndex === i1 &&
+            subSelectedIndex === i2
+              ? 1.0
+              : 0.88
           "
           [markerDraggable]="true"
         ></agm-marker>
         <agm-polyline
-          [strokeColor]="showPointInfo && selectedType === 'tracks' && selectedIndex === i1 ? '#8B0000' : '#556B2F'"
-          [strokeWeight]="showPointInfo && selectedType === 'tracks' && selectedIndex === i1 ? 10 : 5"
+          [strokeColor]="
+            showPointInfo && selectedType === 'tracks' && selectedFile === fileIndex && selectedIndex === i1
+              ? '#8B0000'
+              : '#556B2F'
+          "
+          [strokeWeight]="
+            showPointInfo && selectedType === 'tracks' && selectedFile === fileIndex && selectedIndex === i1 ? 10 : 5
+          "
           (lineClick)="trackLineClick(fileIndex, i1)"
         >
           <agm-polyline-point
@@ -159,13 +184,25 @@
           (markerClick)="routePointClick(fileIndex, i1, i2)"
           (markerRightClick)="routePointRightClick(fileIndex, i1, i2)"
           [opacity]="
-            showPointInfo && selectedType === 'routes' && selectedIndex === i1 && subSelectedIndex === i2 ? 1.0 : 0.88
+            showPointInfo &&
+            selectedType === 'routes' &&
+            selectedFile === fileIndex &&
+            selectedIndex === i1 &&
+            subSelectedIndex === i2
+              ? 1.0
+              : 0.88
           "
           [markerDraggable]="true"
         ></agm-marker>
         <agm-polyline
-          [strokeColor]="showPointInfo && selectedType === 'routes' && selectedIndex === i1 ? '#8B0000' : '#008B8B'"
-          [strokeWeight]="showPointInfo && selectedType === 'routes' && selectedIndex === i1 ? 10 : 5"
+          [strokeColor]="
+            showPointInfo && selectedType === 'routes' && selectedFile === fileIndex && selectedIndex === i1
+              ? '#8B0000'
+              : '#008B8B'
+          "
+          [strokeWeight]="
+            showPointInfo && selectedType === 'routes' && selectedFile === fileIndex && selectedIndex === i1 ? 10 : 5
+          "
           (lineClick)="routeLineClick(fileIndex, i1)"
         >
           <agm-polyline-point
