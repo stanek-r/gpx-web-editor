@@ -168,6 +168,21 @@ export class ProjectDetailComponent implements OnInit {
     }
   }
 
+  async deleteFile(id: string): Promise<void> {
+    this.dialog
+      .open(ConfirmationDialogComponent, {
+        width: '35%',
+        data: { title: 'Smazat soubor?', confirmButtonText: 'Smazat' },
+      })
+      .afterClosed()
+      .subscribe(async (value) => {
+        if (value) {
+          await this.removeFromProject(id);
+          this.storageService.removeFile(id);
+        }
+      });
+  }
+
   async exportToFile(id: string): Promise<void> {
     await this.storageService.exportToFile(id);
   }

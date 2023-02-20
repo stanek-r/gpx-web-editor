@@ -13,9 +13,10 @@ import { MatDividerModule } from '@angular/material/divider';
 import { UploadModule } from '../upload/upload.module';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { SplitFileDialogComponent } from './map/split-file-dialog/split-file-dialog.component';
 
 @NgModule({
-  declarations: [MapComponent, EditorListComponent, EditorDetailComponent],
+  declarations: [MapComponent, EditorListComponent, EditorDetailComponent, SplitFileDialogComponent],
   imports: [
     SharedModule,
     RouterModule,

@@ -82,8 +82,11 @@
           <button type="button" class="btn btn-secondary d-flex" (click)="exportToFile(gpxFileId)">
             <mat-icon>cloud_download</mat-icon>
           </button>
-          <button type="button" class="btn btn-danger d-flex" (click)="removeFromProject(gpxFileId)">
+          <button type="button" class="btn btn-warning d-flex" (click)="removeFromProject(gpxFileId)">
             <mat-icon>remove_circle_outline</mat-icon>
+          </button>
+          <button type="button" class="btn btn-danger d-flex" (click)="deleteFile(gpxFileId)">
+            <mat-icon>delete_forever</mat-icon>
           </button>
         </div>
       </ng-container>
