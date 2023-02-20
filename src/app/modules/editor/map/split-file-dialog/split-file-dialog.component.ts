@@ -22,11 +22,12 @@ export class SplitFileDialogComponent {
   fileToSplit!: GpxModel;
 
   splitData: ExportData = {
-    newFileName: 'Nový soubor',
+    newFileName: '',
     waypoints: [],
     tracks: [],
     routes: [],
   };
+  error?: string;
 
   constructor(
     private readonly dialogRef: MatDialogRef<SplitFileDialogComponent>,
@@ -47,6 +48,18 @@ export class SplitFileDialogComponent {
   }
 
   confirmClick(): void {
+    if (this.splitData.newFileName.trim().length < 4) {
+      this.error = 'Jméno nového souboru musí mít alespoň 4 znaky!';
+      return;
+    }
+    const sumOfExportedFiles =
+      this.splitData.waypoints.filter((w) => w.isExported).length +
+      this.splitData.routes.filter((r) => r.isExported).length +
+      this.splitData.tracks.filter((t) => t.isExported).length;
+    if (sumOfExportedFiles <= 0) {
+      this.error = 'Musí být vybrána alespoň jedna položka pro export!';
+      return;
+    }
     this.dialogRef.close(this.splitData);
   }
 
