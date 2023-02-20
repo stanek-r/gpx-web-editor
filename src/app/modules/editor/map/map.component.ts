@@ -200,7 +200,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   waypointDrag(event: any, fileIndex: number, index: number): void {
-    const file = this.files[this.selectedFile];
+    const file = this.files[fileIndex];
 
     const point = file.waypoints[index];
     if (point) {
@@ -210,7 +210,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   trackPointDrag(event: any, fileIndex: number, index1: number, index2: number): void {
-    const file = this.files[this.selectedFile];
+    const file = this.files[fileIndex];
 
     const point = file.tracks[index1].points[index2];
     if (point) {
@@ -223,7 +223,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   routePointDrag(event: any, fileIndex: number, index1: number, index2: number): void {
-    const file = this.files[this.selectedFile];
+    const file = this.files[fileIndex];
 
     const point = file.routes[index1].points[index2];
     if (point) {
