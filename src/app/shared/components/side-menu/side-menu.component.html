@@ -1,21 +1,49 @@
 <div *ngIf="sideMenuExpanded; else notExpanded">
   <div class="menu">
-    <button type="button" class="btn" (click)="toggleSideMenu()">X</button>
-    <div class="items">
-      <a routerLink="/" (click)="toggleSideMenu()">Domů</a>
-      <a routerLink="/editor" (click)="toggleSideMenu()">Editor</a>
-      <a routerLink="/projects" (click)="toggleSideMenu()">Projects</a>
-      <a (click)="logout()" style="cursor: pointer">Odhlásit</a>
+    <button type="button" class="btn mt-2" (click)="toggleSideMenu()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <mat-divider class="mt-2 w-100"></mat-divider>
+    <div class="d-flex flex-column flex-fill px-4 mt-4 gap-2">
+      <a class="btn" [ngClass]="isActive() ? 'btn-dark' : ''" routerLink="/" (click)="toggleSideMenu()">Domů</a>
+      <a class="btn" [ngClass]="isActive('editor') ? 'btn-dark' : ''" routerLink="/editor" (click)="toggleSideMenu()"
+        >Soubory</a
+      >
+      <a
+        class="btn"
+        [ngClass]="isActive('projects') ? 'btn-dark' : ''"
+        routerLink="/projects"
+        (click)="toggleSideMenu()"
+        >Projekty</a
+      >
+      <button class="btn btn-block" (click)="logout()">Odhlásit se</button>
     </div>
   </div>
 </div>
 <ng-template #notExpanded>
-  <div class="menu-rolled">
-    <button type="button" class="btn mt-2" (click)="toggleSideMenu()">
-      <img src="./assets/menu-icon.png" alt="menu-icon" />
+  <div class="menu-rolled gap-2 pt-2">
+    <button type="button" class="btn d-flex justify-content-center" (click)="toggleSideMenu()">
+      <mat-icon>view_headline</mat-icon>
     </button>
-    <button type="button" class="btn mt-2" *ngIf="backUrl" (click)="back()">
-      <img src="./assets/back.png" alt="back" />
+    <button type="button" class="btn d-flex justify-content-center" *ngIf="backUrl" (click)="back()">
+      <mat-icon>keyboard_backspace</mat-icon>
+    </button>
+    <mat-divider class="w-100"></mat-divider>
+    <a class="btn d-flex justify-content-center" [ngClass]="isActive() ? 'btn-dark' : ''" routerLink="/">
+      <mat-icon>home</mat-icon>
+    </a>
+    <a class="btn d-flex justify-content-center" [ngClass]="isActive('editor') ? 'btn-dark' : ''" routerLink="/editor">
+      <mat-icon>insert_drive_file</mat-icon>
+    </a>
+    <a
+      class="btn d-flex justify-content-center"
+      routerLink="/projects"
+      [ngClass]="isActive('projects') ? 'btn-dark' : ''"
+    >
+      <mat-icon>folder</mat-icon>
+    </a>
+    <button type="button" class="btn d-flex justify-content-center" (click)="logout()">
+      <mat-icon>exit_to_app</mat-icon>
     </button>
   </div>
 </ng-template>

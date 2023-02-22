@@ -6,11 +6,9 @@
   height: 100%;
   background-color: gray;
   z-index: 10000;
-
-  img {
-    height: 100%;
-    width: 100%;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .menu {
@@ -21,28 +19,4 @@
   height: 100%;
   background-color: gray;
   z-index: 10000;
-
-  button {
-    font-size: 20px;
-  }
-
-  .items {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    font-size: 20px;
-
-    a {
-      color: white;
-      text-decoration: none;
-      padding-top: 5px;
-      padding-bottom: 5px;
-    }
-
-    a:hover {
-      color: lightgrey;
-      text-decoration: underline;
-    }
-  }
 }

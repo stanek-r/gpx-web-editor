@@ -6,10 +6,12 @@ import { SideMenuComponent } from './components/side-menu/side-menu.component';
 import { LoginComponent } from './components/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
   declarations: [ImageComponent, SideMenuComponent, LoginComponent, ConfirmationDialogComponent],
-  imports: [RouterModule, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [RouterModule, CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, MatDividerModule],
   exports: [ImageComponent, SideMenuComponent, LoginComponent],
 })
 export class SharedModule {}

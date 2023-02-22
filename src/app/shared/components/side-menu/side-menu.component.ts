@@ -23,6 +23,17 @@ export class SideMenuComponent {
     this.firebaseService.logout();
   }
 
+  isActive(path?: string): boolean {
+    let firstUrl = this.router.url.split('/')[0];
+    if (!firstUrl) {
+      firstUrl = this.router.url.split('/')[1];
+    }
+    if (!firstUrl && !path) {
+      return true;
+    }
+    return firstUrl === path;
+  }
+
   back(): void {
     this.clickedBackEvent.emit();
     this.router.navigate([this.backUrl]);
