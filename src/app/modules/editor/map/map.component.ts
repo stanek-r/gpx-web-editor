@@ -36,6 +36,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
   showPointInfo = false;
 
+  changed = false;
+
   constructor(
     private readonly route: ActivatedRoute,
     private readonly storageService: StorageService,
@@ -96,7 +98,19 @@ export class MapComponent implements OnInit, OnDestroy {
     this.loadDefaultMapPosition();
   }
   async ngOnDestroy(): Promise<void> {
-    await this.save();
+    if (this.changed) {
+      this.dialog
+        .open(ConfirmationDialogComponent, {
+          width: '50%',
+          data: { title: 'Uložit změny před zavřením?', confirmButtonText: 'Uložit', cancelButtonText: 'Neukládat' },
+        })
+        .afterClosed()
+        .subscribe(async (value) => {
+          if (value) {
+            await this.save();
+          }
+        });
+    }
   }
 
   async save(): Promise<void> {
@@ -104,6 +118,13 @@ export class MapComponent implements OnInit, OnDestroy {
     for (let i = 0; i < this.ids.length; i++) {
       await this.storageService.saveFile(this.ids[i], this.files[i]);
     }
+    if (this.project && this.project.gpxFileIds.length !== this.ids.length) {
+      await this.firebaseService.saveProject(this.project.id, {
+        ...this.project,
+        gpxFileIds: this.ids,
+      });
+    }
+    this.changed = false;
   }
 
   mapClick(event: any): void {
@@ -156,6 +177,7 @@ export class MapComponent implements OnInit, OnDestroy {
       slopes: [],
     });
     this.setIndex(this.selectedFile, file[this.selectedType].length - 1);
+    this.changed = true;
   }
 
   removeGroup(displayTitle: string): void {
@@ -174,6 +196,7 @@ export class MapComponent implements OnInit, OnDestroy {
           const index = this.selectedIndex;
           this.setIndex(this.selectedFile, 0);
           file[this.selectedType].splice(index, 1);
+          this.changed = true;
         }
       });
   }
@@ -192,9 +215,11 @@ export class MapComponent implements OnInit, OnDestroy {
           if (value) {
             if (this.selectedType === 'waypoints') {
               file.waypoints.splice(index, 1);
+              this.changed = true;
               return;
             }
             file[this.selectedType][this.selectedIndex].points.splice(index, 1);
+            this.changed = true;
           }
         });
     }, 100);
@@ -207,6 +232,7 @@ export class MapComponent implements OnInit, OnDestroy {
     if (point) {
       point.lat = event.coords.lat;
       point.lon = event.coords.lng;
+      this.changed = true;
     }
   }
 
@@ -220,6 +246,7 @@ export class MapComponent implements OnInit, OnDestroy {
         lat: event.coords.lat,
         lon: event.coords.lng,
       };
+      this.changed = true;
     }
   }
 
@@ -233,6 +260,7 @@ export class MapComponent implements OnInit, OnDestroy {
         lat: event.coords.lat,
         lon: event.coords.lng,
       };
+      this.changed = true;
     }
   }
 
@@ -449,20 +477,18 @@ export class MapComponent implements OnInit, OnDestroy {
           file.waypoints = file.waypoints.filter((_, index) => !waypointsToRemove.includes(index));
           file.tracks = file.tracks.filter((_, index) => !tracksToRemove.includes(index));
           file.routes = file.routes.filter((_, index) => !routesToRemove.includes(index));
-          await this.save();
+          this.changed = true;
         }
         if (this.project) {
           this.ids.push(newFileId);
           this.files.push(newFile);
-
-          await this.save();
-          await this.firebaseService.saveProject(this.project.id, {
-            ...this.project,
-            gpxFileIds: [...this.project.gpxFileIds, newFileId],
-          });
+          this.changed = true;
           return;
         }
 
+        if (value.removeFromOld) {
+          await this.save();
+        }
         await this.storageService.saveFile(newFileId, newFile);
         await this.router.navigate(['/editor/map/', newFileId], { queryParams: { backToDetail: true } });
         this.ids[0] = newFileId;
@@ -500,7 +526,7 @@ export class MapComponent implements OnInit, OnDestroy {
           (_: GpxPointGroup, index: number) => index !== value.groupIndex1 && index !== value.groupIndex2
         );
         file[value.type].push(newGroup);
-        await this.save();
+        this.changed = true;
       });
   }
 }
