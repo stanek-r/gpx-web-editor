@@ -17,8 +17,22 @@
     </select>
   </ng-container>
 
-  <input type="number" class="form-control mt-1" [(ngModel)]="addPointData.lat" placeholder="Latitude" />
-  <input type="number" class="form-control mt-1" [(ngModel)]="addPointData.lon" placeholder="Longitude" />
+  <input
+    type="number"
+    class="form-control mt-1"
+    [(ngModel)]="addPointData.lat"
+    min="-90"
+    max="90"
+    placeholder="Latitude"
+  />
+  <input
+    type="number"
+    class="form-control mt-1"
+    [(ngModel)]="addPointData.lon"
+    min="-180"
+    max="180"
+    placeholder="Longitude"
+  />
 
   <div class="d-flex align-self-end gap-2">
     <button type="button" class="btn btn-secondary" (click)="cancelClick()">Zrušit</button>

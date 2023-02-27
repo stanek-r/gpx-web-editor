@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import gpxParser from 'gpxparser';
 import { StorageService } from '../../../../services/storage.service';
-import { GpxModel } from '../../../../shared/models/gpx.model';
+import { GpxMetaData, GpxModel } from '../../../../shared/models/gpx.model';
 import { nanoid } from 'nanoid';
 import { mapToGpxMetadata, mapToGpxTrackOrRoute, mapToGpxWaypoint } from '../../../../shared/gpx.mapper';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -22,9 +22,11 @@ export class UploadComponent {
       const fileString = await this.readTextFile(file);
       if (fileString) {
         const gpxFileData = this.importFromFile(fileString);
-        const id = nanoid(10);
-        await this.storageService.saveFile(id, gpxFileData);
-        this.dialogRef.close(id);
+        if (gpxFileData) {
+          const id = nanoid(10);
+          await this.storageService.saveFile(id, gpxFileData);
+          this.dialogRef.close(id);
+        }
       }
     }
   }
@@ -40,19 +42,32 @@ export class UploadComponent {
     });
   }
 
-  importFromFile(fileString: string): GpxModel {
-    const gpx = new gpxParser();
-    gpx.parse(fileString);
+  importFromFile(fileString: string): GpxModel | undefined {
+    try {
+      const gpx = new gpxParser();
+      gpx.parse(fileString);
 
-    const routes = gpx.routes.map((r) => mapToGpxTrackOrRoute(r));
-    const tracks = gpx.tracks.map((t) => mapToGpxTrackOrRoute(t));
+      const routes = gpx.routes.map((r) => mapToGpxTrackOrRoute(r));
+      const tracks = gpx.tracks.map((t) => mapToGpxTrackOrRoute(t));
 
-    return {
-      permissionData: {},
-      metadata: mapToGpxMetadata(gpx.metadata),
-      waypoints: gpx.waypoints.map((w) => mapToGpxWaypoint(w)),
-      routes,
-      tracks,
-    };
+      return {
+        permissionData: {},
+        metadata: gpx.metadata
+          ? mapToGpxMetadata(gpx.metadata)
+          : ({
+              name: 'Nový nahraný soubor',
+              link: null,
+              desc: null,
+              time: new Date(),
+              author: null,
+            } as unknown as GpxMetaData),
+        waypoints: gpx.waypoints.map((w) => mapToGpxWaypoint(w)),
+        routes,
+        tracks,
+      };
+    } catch (e) {
+      console.error(e);
+      return undefined;
+    }
   }
 }

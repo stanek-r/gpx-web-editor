@@ -200,7 +200,11 @@ export class ProjectDetailComponent implements OnInit {
         minWidth: '400px',
       })
       .afterClosed()
-      .subscribe((value) => this.addFileToProject(value));
+      .subscribe(async (value) => {
+        if (value) {
+          await this.addFileToProject(value);
+        }
+      });
   }
 
   async deleteProject(): Promise<void> {
