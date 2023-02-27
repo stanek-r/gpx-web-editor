@@ -70,6 +70,7 @@
     <button (click)="addGroup()" class="btn btn-primary" *ngIf="selectedType !== 'waypoints'">
       Přidat {{ selectedType === 'tracks' ? 'trasu' : 'cestu' }}
     </button>
+    <button (click)="addPointManually()" class="btn btn-primary" *ngIf="canAddPointManually()">Přidat bod</button>
     <div class="d-flex flex-column gap-2">
       <ng-container *ngIf="selectedType === 'waypoints'">
         <div

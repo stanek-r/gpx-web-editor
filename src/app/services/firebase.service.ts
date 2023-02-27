@@ -186,6 +186,9 @@ export class FirebaseService {
                     .get<any>(`${this.fireBaseDatabaseUrl + this.sharesBasePath}.json?auth=${token}`)
                     .pipe(
                       map((value) => {
+                        if (!value) {
+                          return [];
+                        }
                         const ret: SharedFileInfo[] = [];
                         for (const key of Object.keys(value)) {
                           for (const key2 of Object.keys(value[key])) {

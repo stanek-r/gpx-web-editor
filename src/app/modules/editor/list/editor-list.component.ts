@@ -47,7 +47,7 @@ export class EditorListComponent implements OnInit {
 
     setTimeout(() => {
       this.router.navigate(['/editor', id]);
-    }, 100);
+    }, 200);
   }
 
   removeGroup(id: string): void {

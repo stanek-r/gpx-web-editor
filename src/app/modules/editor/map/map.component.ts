@@ -9,6 +9,7 @@ import { ExportData, SplitFileDialogComponent } from './split-file-dialog/split-
 import { nanoid } from 'nanoid';
 import { Project } from '../../../shared/models/project.model';
 import { JoinData, JoinGroupDialogComponent } from './join-group-dialog/join-group-dialog.component';
+import { AddPointData, AddPointDialogComponent } from './add-point-dialog/add-point-dialog.component';
 
 @Component({
   selector: 'app-map',
@@ -163,6 +164,54 @@ export class MapComponent implements OnInit, OnDestroy {
 
   mapRightClick(): void {
     this.toggleAddingOfPoints();
+  }
+
+  canAddPointManually(): boolean {
+    if (this.selectedType === 'waypoints') {
+      return true;
+    }
+    const groups = this.files[this.selectedFile][this.selectedType];
+    if (groups.length > 0) {
+      return true;
+    }
+    return false;
+  }
+
+  addPointManually(): void {
+    this.dialog
+      .open(AddPointDialogComponent, {
+        minWidth: '50%',
+        data: {
+          file: this.files[this.selectedFile],
+          type: this.selectedType,
+          groupIndex: this.selectedIndex,
+        },
+      })
+      .afterClosed()
+      .subscribe(async (value: AddPointData | false) => {
+        console.log(value);
+        if (!value || value.lon === undefined || value.lat === undefined) {
+          return;
+        }
+        const file = this.files[this.selectedFile];
+        const newPoint: GpxPoint = {
+          lat: value.lat,
+          lon: value.lon,
+          ele: 0,
+          time: new Date(),
+        };
+        if (value.type === 'waypoints') {
+          const newWaypoint: GpxWaypoint = {
+            ...newPoint,
+            name: '',
+          };
+          file.waypoints.push(newWaypoint);
+          this.changed = true;
+          return;
+        }
+        file[value.type][value.groupIndex].points.push(newPoint);
+        this.changed = true;
+      });
   }
 
   addGroup(): void {

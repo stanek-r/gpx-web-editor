@@ -111,8 +111,8 @@ export class StorageService {
     return {
       metadata: loadedFile.metadata,
       waypoints: loadedFile.waypoints ?? [],
-      tracks: loadedFile.tracks ?? [],
-      routes: loadedFile.routes ?? [],
+      tracks: loadedFile.tracks?.map((t) => ({ ...t, points: t.points ?? [], slopes: t.slopes ?? [] })) ?? [],
+      routes: loadedFile.routes?.map((t) => ({ ...t, points: t.points ?? [], slopes: t.slopes ?? [] })) ?? [],
       permissionData: loadedFile.permissionData ?? {},
     } as GpxModel;
   }

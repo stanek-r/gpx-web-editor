@@ -50,12 +50,15 @@ export class JoinGroupDialogComponent {
 
   confirmClick(): void {
     if (this.joinData.type === '') {
+      this.error = 'Typ skupiny musí být vybrán!';
       return;
     }
     if (this.joinData.groupIndex1 === undefined || this.joinData.groupIndex2 === undefined) {
+      this.error = 'Musí být vybrané právě dvě skupiny ke spojení!';
       return;
     }
     if (this.joinData.groupIndex1 === this.joinData.groupIndex2) {
+      this.error = 'Nelze spojit dvě stejné skupiny!';
       return;
     }
     this.dialogRef.close({

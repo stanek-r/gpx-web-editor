@@ -1,0 +1,27 @@
+<h4 mat-dialog-title>Ruční přidání bodu</h4>
+<div *ngIf="error" class="alert alert-danger mt-2" role="alert">{{ error }}</div>
+<div mat-dialog-content class="d-flex flex-column gap-2 mt-2" *ngIf="file">
+  <select class="form-control mt-1" [(ngModel)]="addPointData.type" minlength="10" maxlength="10">
+    <option value="" disabled>Vyberte typ pro spojení</option>
+    <option value="waypoints">Body</option>
+    <option value="tracks" *ngIf="file.tracks.length >= 1">Trasy</option>
+    <option value="routes" *ngIf="file.routes.length >= 1">Cesty</option>
+  </select>
+
+  <ng-container *ngIf="addPointData.type === 'tracks' || addPointData.type === 'routes'">
+    <select class="form-control" [(ngModel)]="addPointData.groupIndex" minlength="10" maxlength="10">
+      <option value="" disabled>Vyberte skupinu</option>
+      <option *ngFor="let pointGroup of file[addPointData.type]; let i = index" [value]="i">
+        {{ pointGroup.name }} (Počet bodů: {{ pointGroup.points.length }})
+      </option>
+    </select>
+  </ng-container>
+
+  <input type="number" class="form-control mt-1" [(ngModel)]="addPointData.lat" placeholder="Latitude" />
+  <input type="number" class="form-control mt-1" [(ngModel)]="addPointData.lon" placeholder="Longitude" />
+
+  <div class="d-flex align-self-end gap-2">
+    <button type="button" class="btn btn-secondary" (click)="cancelClick()">Zrušit</button>
+    <button type="button" class="btn btn-danger" (click)="confirmClick()">Přidat</button>
+  </div>
+</div>
