@@ -131,12 +131,8 @@
         (dragEnd)="waypointDrag($event, fileIndex, i)"
         (markerClick)="waypointClick(fileIndex, i)"
         (markerRightClick)="waypointRightClick(fileIndex, i)"
+        [iconUrl]="isSelected('waypoints', fileIndex, i) ? '/assets/icon-selected.png' : '/assets/icon-default.png'"
         [markerDraggable]="true"
-        [opacity]="
-          showPointInfo && selectedType === 'waypoints' && selectedFile === fileIndex && selectedIndex === i
-            ? 1.0
-            : 0.88
-        "
       ></agm-marker>
       <ng-container *ngFor="let track of file.tracks; let i1 = index">
         <agm-marker
@@ -146,26 +142,12 @@
           (dragEnd)="trackPointDrag($event, fileIndex, i1, i2)"
           (markerClick)="trackPointClick(fileIndex, i1, i2)"
           (markerRightClick)="trackPointRightClick(fileIndex, i1, i2)"
-          [opacity]="
-            showPointInfo &&
-            selectedType === 'tracks' &&
-            selectedFile === fileIndex &&
-            selectedIndex === i1 &&
-            subSelectedIndex === i2
-              ? 1.0
-              : 0.88
-          "
+          [iconUrl]="isSelected('tracks', fileIndex, i1, i2) ? '/assets/icon-selected.png' : '/assets/icon-default.png'"
           [markerDraggable]="true"
         ></agm-marker>
         <agm-polyline
-          [strokeColor]="
-            showPointInfo && selectedType === 'tracks' && selectedFile === fileIndex && selectedIndex === i1
-              ? '#8B0000'
-              : '#556B2F'
-          "
-          [strokeWeight]="
-            showPointInfo && selectedType === 'tracks' && selectedFile === fileIndex && selectedIndex === i1 ? 10 : 5
-          "
+          [strokeColor]="isSelected('tracks', fileIndex, i1) ? '#8B0000' : '#556B2F'"
+          [strokeWeight]="isSelected('tracks', fileIndex, i1) ? 10 : 5"
           (lineClick)="trackLineClick(fileIndex, i1)"
         >
           <agm-polyline-point
@@ -183,26 +165,12 @@
           (dragEnd)="routePointDrag($event, fileIndex, i1, i2)"
           (markerClick)="routePointClick(fileIndex, i1, i2)"
           (markerRightClick)="routePointRightClick(fileIndex, i1, i2)"
-          [opacity]="
-            showPointInfo &&
-            selectedType === 'routes' &&
-            selectedFile === fileIndex &&
-            selectedIndex === i1 &&
-            subSelectedIndex === i2
-              ? 1.0
-              : 0.88
-          "
+          [iconUrl]="isSelected('routes', fileIndex, i1, i2) ? '/assets/icon-selected.png' : '/assets/icon-default.png'"
           [markerDraggable]="true"
         ></agm-marker>
         <agm-polyline
-          [strokeColor]="
-            showPointInfo && selectedType === 'routes' && selectedFile === fileIndex && selectedIndex === i1
-              ? '#8B0000'
-              : '#008B8B'
-          "
-          [strokeWeight]="
-            showPointInfo && selectedType === 'routes' && selectedFile === fileIndex && selectedIndex === i1 ? 10 : 5
-          "
+          [strokeColor]="isSelected('routes', fileIndex, i1) ? '#8B0000' : '#008B8B'"
+          [strokeWeight]="isSelected('routes', fileIndex, i1) ? 10 : 5"
           (lineClick)="routeLineClick(fileIndex, i1)"
         >
           <agm-polyline-point

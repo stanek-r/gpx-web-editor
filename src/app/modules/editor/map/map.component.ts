@@ -319,6 +319,25 @@ export class MapComponent implements OnInit, OnDestroy {
       allPoints.length;
   }
 
+  isSelected(type: 'routes' | 'tracks' | 'waypoints', fileIndex: number, index1: number, index2?: number): boolean {
+    if (!this.showPointInfo) {
+      return false;
+    }
+    if (this.selectedFile !== fileIndex) {
+      return false;
+    }
+    if (this.selectedType !== type) {
+      return false;
+    }
+    if (this.selectedIndex !== index1) {
+      return false;
+    }
+    if (index2 !== undefined && this.subSelectedIndex !== index2) {
+      return false;
+    }
+    return true;
+  }
+
   getSelectedSection(): GpxPointGroup | undefined {
     if (!this.showPointInfo) {
       return undefined;
