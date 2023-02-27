@@ -1,63 +1,84 @@
 <h4 mat-dialog-title>Rozdělení souboru "{{ fileToSplit.metadata.name }}"</h4>
 <div *ngIf="error" class="alert alert-danger mt-2" role="alert">{{ error }}</div>
 <div mat-dialog-content class="d-flex flex-column gap-2 mt-2">
-  <input type="text" class="form-control" [(ngModel)]="splitData.newFileName" placeholder="Jméno nového souboru" />
+  <input type="text" class="form-control mt-1" [(ngModel)]="splitData.newFileName" placeholder="Jméno nového souboru" />
+
+  <div class="form-check mt-2">
+    <input class="form-check-input" type="checkbox" value="" [(ngModel)]="splitData.removeFromOld" id="removeFromOld" />
+    <label class="form-check-label" for="removeFromOld"> Odstranit z originálního souboru? </label>
+  </div>
 
   <h5 class="mt-3">Body</h5>
-  <div class="d-flex justify-content-between" *ngFor="let waypoint of fileToSplit.waypoints; let i = index">
-    <div class="d-flex flex-column">
-      <span>Bod {{ i + 1 }}</span>
-      <span>Jméno: {{ waypoint.name }}</span>
+  <ng-container *ngIf="fileToSplit.waypoints.length > 0; else noWaypoints">
+    <div class="d-flex justify-content-between" *ngFor="let waypoint of fileToSplit.waypoints; let i = index">
+      <div class="d-flex flex-column">
+        <span>Bod {{ i + 1 }}</span>
+        <span>Jméno: {{ waypoint.name }}</span>
+      </div>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          value=""
+          [(ngModel)]="splitData.waypoints[i].isExported"
+          [id]="'waypoint' + i"
+        />
+        <label class="form-check-label" [for]="'waypoint' + i"> Exportovat </label>
+      </div>
     </div>
-    <div class="form-check">
-      <input
-        class="form-check-input"
-        type="checkbox"
-        value=""
-        [(ngModel)]="splitData.waypoints[i].isExported"
-        [id]="'waypoint' + i"
-      />
-      <label class="form-check-label" [for]="'waypoint' + i"> Exportovat </label>
-    </div>
-  </div>
+  </ng-container>
+  <ng-template #noWaypoints>
+    <p>Tento soubor neobsahuje žádné body</p>
+  </ng-template>
 
   <h5 class="mt-3">Trasy</h5>
-  <div class="d-flex justify-content-between" *ngFor="let group of fileToSplit.tracks; let i = index">
-    <div class="d-flex flex-column">
-      <span>Trasa {{ i + 1 }}</span>
-      <span>Jméno: {{ group.name }}</span>
-      <span>Počet bodů: {{ group.points.length }}</span>
+  <ng-container *ngIf="fileToSplit.tracks.length > 0; else noTracks">
+    <div class="d-flex justify-content-between" *ngFor="let group of fileToSplit.tracks; let i = index">
+      <div class="d-flex flex-column">
+        <span>Trasa {{ i + 1 }}</span>
+        <span>Jméno: {{ group.name }}</span>
+        <span>Počet bodů: {{ group.points.length }}</span>
+      </div>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          value=""
+          [(ngModel)]="splitData.tracks[i].isExported"
+          [id]="'track' + i"
+        />
+        <label class="form-check-label" [for]="'track' + i"> Exportovat </label>
+      </div>
     </div>
-    <div class="form-check">
-      <input
-        class="form-check-input"
-        type="checkbox"
-        value=""
-        [(ngModel)]="splitData.tracks[i].isExported"
-        [id]="'track' + i"
-      />
-      <label class="form-check-label" [for]="'track' + i"> Exportovat </label>
-    </div>
-  </div>
+  </ng-container>
+  <ng-template #noTracks>
+    <p>Tento soubor neobsahuje žádné trasy</p>
+  </ng-template>
 
   <h5 class="mt-3">Cesty</h5>
-  <div class="d-flex justify-content-between" *ngFor="let group of fileToSplit.routes; let i = index">
-    <div class="d-flex flex-column">
-      <span>Cesta {{ i + 1 }}</span>
-      <span>Jméno: {{ group.name }}</span>
-      <span>Počet bodů: {{ group.points.length }}</span>
+  <ng-container *ngIf="fileToSplit.routes.length > 0; else noRoutes">
+    <div class="d-flex justify-content-between" *ngFor="let group of fileToSplit.routes; let i = index">
+      <div class="d-flex flex-column">
+        <span>Cesta {{ i + 1 }}</span>
+        <span>Jméno: {{ group.name }}</span>
+        <span>Počet bodů: {{ group.points.length }}</span>
+      </div>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          value=""
+          [(ngModel)]="splitData.routes[i].isExported"
+          [id]="'track' + i"
+        />
+        <label class="form-check-label" [for]="'route' + i"> Exportovat </label>
+      </div>
     </div>
-    <div class="form-check">
-      <input
-        class="form-check-input"
-        type="checkbox"
-        value=""
-        [(ngModel)]="splitData.routes[i].isExported"
-        [id]="'track' + i"
-      />
-      <label class="form-check-label" [for]="'route' + i"> Exportovat </label>
-    </div>
-  </div>
+  </ng-container>
+  <ng-template #noRoutes>
+    <p>Tento soubor neobsahuje žádné cesty</p>
+  </ng-template>
+
   <div class="d-flex align-self-end gap-2">
     <button type="button" class="btn btn-secondary" (click)="cancelClick()">Zrušit</button>
     <button type="button" class="btn btn-danger" (click)="confirmClick()">Rozdělit</button>

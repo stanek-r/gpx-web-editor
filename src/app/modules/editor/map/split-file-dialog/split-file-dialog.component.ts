@@ -9,6 +9,7 @@ export interface ExportInformation {
 
 export interface ExportData {
   newFileName: string;
+  removeFromOld: boolean;
   waypoints: ExportInformation[];
   tracks: ExportInformation[];
   routes: ExportInformation[];
@@ -23,6 +24,7 @@ export class SplitFileDialogComponent {
 
   splitData: ExportData = {
     newFileName: '',
+    removeFromOld: false,
     waypoints: [],
     tracks: [],
     routes: [],
@@ -34,6 +36,7 @@ export class SplitFileDialogComponent {
     @Inject(MAT_DIALOG_DATA)
     public data?: {
       file?: GpxModel;
+      isFromProject?: boolean;
     }
   ) {
     if (!data?.file) {
@@ -45,6 +48,7 @@ export class SplitFileDialogComponent {
     this.splitData.waypoints.push(...this.fileToSplit.waypoints.map((w, index) => ({ index, isExported: false })));
     this.splitData.tracks.push(...this.fileToSplit.tracks.map((w, index) => ({ index, isExported: false })));
     this.splitData.routes.push(...this.fileToSplit.routes.map((w, index) => ({ index, isExported: false })));
+    this.splitData.removeFromOld = !!data.isFromProject;
   }
 
   confirmClick(): void {

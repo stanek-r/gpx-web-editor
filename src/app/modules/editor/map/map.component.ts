@@ -8,6 +8,7 @@ import { FirebaseService } from '../../../services/firebase.service';
 import { ExportData, SplitFileDialogComponent } from './split-file-dialog/split-file-dialog.component';
 import { nanoid } from 'nanoid';
 import { Project } from '../../../shared/models/project.model';
+import { JoinData, JoinGroupDialogComponent } from './join-group-dialog/join-group-dialog.component';
 
 @Component({
   selector: 'app-map',
@@ -338,6 +339,17 @@ export class MapComponent implements OnInit, OnDestroy {
     return true;
   }
 
+  showSplitPointGroupButton(): boolean {
+    if (this.selectedType === 'waypoints') {
+      return false;
+    }
+    const pointGroups = this.files[this.selectedFile][this.selectedType];
+    if (!pointGroups) {
+      return false;
+    }
+    return pointGroups.length > 1;
+  }
+
   getSelectedSection(): GpxPointGroup | undefined {
     if (!this.showPointInfo) {
       return undefined;
@@ -382,11 +394,11 @@ export class MapComponent implements OnInit, OnDestroy {
     this.dialog
       .open(SplitFileDialogComponent, {
         width: '50%',
-        data: { file: this.files[this.selectedFile] },
+        data: { file: this.files[this.selectedFile], isFromProject: !!this.project },
       })
       .afterClosed()
       .subscribe(async (value: ExportData | undefined) => {
-        if (!value || !this.project) {
+        if (!value) {
           return;
         }
         const file = this.files[this.selectedFile];
@@ -418,10 +430,6 @@ export class MapComponent implements OnInit, OnDestroy {
           }
         }
 
-        file.waypoints = file.waypoints.filter((_, index) => !waypointsToRemove.includes(index));
-        file.tracks = file.tracks.filter((_, index) => !tracksToRemove.includes(index));
-        file.routes = file.routes.filter((_, index) => !routesToRemove.includes(index));
-
         const newFileId = nanoid(10);
         const newFile = {
           permissionData: {},
@@ -437,14 +445,62 @@ export class MapComponent implements OnInit, OnDestroy {
           waypoints: waypointsToExport,
         } as unknown as GpxModel;
 
-        this.ids.push(newFileId);
-        this.files.push(newFile);
+        if (value.removeFromOld) {
+          file.waypoints = file.waypoints.filter((_, index) => !waypointsToRemove.includes(index));
+          file.tracks = file.tracks.filter((_, index) => !tracksToRemove.includes(index));
+          file.routes = file.routes.filter((_, index) => !routesToRemove.includes(index));
+          await this.save();
+        }
+        if (this.project) {
+          this.ids.push(newFileId);
+          this.files.push(newFile);
 
+          await this.save();
+          await this.firebaseService.saveProject(this.project.id, {
+            ...this.project,
+            gpxFileIds: [...this.project.gpxFileIds, newFileId],
+          });
+          return;
+        }
+
+        await this.storageService.saveFile(newFileId, newFile);
+        await this.router.navigate(['/editor/map/', newFileId], { queryParams: { backToDetail: true } });
+        this.ids[0] = newFileId;
+        this.files[0] = newFile;
+      });
+  }
+
+  joinPointGroups(): void {
+    this.dialog
+      .open(JoinGroupDialogComponent, {
+        width: '50%',
+        data: {
+          file: this.files[this.selectedFile],
+          type: this.selectedType,
+          firstIndex: this.selectedIndex,
+        },
+      })
+      .afterClosed()
+      .subscribe(async (value: JoinData | false) => {
+        if (!value) {
+          return;
+        }
+        const file = this.files[this.selectedFile];
+        const group1 = file[value.type][value.groupIndex1];
+        const group2 = file[value.type][value.groupIndex2];
+        if (!group1 || !group2) {
+          return;
+        }
+        const newGroup: GpxPointGroup = {
+          ...group1,
+          points: [...group1.points, ...group2.points],
+        };
+
+        file[value.type] = file[value.type].filter(
+          (_: GpxPointGroup, index: number) => index !== value.groupIndex1 && index !== value.groupIndex2
+        );
+        file[value.type].push(newGroup);
         await this.save();
-        await this.firebaseService.saveProject(this.project.id, {
-          ...this.project,
-          gpxFileIds: [...this.project.gpxFileIds, newFileId],
-        });
       });
   }
 }
