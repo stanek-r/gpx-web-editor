@@ -55,7 +55,7 @@ export class ProjectListComponent implements OnInit {
   async deleteProject(id: string): Promise<void> {
     this.dialog
       .open(ConfirmationDialogComponent, {
-        width: '35%',
+        minWidth: '35%',
         data: { title: 'Smazat projekt?', confirmButtonText: 'Smazat' },
       })
       .afterClosed()

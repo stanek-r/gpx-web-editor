@@ -53,7 +53,7 @@ export class EditorListComponent implements OnInit {
   removeGroup(id: string): void {
     this.dialog
       .open(ConfirmationDialogComponent, {
-        width: '35%',
+        minWidth: '35%',
         data: { title: 'Smazat soubor?', confirmButtonText: 'Smazat' },
       })
       .afterClosed()
@@ -67,7 +67,7 @@ export class EditorListComponent implements OnInit {
   uploadFile(): void {
     this.dialog
       .open(UploadComponent, {
-        width: '400px',
+        minWidth: '400px',
       })
       .afterClosed()
       .subscribe((value) => {

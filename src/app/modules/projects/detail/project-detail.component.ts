@@ -171,7 +171,7 @@ export class ProjectDetailComponent implements OnInit {
   async deleteFile(id: string): Promise<void> {
     this.dialog
       .open(ConfirmationDialogComponent, {
-        width: '35%',
+        minWidth: '35%',
         data: { title: 'Smazat soubor?', confirmButtonText: 'Smazat' },
       })
       .afterClosed()
@@ -197,7 +197,7 @@ export class ProjectDetailComponent implements OnInit {
   uploadFile(): void {
     this.dialog
       .open(UploadComponent, {
-        width: '400px',
+        minWidth: '400px',
       })
       .afterClosed()
       .subscribe((value) => this.addFileToProject(value));
@@ -206,7 +206,7 @@ export class ProjectDetailComponent implements OnInit {
   async deleteProject(): Promise<void> {
     this.dialog
       .open(ConfirmationDialogComponent, {
-        width: '35%',
+        minWidth: '35%',
         data: { title: 'Smazat projekt?', confirmButtonText: 'Smazat' },
       })
       .afterClosed()

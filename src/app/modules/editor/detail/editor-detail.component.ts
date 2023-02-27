@@ -94,7 +94,7 @@ export class EditorDetailComponent implements OnInit {
   removeGroup(id: string): void {
     this.dialog
       .open(ConfirmationDialogComponent, {
-        width: '35%',
+        minWidth: '35%',
         data: { title: 'Smazat soubor?', confirmButtonText: 'Smazat' },
       })
       .afterClosed()

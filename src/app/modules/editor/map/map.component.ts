@@ -101,7 +101,7 @@ export class MapComponent implements OnInit, OnDestroy {
     if (this.changed) {
       this.dialog
         .open(ConfirmationDialogComponent, {
-          width: '50%',
+          minWidth: '50%',
           data: { title: 'Uložit změny před zavřením?', confirmButtonText: 'Uložit', cancelButtonText: 'Neukládat' },
         })
         .afterClosed()
@@ -187,7 +187,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }
     this.dialog
       .open(ConfirmationDialogComponent, {
-        width: '35%',
+        minWidth: '35%',
         data: { title: displayTitle, confirmButtonText: 'Smazat' },
       })
       .afterClosed()
@@ -207,7 +207,7 @@ export class MapComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.dialog
         .open(ConfirmationDialogComponent, {
-          width: '35%',
+          minWidth: '35%',
           data: { title: 'Smazat bod?', confirmButtonText: 'Smazat' },
         })
         .afterClosed()
@@ -421,7 +421,7 @@ export class MapComponent implements OnInit, OnDestroy {
   splitFile(): void {
     this.dialog
       .open(SplitFileDialogComponent, {
-        width: '50%',
+        minWidth: '50%',
         data: { file: this.files[this.selectedFile], isFromProject: !!this.project },
       })
       .afterClosed()
@@ -499,7 +499,7 @@ export class MapComponent implements OnInit, OnDestroy {
   joinPointGroups(): void {
     this.dialog
       .open(JoinGroupDialogComponent, {
-        width: '50%',
+        minWidth: '50%',
         data: {
           file: this.files[this.selectedFile],
           type: this.selectedType,
