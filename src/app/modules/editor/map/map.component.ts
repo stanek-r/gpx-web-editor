@@ -157,6 +157,7 @@ export class MapComponent implements OnInit, OnDestroy {
           ele: 0,
         });
       }
+      this.changed = true;
     } else {
       this.showPointInfo = false;
     }
@@ -189,7 +190,6 @@ export class MapComponent implements OnInit, OnDestroy {
       })
       .afterClosed()
       .subscribe(async (value: AddPointData | false) => {
-        console.log(value);
         if (!value || value.lon === undefined || value.lat === undefined) {
           return;
         }
