@@ -14,7 +14,7 @@
     <button type="button" class="btn btn-secondary d-flex gap-2" (click)="exportToFile(id)">
       <mat-icon>cloud_download</mat-icon>Stáhnout soubor
     </button>
-    <button type="button" class="btn btn-danger d-flex gap-2" (click)="removeGroup(id)">
+    <button type="button" class="btn btn-danger d-flex gap-2" *ngIf="isOwner" (click)="removeGroup(id)">
       <mat-icon>delete_forever</mat-icon>Smazat
     </button>
   </div>

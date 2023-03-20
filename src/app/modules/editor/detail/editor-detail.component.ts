@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class EditorDetailComponent implements OnInit {
   id: string | null = null;
   fileData: GpxModel | null = null;
+  isOwner = false;
   backProject: string | null = null;
 
   changed = false;
@@ -42,6 +43,7 @@ export class EditorDetailComponent implements OnInit {
     }
     await this.storageService.waitUntilLoaded();
     this.fileData = await this.storageService.getFile(this.id);
+    this.isOwner = this.storageService.isOwner(this.id);
     if (!this.fileData) {
       this.router.navigate(['/editor']);
       return;

@@ -107,9 +107,6 @@ export class StorageService {
       loadedFile = await this.firebaseService.loadGPXFileData(id, tmp.uid);
     }
     if (!loadedFile) {
-      return Promise.resolve(null);
-    }
-    if (!loadedFile) {
       return null;
     }
     return {
@@ -119,6 +116,10 @@ export class StorageService {
       routes: loadedFile.routes?.map((t) => ({ ...t, points: t.points ?? [], slopes: t.slopes ?? [] })) ?? [],
       permissionData: loadedFile.permissionData ?? {},
     } as GpxModel;
+  }
+
+  isOwner(id: string): boolean {
+    return !!this.filesSubject.getValue()?.find((pg) => pg.id === id);
   }
 
   async saveFile(id: string, data: GpxModel): Promise<void> {

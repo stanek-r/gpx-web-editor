@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import gpxParser from 'gpxparser';
-import { StorageService } from '../../../../services/storage.service';
 import { GpxMetaData, GpxModel } from '../../../../shared/models/gpx.model';
-import { nanoid } from 'nanoid';
 import { mapToGpxMetadata, mapToGpxTrackOrRoute, mapToGpxWaypoint } from '../../../../shared/gpx.mapper';
 import { MatDialogRef } from '@angular/material/dialog';
 
@@ -11,10 +9,7 @@ import { MatDialogRef } from '@angular/material/dialog';
   templateUrl: './upload.component.html',
 })
 export class UploadComponent {
-  constructor(
-    private readonly storageService: StorageService,
-    private readonly dialogRef: MatDialogRef<UploadComponent>
-  ) {}
+  constructor(private readonly dialogRef: MatDialogRef<UploadComponent>) {}
 
   async onFileSelected(event: any): Promise<void> {
     if (event.target?.files.length > 0) {
@@ -23,9 +18,7 @@ export class UploadComponent {
       if (fileString) {
         const gpxFileData = this.importFromFile(fileString);
         if (gpxFileData) {
-          const id = nanoid(10);
-          await this.storageService.saveFile(id, gpxFileData);
-          this.dialogRef.close(id);
+          this.dialogRef.close(gpxFileData);
         }
       } else {
         this.dialogRef.close({
@@ -57,9 +50,11 @@ export class UploadComponent {
       const routes = gpx.routes?.map((r) => mapToGpxTrackOrRoute(r)) ?? [];
       const tracks = gpx.tracks?.map((t) => mapToGpxTrackOrRoute(t)) ?? [];
 
+      const hasMetadata: boolean = !!gpx.metadata && Object.keys(gpx.metadata).length > 0;
+
       return {
         permissionData: {},
-        metadata: gpx.metadata
+        metadata: hasMetadata
           ? mapToGpxMetadata(gpx.metadata)
           : ({
               name: 'Nový nahraný soubor',

@@ -11,6 +11,7 @@ import { UploadComponent } from '../../upload/components/upload/upload.component
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ErrorDialogComponent } from '../../../shared/components/error-dialog/error-dialog.component';
+import { nanoid } from 'nanoid';
 
 @Component({
   selector: 'app-project-detail',
@@ -201,15 +202,17 @@ export class ProjectDetailComponent implements OnInit {
         minWidth: '400px',
       })
       .afterClosed()
-      .subscribe(async (value) => {
+      .subscribe(async (value: GpxModel | string) => {
         if (value) {
           if (typeof value === 'string') {
-            await this.addFileToProject(value);
-          } else {
             this.dialog.open(ErrorDialogComponent, {
               minWidth: '35%',
-              data: { title: 'Nahrání souboru se nezdařilo', subTitle: value.text, confirmButtonText: 'Zavřít' },
+              data: { title: 'Nahrání souboru se nezdařilo', subTitle: value, confirmButtonText: 'Zavřít' },
             });
+          } else {
+            const id = nanoid(10);
+            await this.storageService.saveFile(id, value);
+            await this.addFileToProject(id);
           }
         }
       });

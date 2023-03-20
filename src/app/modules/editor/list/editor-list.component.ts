@@ -71,15 +71,19 @@ export class EditorListComponent implements OnInit {
         minWidth: '400px',
       })
       .afterClosed()
-      .subscribe((value) => {
+      .subscribe(async (value: GpxModel | string) => {
         if (value) {
           if (typeof value === 'string') {
-            this.router.navigate(['/editor', value]);
-          } else {
             this.dialog.open(ErrorDialogComponent, {
               minWidth: '35%',
-              data: { title: 'Nahrání souboru se nezdařilo', subTitle: value.text, confirmButtonText: 'Ok' },
+              data: { title: 'Nahrání souboru se nezdařilo', subTitle: value, confirmButtonText: 'Ok' },
             });
+          } else {
+            const id = nanoid(10);
+            await this.storageService.saveFile(id, value);
+            setTimeout(() => {
+              this.router.navigate(['/editor', id]);
+            }, 200);
           }
         }
       });

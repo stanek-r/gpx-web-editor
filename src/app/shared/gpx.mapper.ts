@@ -29,7 +29,7 @@ export function mapToGpxTrackOrRoute<T>(trackOrRoute: Track | Route | undefined)
 
 export function mapToGpxMetadata(metadata: MetaData): GpxMetaData {
   return {
-    name: metadata.name ?? null,
+    name: metadata.name ?? 'Nový nahraný soubor',
     link: metadata.link ?? null,
     time: new Date(),
     desc: metadata.desc ?? null,

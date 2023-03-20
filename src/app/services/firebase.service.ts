@@ -141,27 +141,7 @@ export class FirebaseService {
         if (!value) {
           return of(null);
         }
-        return this.fireDB
-          .list(`${this.filesBasePath}/${this.fireUserSubject.getValue()?.uid}`)
-          .valueChanges()
-          .pipe(
-            switchMap(() => {
-              const user = this.fireUserSubject.getValue();
-              if (!user) {
-                return of(null);
-              }
-              return from(user.getIdToken()).pipe(
-                switchMap((token) => {
-                  if (!token) {
-                    return of(null);
-                  }
-                  return this.http.get<any>(
-                    `${this.fireBaseDatabaseUrl + this.filesBasePath}/${user.uid}.json?auth=${token}`
-                  );
-                })
-              );
-            })
-          );
+        return this.fireDB.object(`${this.filesBasePath}/${this.fireUserSubject.getValue()?.uid}`).valueChanges();
       })
     );
   }
@@ -173,41 +153,28 @@ export class FirebaseService {
           return of([]);
         }
         return this.fireDB
-          .list(`${this.sharesBasePath}`)
+          .object(`${this.sharesBasePath}`)
           .valueChanges()
           .pipe(
-            switchMap(() => {
-              return from(user.getIdToken()).pipe(
-                switchMap((token) => {
-                  if (!token) {
-                    return of([]);
+            map((value: any) => {
+              if (!value) {
+                return [];
+              }
+              const ret: SharedFileInfo[] = [];
+              for (const key of Object.keys(value)) {
+                for (const key2 of Object.keys(value[key])) {
+                  if (
+                    user.email &&
+                    (value[key][key2] as any[]).includes(user.email.replace('@', 'AT').replace('.', 'DOT'))
+                  ) {
+                    ret.push({
+                      uid: key,
+                      id: key2,
+                    });
                   }
-                  return this.http
-                    .get<any>(`${this.fireBaseDatabaseUrl + this.sharesBasePath}.json?auth=${token}`)
-                    .pipe(
-                      map((value) => {
-                        if (!value) {
-                          return [];
-                        }
-                        const ret: SharedFileInfo[] = [];
-                        for (const key of Object.keys(value)) {
-                          for (const key2 of Object.keys(value[key])) {
-                            if (
-                              user.email &&
-                              (value[key][key2] as any[]).includes(user.email.replace('@', 'AT').replace('.', 'DOT'))
-                            ) {
-                              ret.push({
-                                uid: key,
-                                id: key2,
-                              });
-                            }
-                          }
-                        }
-                        return ret;
-                      })
-                    );
-                })
-              );
+                }
+              }
+              return ret;
             })
           );
       })
