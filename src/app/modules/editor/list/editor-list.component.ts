@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UploadComponent } from '../../upload/components/upload/upload.component';
 import { Router } from '@angular/router';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { ErrorDialogComponent } from '../../../shared/components/error-dialog/error-dialog.component';
 
 @Component({
   selector: 'app-editor-list',
@@ -72,7 +73,14 @@ export class EditorListComponent implements OnInit {
       .afterClosed()
       .subscribe((value) => {
         if (value) {
-          this.router.navigate(['/editor', value]);
+          if (typeof value === 'string') {
+            this.router.navigate(['/editor', value]);
+          } else {
+            this.dialog.open(ErrorDialogComponent, {
+              minWidth: '35%',
+              data: { title: 'Nahrání souboru se nezdařilo', subTitle: value.text, confirmButtonText: 'Ok' },
+            });
+          }
         }
       });
   }

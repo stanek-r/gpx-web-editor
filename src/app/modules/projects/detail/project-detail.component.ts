@@ -10,6 +10,7 @@ import { BehaviorSubject } from 'rxjs';
 import { UploadComponent } from '../../upload/components/upload/upload.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { ErrorDialogComponent } from '../../../shared/components/error-dialog/error-dialog.component';
 
 @Component({
   selector: 'app-project-detail',
@@ -202,7 +203,14 @@ export class ProjectDetailComponent implements OnInit {
       .afterClosed()
       .subscribe(async (value) => {
         if (value) {
-          await this.addFileToProject(value);
+          if (typeof value === 'string') {
+            await this.addFileToProject(value);
+          } else {
+            this.dialog.open(ErrorDialogComponent, {
+              minWidth: '35%',
+              data: { title: 'Nahrání souboru se nezdařilo', subTitle: value.text, confirmButtonText: 'Zavřít' },
+            });
+          }
         }
       });
   }

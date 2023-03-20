@@ -27,6 +27,11 @@ export class UploadComponent {
           await this.storageService.saveFile(id, gpxFileData);
           this.dialogRef.close(id);
         }
+      } else {
+        this.dialogRef.close({
+          error: true,
+          text: 'Soubor nebylo možné přečíst',
+        });
       }
     }
   }
@@ -42,13 +47,15 @@ export class UploadComponent {
     });
   }
 
+  // @ts-ignore
   importFromFile(fileString: string): GpxModel | undefined {
     try {
       const gpx = new gpxParser();
       gpx.parse(fileString);
 
-      const routes = gpx.routes.map((r) => mapToGpxTrackOrRoute(r));
-      const tracks = gpx.tracks.map((t) => mapToGpxTrackOrRoute(t));
+      const waypoints = gpx.waypoints?.map((w) => mapToGpxWaypoint(w)) ?? [];
+      const routes = gpx.routes?.map((r) => mapToGpxTrackOrRoute(r)) ?? [];
+      const tracks = gpx.tracks?.map((t) => mapToGpxTrackOrRoute(t)) ?? [];
 
       return {
         permissionData: {},
@@ -61,12 +68,16 @@ export class UploadComponent {
               time: new Date(),
               author: null,
             } as unknown as GpxMetaData),
-        waypoints: gpx.waypoints.map((w) => mapToGpxWaypoint(w)),
+        waypoints,
         routes,
         tracks,
       };
     } catch (e) {
       console.error(e);
+      this.dialogRef.close({
+        error: true,
+        text: e.toString(),
+      });
       return undefined;
     }
   }

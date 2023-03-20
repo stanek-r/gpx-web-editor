@@ -14,15 +14,15 @@ export function mapToGpxWaypoint(point: Waypoint): GpxWaypoint {
   };
 }
 
-export function mapToGpxTrackOrRoute<T>(trackOrRoute: Track | Route): GpxPointGroup {
+export function mapToGpxTrackOrRoute<T>(trackOrRoute: Track | Route | undefined): GpxPointGroup {
   const ret = {
-    name: trackOrRoute.name ?? null,
-    link: trackOrRoute.link ?? null,
-    points: trackOrRoute.points.map((p) => mapToGpxPoint(p)),
+    name: trackOrRoute?.name ?? null,
+    link: trackOrRoute?.link ?? null,
+    points: trackOrRoute?.points.map((p) => mapToGpxPoint(p)),
   } as GpxPointGroup;
 
-  if (trackOrRoute.slopes) {
-    ret.slopes = trackOrRoute.slopes.map((s) => (isFinite(s) ? s : 0));
+  if (trackOrRoute?.slopes) {
+    ret.slopes = trackOrRoute?.slopes.map((s) => (isFinite(s) ? s : 0));
   }
   return ret;
 }
