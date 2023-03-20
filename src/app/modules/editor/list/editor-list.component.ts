@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PointGroupInfo, StorageService } from '../../../services/storage.service';
+import { FileInfo, StorageService } from '../../../services/storage.service';
 import { nanoid } from 'nanoid';
 import { GpxModel } from '../../../shared/models/gpx.model';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,8 +14,8 @@ import { ConfirmationDialogComponent } from '../../../shared/components/confirma
   styleUrls: ['./editor-list.component.scss'],
 })
 export class EditorListComponent implements OnInit {
-  pointGroups$!: Observable<PointGroupInfo[] | null>;
-  sharedPointGroups$!: Observable<PointGroupInfo[] | null>;
+  pointGroups$!: Observable<FileInfo[] | null>;
+  sharedPointGroups$!: Observable<FileInfo[] | null>;
 
   constructor(
     private readonly storageService: StorageService,

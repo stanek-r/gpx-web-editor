@@ -5,11 +5,16 @@ import { GpxModel, GpxPoint, GpxPointGroup, GpxWaypoint } from '../../../shared/
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { FirebaseService } from '../../../services/firebase.service';
-import { ExportData, SplitFileDialogComponent } from './split-file-dialog/split-file-dialog.component';
+import { SplitData, SplitFileDialogComponent } from './split-file-dialog/split-file-dialog.component';
 import { nanoid } from 'nanoid';
 import { Project } from '../../../shared/models/project.model';
 import { JoinData, JoinGroupDialogComponent } from './join-group-dialog/join-group-dialog.component';
 import { AddPointData, AddPointDialogComponent } from './add-point-dialog/add-point-dialog.component';
+import {
+  MoveData,
+  MoveToOtherFileDialogComponent,
+} from './mode-to-other-file-dialog/move-to-other-file-dialog.component';
+import { EditElementMetadataDialogComponent } from './edit-element-metadata-dialog/edit-element-metadata-dialog.component';
 
 @Component({
   selector: 'app-map',
@@ -139,25 +144,31 @@ export class MapComponent implements OnInit, OnDestroy {
           lat,
           lon: lng,
           time: new Date(),
-          name: 'Test point ' + Math.round(Math.random() * 1000),
+          name: 'Point ' + Math.round(Math.random() * 1000),
           ele: 0,
         });
-      } else if (this.selectedType === 'routes') {
-        file.routes[this.selectedIndex].points.push({
-          lat,
-          lon: lng,
-          time: new Date(),
-          ele: 0,
-        });
+        this.changed = true;
       } else {
-        file.tracks[this.selectedIndex].points.push({
-          lat,
-          lon: lng,
-          time: new Date(),
-          ele: 0,
-        });
+        if (this.files[this.selectedFile][this.selectedType].length <= this.selectedIndex) {
+          this.addGroup();
+        }
+        if (this.selectedType === 'routes') {
+          file.routes[this.selectedIndex].points.push({
+            lat,
+            lon: lng,
+            time: new Date(),
+            ele: 0,
+          });
+        } else {
+          file.tracks[this.selectedIndex].points.push({
+            lat,
+            lon: lng,
+            time: new Date(),
+            ele: 0,
+          });
+        }
+        this.changed = true;
       }
-      this.changed = true;
     } else {
       this.showPointInfo = false;
     }
@@ -221,7 +232,7 @@ export class MapComponent implements OnInit, OnDestroy {
       return;
     }
     file[this.selectedType].push({
-      name: 'Test group' + Math.round(Math.random() * 1000),
+      name: 'Group' + Math.round(Math.random() * 1000),
       points: [],
       slopes: [],
     });
@@ -272,6 +283,42 @@ export class MapComponent implements OnInit, OnDestroy {
           }
         });
     }, 100);
+  }
+
+  editElement(editPointInGroup: boolean): void {
+    const type = editPointInGroup ? 'points' : this.selectedType;
+    let element: GpxWaypoint | GpxPointGroup | GpxPoint;
+    if (type !== 'points') {
+      element = this.files[this.selectedFile][this.selectedType][this.selectedIndex];
+    } else {
+      element = (this.files[this.selectedFile][this.selectedType][this.selectedIndex] as GpxPointGroup).points[
+        this.subSelectedIndex
+      ];
+    }
+
+    if (!element) {
+      return;
+    }
+
+    this.dialog
+      .open(EditElementMetadataDialogComponent, {
+        minWidth: '50%',
+        data: { element, type },
+      })
+      .afterClosed()
+      .subscribe((value) => {
+        if (!value) {
+          return;
+        }
+        if (type !== 'points') {
+          this.files[this.selectedFile][this.selectedType][this.selectedIndex] = value;
+        } else {
+          (this.files[this.selectedFile][this.selectedType][this.selectedIndex] as GpxPointGroup).points[
+            this.subSelectedIndex
+          ] = value;
+        }
+        this.changed = true;
+      });
   }
 
   waypointDrag(event: any, fileIndex: number, index: number): void {
@@ -467,6 +514,82 @@ export class MapComponent implements OnInit, OnDestroy {
     return '/editor';
   }
 
+  moveElements(): void {
+    this.dialog
+      .open(MoveToOtherFileDialogComponent, {
+        minWidth: '50%',
+        data: { file: this.files[this.selectedFile], fileId: this.ids[this.selectedFile] },
+      })
+      .afterClosed()
+      .subscribe(async (value: MoveData | undefined) => {
+        if (!value) {
+          return;
+        }
+        const file = this.files[this.selectedFile];
+        const fileToMoveTo = await this.storageService.getFile(value.fileToMoveTo);
+        if (!fileToMoveTo) {
+          return;
+        }
+
+        const waypointsToExport: GpxWaypoint[] = [];
+        const waypointsToRemove: number[] = [];
+        for (const waypointExport of value.waypoints) {
+          if (waypointExport.isExported) {
+            waypointsToExport.push(file.waypoints[waypointExport.index]);
+            waypointsToRemove.push(waypointExport.index);
+          }
+        }
+
+        const tracksToExport: GpxPointGroup[] = [];
+        const tracksToRemove: number[] = [];
+        for (const trackExport of value.tracks) {
+          if (trackExport.isExported) {
+            tracksToExport.push(file.tracks[trackExport.index]);
+            tracksToRemove.push(trackExport.index);
+          }
+        }
+
+        const routesToExport: GpxPointGroup[] = [];
+        const routesToRemove: number[] = [];
+        for (const routeExport of value.routes) {
+          if (routeExport.isExported) {
+            routesToExport.push(file.routes[routeExport.index]);
+            routesToRemove.push(routeExport.index);
+          }
+        }
+        if (value.removeFromOld) {
+          file.waypoints = file.waypoints.filter((_, index) => !waypointsToRemove.includes(index));
+          file.tracks = file.tracks.filter((_, index) => !tracksToRemove.includes(index));
+          file.routes = file.routes.filter((_, index) => !routesToRemove.includes(index));
+          this.changed = true;
+        }
+
+        const updatedFile = {
+          ...fileToMoveTo,
+          routes: [...fileToMoveTo.routes, ...routesToExport],
+          tracks: [...fileToMoveTo.tracks, ...tracksToExport],
+          waypoints: [...fileToMoveTo.waypoints, ...waypointsToExport],
+        } as unknown as GpxModel;
+
+        if (value.removeFromOld) {
+          await this.save();
+        }
+        await this.storageService.saveFile(value.fileToMoveTo, updatedFile);
+        if (this.project) {
+          const index = this.ids.findIndex((id) => id === value.fileToMoveTo);
+          if (index !== -1) {
+            this.selectedFile = index;
+            return;
+          }
+          await this.router.navigate(['/editor/', value.fileToMoveTo]);
+          return;
+        }
+        await this.router.navigate(['/editor/map/', value.fileToMoveTo], { queryParams: { backToDetail: true } });
+        this.ids[0] = value.fileToMoveTo;
+        this.files[0] = updatedFile;
+      });
+  }
+
   splitFile(): void {
     this.dialog
       .open(SplitFileDialogComponent, {
@@ -474,7 +597,7 @@ export class MapComponent implements OnInit, OnDestroy {
         data: { file: this.files[this.selectedFile], isFromProject: !!this.project },
       })
       .afterClosed()
-      .subscribe(async (value: ExportData | undefined) => {
+      .subscribe(async (value: SplitData | undefined) => {
         if (!value) {
           return;
         }

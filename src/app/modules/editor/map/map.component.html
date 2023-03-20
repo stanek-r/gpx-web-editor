@@ -27,27 +27,37 @@
     <span>Lon: {{ selectedPoint.lon }}</span>
     <span *ngIf="selectedPoint.ele && selectedPoint.ele > 0">Ele: {{ selectedPoint.ele }}</span>
     <span *ngIf="selectedPoint.time">Time: {{ selectedPoint.time | date }}</span>
-    <div class="d-flex justify-content-center mt-3" *ngIf="selectedType === 'waypoints'">
-      <button type="button" class="btn btn-warning" (click)="removePoint(selectedIndex)">Smazat bod</button>
+    <div class="d-flex gap-2 mt-3" *ngIf="selectedType === 'waypoints'">
+      <button type="button" class="btn btn-primary w-50 text-nowrap" (click)="editElement(false)">Editovat bod</button>
+      <button type="button" class="btn btn-warning w-50 text-nowrap" (click)="removePoint(selectedIndex)">
+        Smazat bod
+      </button>
     </div>
-    <div class="d-flex gap-2 justify-content-center mt-3" *ngIf="selectedType !== 'waypoints'">
-      <button type="button" class="btn btn-warning" (click)="removePoint(subSelectedIndex)">Smazat bod</button>
-      <button
-        type="button"
-        class="btn btn-danger"
-        *ngIf="selectedType === 'routes'"
-        (click)="removeGroup('Smazat cestu?')"
-      >
-        Smazat cestu
-      </button>
-      <button
-        type="button"
-        class="btn btn-danger"
-        *ngIf="selectedType === 'tracks'"
-        (click)="removeGroup('Smazat trasu?')"
-      >
-        Smazat trasu
-      </button>
+    <div class="d-flex flex-column gap-2 mt-3" *ngIf="selectedType !== 'waypoints'">
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-primary w-50 text-nowrap" (click)="editElement(true)">Editovat bod</button>
+        <button type="button" class="btn btn-warning w-50 text-nowrap" (click)="removePoint(subSelectedIndex)">
+          Smazat bod
+        </button>
+      </div>
+      <div class="d-flex gap-2">
+        <ng-container *ngIf="selectedType === 'routes'; else editTracks">
+          <button type="button" class="btn btn-primary w-50 text-nowrap" (click)="editElement(false)">
+            Editovat cestu
+          </button>
+          <button type="button" class="btn btn-danger w-50 text-nowrap" (click)="removeGroup('Smazat cestu?')">
+            Smazat cestu
+          </button>
+        </ng-container>
+        <ng-template #editTracks>
+          <button type="button" class="btn btn-primary w-50 text-nowrap" (click)="editElement(false)">
+            Editovat trasu
+          </button>
+          <button type="button" class="btn btn-danger w-50 text-nowrap" (click)="removeGroup('Smazat trasu?')">
+            Smazat trasu
+          </button>
+        </ng-template>
+      </div>
     </div>
   </div>
   <div class="side-menu gap-3">
@@ -118,6 +128,10 @@
       <button type="button" class="btn btn-secondary d-flex justify-content-center gap-2" (click)="splitFile()">
         <mat-icon>queue_play_next</mat-icon>
         <span>Rozdělit soubor</span>
+      </button>
+      <button type="button" class="btn btn-secondary d-flex justify-content-center gap-2" (click)="moveElements()">
+        <mat-icon>file_copy</mat-icon>
+        <span>Přesun elementů</span>
       </button>
     </div>
   </div>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PointGroupInfo, StorageService } from '../../../services/storage.service';
+import { FileInfo, StorageService } from '../../../services/storage.service';
 import { FirebaseService } from '../../../services/firebase.service';
 import { GpxModel } from '../../../shared/models/gpx.model';
 import { Project } from '../../../shared/models/project.model';
@@ -20,7 +20,7 @@ export class ProjectDetailComponent implements OnInit {
   projectToShow?: Project;
   gpxFiles: GpxModel[] = [];
 
-  pointGroups$ = new BehaviorSubject<PointGroupInfo[] | null>(null);
+  pointGroups$ = new BehaviorSubject<FileInfo[] | null>(null);
 
   fg = this.fb.group({
     name: new FormControl('', [Validators.required, Validators.minLength(3)]),

@@ -8,11 +8,14 @@ export interface ExportInformation {
 }
 
 export interface ExportData {
-  newFileName: string;
   removeFromOld: boolean;
   waypoints: ExportInformation[];
   tracks: ExportInformation[];
   routes: ExportInformation[];
+}
+
+export interface SplitData extends ExportData {
+  newFileName: string;
 }
 
 @Component({
@@ -22,7 +25,7 @@ export interface ExportData {
 export class SplitFileDialogComponent {
   fileToSplit!: GpxModel;
 
-  splitData: ExportData = {
+  splitData: SplitData = {
     newFileName: '',
     removeFromOld: false,
     waypoints: [],

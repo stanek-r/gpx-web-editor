@@ -16,6 +16,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SplitFileDialogComponent } from './map/split-file-dialog/split-file-dialog.component';
 import { JoinGroupDialogComponent } from './map/join-group-dialog/join-group-dialog.component';
 import { AddPointDialogComponent } from './map/add-point-dialog/add-point-dialog.component';
+import { MoveToOtherFileDialogComponent } from './map/mode-to-other-file-dialog/move-to-other-file-dialog.component';
+import { EditElementMetadataDialogComponent } from './map/edit-element-metadata-dialog/edit-element-metadata-dialog.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +27,8 @@ import { AddPointDialogComponent } from './map/add-point-dialog/add-point-dialog
     SplitFileDialogComponent,
     JoinGroupDialogComponent,
     AddPointDialogComponent,
+    MoveToOtherFileDialogComponent,
+    EditElementMetadataDialogComponent,
   ],
   imports: [
     SharedModule,

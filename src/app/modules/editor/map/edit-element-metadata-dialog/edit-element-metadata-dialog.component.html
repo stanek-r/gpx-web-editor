@@ -1,0 +1,39 @@
+<h4 mat-dialog-title>Spojení skupiny bodů</h4>
+<div *ngIf="error" class="alert alert-danger mt-2" role="alert">{{ error }}</div>
+<div mat-dialog-content class="d-flex flex-column gap-2 mt-2" *ngIf="elementToEdit">
+  <ng-container *ngIf="type === 'waypoints' || type === 'points'">
+    <ng-container *ngIf="type === 'waypoints'">
+      <input type="text" class="form-control mt-1" [(ngModel)]="elementToEdit['name']" placeholder="Jméno bodu" />
+      <input type="text" class="form-control mt-1" [(ngModel)]="elementToEdit['desc']" placeholder="Popis bodu" />
+      <input type="text" class="form-control mt-1" [(ngModel)]="elementToEdit['cmt']" placeholder="Komentář bodu" />
+    </ng-container>
+
+    <input
+      type="number"
+      class="form-control mt-1"
+      [(ngModel)]="elementToEdit['lat']"
+      min="-90"
+      max="90"
+      placeholder="Latitude"
+    />
+    <input
+      type="number"
+      class="form-control mt-1"
+      [(ngModel)]="elementToEdit['lon']"
+      min="-180"
+      max="180"
+      placeholder="Longitude"
+    />
+  </ng-container>
+  <ng-container *ngIf="type === 'tracks' || type === 'routes'">
+    <input type="text" class="form-control mt-1" [(ngModel)]="elementToEdit['name']" placeholder="Jméno" />
+    <input type="text" class="form-control mt-1" [(ngModel)]="elementToEdit['desc']" placeholder="Popis" />
+    <input type="text" class="form-control mt-1" [(ngModel)]="elementToEdit['cmt']" placeholder="Komentář" />
+    <input type="text" class="form-control mt-1" [(ngModel)]="elementToEdit['type']" placeholder="Typ" />
+  </ng-container>
+
+  <div class="d-flex align-self-end gap-2">
+    <button type="button" class="btn btn-secondary" (click)="cancelClick()">Zrušit</button>
+    <button type="button" class="btn btn-danger" (click)="confirmClick()">Uložit</button>
+  </div>
+</div>
