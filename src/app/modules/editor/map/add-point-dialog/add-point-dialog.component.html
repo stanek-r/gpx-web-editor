@@ -4,8 +4,8 @@
   <select class="form-control mt-1" [(ngModel)]="addPointData.type" minlength="10" maxlength="10">
     <option value="" disabled>Vyberte typ kam bod přidat</option>
     <option value="waypoints">Body</option>
-    <option value="tracks" *ngIf="file.tracks.length >= 1">Trasy</option>
-    <option value="routes" *ngIf="file.routes.length >= 1">Cesty</option>
+    <option value="tracks" *ngIf="file.tracks.length >= 1">Stopy</option>
+    <option value="routes" *ngIf="file.routes.length >= 1">Trasy</option>
   </select>
 
   <ng-container *ngIf="addPointData.type === 'tracks' || addPointData.type === 'routes'">

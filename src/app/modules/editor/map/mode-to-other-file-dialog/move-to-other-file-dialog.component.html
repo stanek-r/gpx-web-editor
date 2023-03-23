@@ -46,11 +46,11 @@
     <p>Tento soubor neobsahuje žádné body</p>
   </ng-template>
 
-  <h5 class="mt-3">Trasy</h5>
+  <h5 class="mt-3">Stopy</h5>
   <ng-container *ngIf="fileToExtractFrom.tracks.length > 0; else noTracks">
     <div class="d-flex justify-content-between" *ngFor="let group of fileToExtractFrom.tracks; let i = index">
       <div class="d-flex flex-column">
-        <span>Trasa {{ i + 1 }}</span>
+        <span>Stopa {{ i + 1 }}</span>
         <span>Jméno: {{ group.name }}</span>
         <span>Počet bodů: {{ group.points.length }}</span>
       </div>
@@ -69,14 +69,14 @@
     </div>
   </ng-container>
   <ng-template #noTracks>
-    <p>Tento soubor neobsahuje žádné trasy</p>
+    <p>Tento soubor neobsahuje žádné stopy</p>
   </ng-template>
 
-  <h5 class="mt-3">Cesty</h5>
+  <h5 class="mt-3">Trasy</h5>
   <ng-container *ngIf="fileToExtractFrom.routes.length > 0; else noRoutes">
     <div class="d-flex justify-content-between" *ngFor="let group of fileToExtractFrom.routes; let i = index">
       <div class="d-flex flex-column">
-        <span>Cesta {{ i + 1 }}</span>
+        <span>Trasa {{ i + 1 }}</span>
         <span>Jméno: {{ group.name }}</span>
         <span>Počet bodů: {{ group.points.length }}</span>
       </div>
@@ -95,7 +95,7 @@
     </div>
   </ng-container>
   <ng-template #noRoutes>
-    <p>Tento soubor neobsahuje žádné cesty</p>
+    <p>Tento soubor neobsahuje žádné trasy</p>
   </ng-template>
 
   <div class="d-flex align-self-end gap-2">

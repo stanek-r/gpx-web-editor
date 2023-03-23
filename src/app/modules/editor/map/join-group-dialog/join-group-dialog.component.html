@@ -3,8 +3,8 @@
 <div mat-dialog-content class="d-flex flex-column gap-2 mt-2" *ngIf="fileToSplit">
   <select class="form-control mt-1" [(ngModel)]="joinData.type" minlength="10" maxlength="10">
     <option value="" disabled>Vyberte typ skupiny pro spojení</option>
-    <option value="tracks" *ngIf="fileToSplit.tracks.length > 1">Trasy</option>
-    <option value="routes" *ngIf="fileToSplit.routes.length > 1">Cesty</option>
+    <option value="tracks" *ngIf="fileToSplit.tracks.length > 1">Stopy</option>
+    <option value="routes" *ngIf="fileToSplit.routes.length > 1">Trasy</option>
   </select>
 
   <select class="form-control" [(ngModel)]="joinData.groupIndex1" minlength="10" maxlength="10">
