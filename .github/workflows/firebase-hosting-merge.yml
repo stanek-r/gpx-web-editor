@@ -11,23 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          FIREBASE_API_KEY: '${{ secrets.FIREBASE_API_KEY }}'
-          FIREBASE_AUTH_DOMAIN: '${{ secrets.FIREBASE_AUTH_DOMAIN }}'
-          FIREBASE_DATABASE_URL: '${{ secrets.FIREBASE_DATABASE_URL }}'
-          FIREBASE_PROJECT_ID: '${{ secrets.FIREBASE_PROJECT_ID }}'
-          GOOGLE_MAPS_API_KEY: '${{ secrets.GOOGLE_MAPS_API_KEY }}'
-          STORAGE_BUCKET: '${{ secrets.STORAGE_BUCKET }}'
       - run: |
           export NODE_OPTIONS=--openssl-legacy-provider
           npm ci --legacy-peer-deps
-          envsubst < src/environments/environment.ts.template > src/environments/environment.ts
-          envsubst < src/environments/environment.ts.template > src/environments/environment.prod.ts
           npm run build --prod
-
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_GPX_WEB_EDITOR }}'
-          channelId: '${{ secrets.CHANNEL_ID }}'
-          projectId: '${{ secrets.FIREBASE_PROJECT_ID }}'
+          channelId: live
+          projectId: gpx-web-editor
