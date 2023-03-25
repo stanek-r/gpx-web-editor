@@ -18,6 +18,7 @@ import { JoinGroupDialogComponent } from './map/join-group-dialog/join-group-dia
 import { AddPointDialogComponent } from './map/add-point-dialog/add-point-dialog.component';
 import { MoveToOtherFileDialogComponent } from './map/mode-to-other-file-dialog/move-to-other-file-dialog.component';
 import { EditElementMetadataDialogComponent } from './map/edit-element-metadata-dialog/edit-element-metadata-dialog.component';
+import { environment } from '../../../environments/environment';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,7 @@ import { EditElementMetadataDialogComponent } from './map/edit-element-metadata-
     RouterModule,
     CommonModule,
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyBlhKqQmeaoitPsrm293z_X19hTYJ8ckts',
+      apiKey: environment.googleMapsApiKey,
     }),
     AgmDirectionModule,
     FormsModule,

@@ -16,11 +16,12 @@ jobs:
           FIREBASE_AUTH_DOMAIN: '${{ secrets.FIREBASE_AUTH_DOMAIN }}'
           FIREBASE_DATABASE_URL: '${{ secrets.FIREBASE_DATABASE_URL }}'
           FIREBASE_PROJECT_ID: '${{ secrets.FIREBASE_PROJECT_ID }}'
+          GOOGLE_MAPS_API_KEY: '${{ secrets.GOOGLE_MAPS_API_KEY }}'
       - run: |
           export NODE_OPTIONS=--openssl-legacy-provider
           npm ci --legacy-peer-deps
           envsubst < src/environments/environment.prod.ts.template > src/environments/environment.prod.ts
-          npm run build
+          npm run build --prod
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
