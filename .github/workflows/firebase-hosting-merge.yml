@@ -16,12 +16,15 @@ jobs:
           npm ci --legacy-peer-deps
           envsubst < src/environments/environment.prod.ts.template > src/environments/environment.prod.ts
           npm run build
+        with:
+          FIREBASE_API_KEY: '${{ secrets.FIREBASE_API_KEY }}'
+          FIREBASE_AUTH_DOMAIN: '${{ secrets.FIREBASE_AUTH_DOMAIN }}'
+          FIREBASE_DATABASE_URL: '${{ secrets.FIREBASE_DATABASE_URL }}'
+          FIREBASE_PROJECT_ID: '${{ secrets.FIREBASE_PROJECT_ID }}'
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_GPX_WEB_EDITOR }}'
           channelId: '${{ secrets.CHANNEL_ID }}'
           projectId: '${{ secrets.FIREBASE_PROJECT_ID }}'
-          FIREBASE_API_KEY: '${{ secrets.FIREBASE_API_KEY }}'
-          FIREBASE_AUTH_DOMAIN: '${{ secrets.FIREBASE_AUTH_DOMAIN }}'
-          FIREBASE_DATABASE_URL: '${{ secrets.FIREBASE_DATABASE_URL }}'

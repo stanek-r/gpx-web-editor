@@ -4,6 +4,6 @@ export const environment = {
     apiKey: '${FIREBASE_API_KEY}',
     authDomain: '${FIREBASE_AUTH_DOMAIN}',
     databaseURL: '${FIREBASE_DATABASE_URL}',
-    projectId: '${projectId}'
+    projectId: '${FIREBASE_PROJECT_ID}'
   },
 };
