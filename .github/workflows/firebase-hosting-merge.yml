@@ -10,12 +10,33 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: action/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
       - run: |
           export NODE_OPTIONS=--openssl-legacy-provider
           npm ci --legacy-peer-deps
-          npm run build
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+
+      - name: Generate environment file
+        run: |
+          export API_URL="https://my-api.example.com"
+          export SOME_OTHER_VARIABLE="value"
+          envsubst < src/environments/environment.prod.ts.template > src/environments/environment.prod.ts
+        env:
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          FIREBASE_DATABASE_URL: ${{ secrets.FIREBASE_DATABASE_URL }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+
+      - name: Build
+        run: npm run build --prod
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_GPX_WEB_EDITOR }}'
