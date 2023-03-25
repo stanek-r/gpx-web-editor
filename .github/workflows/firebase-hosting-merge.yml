@@ -20,7 +20,7 @@ jobs:
       - run: |
           export NODE_OPTIONS=--openssl-legacy-provider
           npm ci --legacy-peer-deps
-          envsubst < src/environments/environment.prod.ts.template > src/environments/environment.prod.ts
+          envsubst < src/environments/environment.prod.ts.template > src/environments/environment.ts
           npm run build --prod
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
