@@ -7,4 +7,5 @@ export const environment = {
     projectId: 'gpx-web-editor',
     storageBucket: 'gs://gpx-web-editor.appspot.com',
   },
+  googleMapsApiKey: 'AIzaSyBlhKqQmeaoitPsrm293z_X19hTYJ8ckts',
 };
