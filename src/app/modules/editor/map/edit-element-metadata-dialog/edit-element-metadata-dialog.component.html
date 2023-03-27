@@ -14,7 +14,7 @@
       [(ngModel)]="elementToEdit['lat']"
       min="-90"
       max="90"
-      placeholder="Latitude"
+      placeholder="Zeměpisná šířka"
     />
     <input
       type="number"
@@ -22,7 +22,15 @@
       [(ngModel)]="elementToEdit['lon']"
       min="-180"
       max="180"
-      placeholder="Longitude"
+      placeholder="Zeměpisná délka"
+    />
+    <input
+      type="number"
+      class="form-control mt-1"
+      [(ngModel)]="elementToEdit['ele']"
+      min="0"
+      max="9000"
+      placeholder="Nadmořská výška"
     />
   </ng-container>
   <ng-container *ngIf="type === 'tracks' || type === 'routes'">

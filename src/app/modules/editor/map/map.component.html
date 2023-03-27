@@ -15,17 +15,21 @@
       <span>Typ: {{ selectedSection.type }}</span>
       <span>Počet bodů: {{ selectedSection.points.length }}</span>
     </ng-container>
-    <div class="d-flex justify-content-center mt-3" *ngIf="selectedType !== 'waypoints'">
-      <h6>Bod {{ subSelectedIndex + 1 }}</h6>
+    <div class="d-flex justify-content-center my-3" *ngIf="selectedType !== 'waypoints'">
+      <select class="form-select" [(ngModel)]="subSelectedIndex" *ngIf="getSelectedSection() as selectedSection">
+        <option *ngFor="let i of [].constructor(selectedSection.points.length); let index = index" [ngValue]="index">
+          Bod {{ index + 1 }}
+        </option>
+      </select>
     </div>
     <ng-container *ngIf="selectedType === 'waypoints'">
       <span>Jméno {{ selectedPoint['name'] }}</span>
       <span>Popis: {{ selectedPoint['desc'] }}</span>
       <span>Komentář: {{ selectedPoint['cmt'] }}</span>
     </ng-container>
-    <span>Lat: {{ selectedPoint.lat }}</span>
-    <span>Lon: {{ selectedPoint.lon }}</span>
-    <span *ngIf="selectedPoint.ele && selectedPoint.ele > 0">Ele: {{ selectedPoint.ele }}</span>
+    <span>Šířka: {{ selectedPoint.lat }}</span>
+    <span>Délka: {{ selectedPoint.lon }}</span>
+    <span *ngIf="selectedPoint.ele && selectedPoint.ele > 0">Výška: {{ selectedPoint.ele }}</span>
     <span *ngIf="selectedPoint.time">Time: {{ selectedPoint.time | date }}</span>
     <div class="d-flex gap-2 mt-3" *ngIf="selectedType === 'waypoints'">
       <button type="button" class="btn btn-primary w-50 text-nowrap" (click)="editElement(false)">Editovat bod</button>
@@ -171,7 +175,9 @@
             (dragEnd)="trackPointDrag($event, fileIndex, i1, i2)"
             (markerClick)="trackPointClick(fileIndex, i1, i2)"
             (markerRightClick)="trackPointRightClick(fileIndex, i1, i2)"
-            [iconUrl]="isSelected('tracks', fileIndex, i1, i2) ? '/assets/icon-selected.png' : '/assets/icon-default.png'"
+            [iconUrl]="
+              isSelected('tracks', fileIndex, i1, i2) ? '/assets/icon-selected.png' : '/assets/icon-default.png'
+            "
             [markerDraggable]="true"
           ></agm-marker>
         </ng-container>
@@ -196,7 +202,9 @@
             (dragEnd)="routePointDrag($event, fileIndex, i1, i2)"
             (markerClick)="routePointClick(fileIndex, i1, i2)"
             (markerRightClick)="routePointRightClick(fileIndex, i1, i2)"
-            [iconUrl]="isSelected('routes', fileIndex, i1, i2) ? '/assets/icon-selected.png' : '/assets/icon-default.png'"
+            [iconUrl]="
+              isSelected('routes', fileIndex, i1, i2) ? '/assets/icon-selected.png' : '/assets/icon-default.png'
+            "
             [markerDraggable]="true"
           ></agm-marker>
         </ng-container>
