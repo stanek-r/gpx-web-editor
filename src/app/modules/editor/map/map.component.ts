@@ -34,6 +34,7 @@ export class MapComponent implements OnInit, OnDestroy {
   files: GpxModel[] = [];
 
   addPoint = false;
+  showPoints = true;
 
   selectedFile = 0;
   selectedType: 'routes' | 'tracks' | 'waypoints' = 'waypoints';

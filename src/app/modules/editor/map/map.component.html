@@ -77,6 +77,7 @@
       <option value="routes">Trasy</option>
     </select>
     <mat-slide-toggle [(ngModel)]="addPoint">Mód přidávání bodů</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="showPoints">Zobrazovat body na trasách</mat-slide-toggle>
     <button (click)="addGroup()" class="btn btn-primary" *ngIf="selectedType !== 'waypoints'">
       Přidat {{ selectedType === 'tracks' ? 'stopu' : 'trasu' }}
     </button>
@@ -162,16 +163,18 @@
         [markerDraggable]="true"
       ></agm-marker>
       <ng-container *ngFor="let track of file.tracks; let i1 = index">
-        <agm-marker
-          *ngFor="let point of track.points; let i2 = index"
-          [latitude]="point.lat"
-          [longitude]="point.lon"
-          (dragEnd)="trackPointDrag($event, fileIndex, i1, i2)"
-          (markerClick)="trackPointClick(fileIndex, i1, i2)"
-          (markerRightClick)="trackPointRightClick(fileIndex, i1, i2)"
-          [iconUrl]="isSelected('tracks', fileIndex, i1, i2) ? '/assets/icon-selected.png' : '/assets/icon-default.png'"
-          [markerDraggable]="true"
-        ></agm-marker>
+        <ng-container *ngIf="showPoints">
+          <agm-marker
+            *ngFor="let point of track.points; let i2 = index"
+            [latitude]="point.lat"
+            [longitude]="point.lon"
+            (dragEnd)="trackPointDrag($event, fileIndex, i1, i2)"
+            (markerClick)="trackPointClick(fileIndex, i1, i2)"
+            (markerRightClick)="trackPointRightClick(fileIndex, i1, i2)"
+            [iconUrl]="isSelected('tracks', fileIndex, i1, i2) ? '/assets/icon-selected.png' : '/assets/icon-default.png'"
+            [markerDraggable]="true"
+          ></agm-marker>
+        </ng-container>
         <agm-polyline
           [strokeColor]="isSelected('tracks', fileIndex, i1) ? '#8B0000' : '#556B2F'"
           [strokeWeight]="isSelected('tracks', fileIndex, i1) ? 10 : 5"
@@ -185,16 +188,18 @@
         </agm-polyline>
       </ng-container>
       <ng-container *ngFor="let route of file.routes; let i1 = index">
-        <agm-marker
-          *ngFor="let point of route.points; let i2 = index"
-          [latitude]="point.lat"
-          [longitude]="point.lon"
-          (dragEnd)="routePointDrag($event, fileIndex, i1, i2)"
-          (markerClick)="routePointClick(fileIndex, i1, i2)"
-          (markerRightClick)="routePointRightClick(fileIndex, i1, i2)"
-          [iconUrl]="isSelected('routes', fileIndex, i1, i2) ? '/assets/icon-selected.png' : '/assets/icon-default.png'"
-          [markerDraggable]="true"
-        ></agm-marker>
+        <ng-container *ngIf="showPoints">
+          <agm-marker
+            *ngFor="let point of route.points; let i2 = index"
+            [latitude]="point.lat"
+            [longitude]="point.lon"
+            (dragEnd)="routePointDrag($event, fileIndex, i1, i2)"
+            (markerClick)="routePointClick(fileIndex, i1, i2)"
+            (markerRightClick)="routePointRightClick(fileIndex, i1, i2)"
+            [iconUrl]="isSelected('routes', fileIndex, i1, i2) ? '/assets/icon-selected.png' : '/assets/icon-default.png'"
+            [markerDraggable]="true"
+          ></agm-marker>
+        </ng-container>
         <agm-polyline
           [strokeColor]="isSelected('routes', fileIndex, i1) ? '#8B0000' : '#008B8B'"
           [strokeWeight]="isSelected('routes', fileIndex, i1) ? 10 : 5"
