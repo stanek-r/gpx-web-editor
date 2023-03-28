@@ -81,7 +81,8 @@
       <option value="routes">Trasy</option>
     </select>
     <mat-slide-toggle [(ngModel)]="addPoint">Mód přidávání bodů</mat-slide-toggle>
-    <mat-slide-toggle [(ngModel)]="showPoints">Editace tras a stop</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="editTracks">Editace stop</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="editRoutes">Editace tras</mat-slide-toggle>
     <button (click)="addGroup()" class="btn btn-primary" *ngIf="selectedType !== 'waypoints'">
       Přidat {{ selectedType === 'tracks' ? 'stopu' : 'trasu' }}
     </button>
@@ -167,7 +168,7 @@
         [markerDraggable]="true"
       ></agm-marker>
       <ng-container *ngFor="let track of file.tracks; let i1 = index">
-        <ng-container *ngIf="showPoints">
+        <ng-container *ngIf="editTracks">
           <agm-marker
             *ngFor="let point of track.points; let i2 = index"
             [latitude]="point.lat"
@@ -194,7 +195,7 @@
         </agm-polyline>
       </ng-container>
       <ng-container *ngFor="let route of file.routes; let i1 = index">
-        <ng-container *ngIf="showPoints">
+        <ng-container *ngIf="editRoutes">
           <agm-marker
             *ngFor="let point of route.points; let i2 = index"
             [latitude]="point.lat"
