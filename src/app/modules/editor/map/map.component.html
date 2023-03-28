@@ -81,7 +81,7 @@
       <option value="routes">Trasy</option>
     </select>
     <mat-slide-toggle [(ngModel)]="addPoint">Mód přidávání bodů</mat-slide-toggle>
-    <mat-slide-toggle [(ngModel)]="showPoints">Zobrazovat body na trasách</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="showPoints">Editace tras a stop</mat-slide-toggle>
     <button (click)="addGroup()" class="btn btn-primary" *ngIf="selectedType !== 'waypoints'">
       Přidat {{ selectedType === 'tracks' ? 'stopu' : 'trasu' }}
     </button>
