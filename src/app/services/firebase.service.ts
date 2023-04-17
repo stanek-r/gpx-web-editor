@@ -49,12 +49,12 @@ export class FirebaseService {
     return this.fireDB.list(this.filesBasePath + '/' + (uid ?? user.uid)).set(id, data);
   }
 
-  deleteGPXFileData(id: string): void {
+  async deleteGPXFileData(id: string): Promise<void> {
     const user = this.fireUserSubject.getValue();
     if (!user) {
       return;
     }
-    this.fireDB.list(this.filesBasePath + '/' + user?.uid).remove(id);
+    return this.fireDB.list(this.filesBasePath + '/' + user?.uid).remove(id);
   }
 
   async loadGPXFileData(id: string, uid?: string): Promise<GpxModel | null> {
@@ -189,15 +189,15 @@ export class FirebaseService {
     return this.fireUserSubject.getValue();
   }
 
-  loginToGoogle(): Observable<any> {
+  loginToGoogle(): Observable<firebase.auth.UserCredential> {
     return from(this.fireAuth.signInWithPopup(new GoogleAuthProvider()));
   }
 
-  loginWithEmail(email: string, password: string): Observable<any> {
+  loginWithEmail(email: string, password: string): Observable<firebase.auth.UserCredential> {
     return from(this.fireAuth.signInWithEmailAndPassword(email, password));
   }
 
-  registerWithEmail(email: string, password: string): Observable<any> {
+  registerWithEmail(email: string, password: string): Observable<firebase.auth.UserCredential> {
     return from(this.fireAuth.createUserWithEmailAndPassword(email, password)).pipe(
       tap((credentials) => {
         if (credentials?.user && !credentials.user.emailVerified) {
@@ -207,7 +207,7 @@ export class FirebaseService {
     );
   }
 
-  logout(): void {
-    this.fireAuth.signOut();
+  async logout(): Promise<void> {
+    return this.fireAuth.signOut();
   }
 }

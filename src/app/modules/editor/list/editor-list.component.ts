@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { FileInfo, StorageService } from '../../../services/storage.service';
+import { FileInfo, FileStorageService } from '../../../services/file-storage.service';
 import { nanoid } from 'nanoid';
 import { GpxModel } from '../../../shared/models/gpx.model';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,7 +19,7 @@ export class EditorListComponent implements OnInit {
   sharedPointGroups$!: Observable<FileInfo[] | null>;
 
   constructor(
-    private readonly storageService: StorageService,
+    private readonly storageService: FileStorageService,
     private readonly dialog: MatDialog,
     private readonly router: Router
   ) {}

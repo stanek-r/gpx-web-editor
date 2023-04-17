@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FileInfo, StorageService } from '../../../services/storage.service';
+import { FileInfo, FileStorageService } from '../../../services/file-storage.service';
 import { FirebaseService } from '../../../services/firebase.service';
 import { GpxModel } from '../../../shared/models/gpx.model';
 import { Project } from '../../../shared/models/project.model';
@@ -35,7 +35,7 @@ export class ProjectDetailComponent implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly storageService: StorageService,
+    private readonly storageService: FileStorageService,
     private readonly firebaseService: FirebaseService,
     private readonly dialog: MatDialog,
     private readonly router: Router,
@@ -115,7 +115,7 @@ export class ProjectDetailComponent implements OnInit {
       id: this.projectToShow.id,
       name: this.fg.value.name ?? '',
       description: this.fg.value.description ?? '',
-      userIds: this.projectToShow.userIds, // TODO: adding of users
+      userIds: this.projectToShow.userIds,
       gpxFileIds: this.projectToShow.gpxFileIds,
     });
     // @ts-ignore

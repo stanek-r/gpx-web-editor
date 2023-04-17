@@ -40,15 +40,14 @@ export class UploadComponent {
     });
   }
 
-  // @ts-ignore
   importFromFile(fileString: string): GpxModel | undefined {
     try {
       const gpx = new gpxParser();
       gpx.parse(fileString);
 
       const waypoints = gpx.waypoints?.map((w) => mapToGpxWaypoint(w)) ?? [];
-      const routes = gpx.routes?.map((r) => mapToGpxTrackOrRoute(r)) ?? [];
-      const tracks = gpx.tracks?.map((t) => mapToGpxTrackOrRoute(t)) ?? [];
+      const routes = gpx.routes?.filter((r) => !!r).map((r) => mapToGpxTrackOrRoute(r)) ?? [];
+      const tracks = gpx.tracks?.filter((r) => !!r).map((t) => mapToGpxTrackOrRoute(t)) ?? [];
 
       const hasMetadata: boolean = !!gpx.metadata && Object.keys(gpx.metadata).length > 0;
 

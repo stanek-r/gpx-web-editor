@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StorageService } from '../../../services/storage.service';
+import { FileStorageService } from '../../../services/file-storage.service';
 import { GpxModel, GpxPoint, GpxPointGroup, GpxWaypoint } from '../../../shared/models/gpx.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
@@ -48,7 +48,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly storageService: StorageService,
+    private readonly storageService: FileStorageService,
     private readonly firebaseService: FirebaseService,
     private readonly router: Router,
     private readonly dialog: MatDialog

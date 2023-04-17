@@ -3,7 +3,7 @@ import { GpxModel } from '../shared/models/gpx.model';
 import { FirebaseService } from './firebase.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { parse } from 'js2xmlparser';
-import { mapToGpxExport } from '../shared/gpx.mapper';
+import { mapToGpxExport, combineGpxFiles } from '../shared/gpx.mapper';
 import { Project } from '../shared/models/project.model';
 
 export interface FileInfo {
@@ -17,7 +17,7 @@ export interface FileInfo {
 @Injectable({
   providedIn: 'root',
 })
-export class StorageService {
+export class FileStorageService {
   private filesSubject = new BehaviorSubject<FileInfo[] | null>(null);
 
   private sharedFilesSubject = new BehaviorSubject<FileInfo[] | null>(null);
@@ -76,7 +76,7 @@ export class StorageService {
     return this.sharedFilesSubject.getValue();
   }
 
-  waitUntilLoaded(): Promise<boolean> {
+  async waitUntilLoaded(): Promise<boolean> {
     if (this.loaded.getValue()) {
       return Promise.resolve(true);
     }
@@ -90,16 +90,16 @@ export class StorageService {
     });
   }
 
-  removeFile(id: string): void {
-    if (!this.filesSubject.getValue()?.find((pg) => pg.id === id)) {
+  async removeFile(id: string): Promise<void> {
+    if (!this.isOwner(id)) {
       return;
     }
-    this.firebaseService.deleteGPXFileData(id);
+    return this.firebaseService.deleteGPXFileData(id);
   }
 
   async getFile(id: string): Promise<GpxModel | null> {
     let loadedFile = null;
-    if (this.filesSubject.getValue()?.find((pg) => pg.id === id)) {
+    if (this.isOwner(id)) {
       loadedFile = await this.firebaseService.loadGPXFileData(id);
     }
     const tmp = this.sharedFilesSubject.getValue()?.find((pg) => pg.id === id);
@@ -162,24 +162,11 @@ export class StorageService {
     if (files.length > 0) {
       let combinedFile = files[0];
       for (let i = 1; i < files.length; i++) {
-        combinedFile = this.combineFiles(combinedFile, files[i]);
+        combinedFile = combineGpxFiles(combinedFile, files[i]);
       }
       combinedFile.metadata.name = project.name;
       combinedFile.metadata.desc = project.description;
       this.downloadFile(combinedFile);
     }
-  }
-
-  combineFiles(file1: GpxModel, file2: GpxModel): GpxModel {
-    return {
-      metadata: {
-        ...file2.metadata,
-        ...file1.metadata,
-      },
-      routes: [...file1.routes, ...file2.routes],
-      tracks: [...file1.tracks, ...file2.tracks],
-      waypoints: [...file1.waypoints, ...file2.waypoints],
-      permissionData: {},
-    };
   }
 }

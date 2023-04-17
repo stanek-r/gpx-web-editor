@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { GpxModel } from '../../../../shared/models/gpx.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ExportData } from '../split-file-dialog/split-file-dialog.component';
-import { FileInfo, StorageService } from '../../../../services/storage.service';
+import { FileInfo, FileStorageService } from '../../../../services/file-storage.service';
 
 export interface MoveData extends ExportData {
   fileToMoveTo: string;
@@ -28,7 +28,7 @@ export class MoveToOtherFileDialogComponent {
   };
 
   constructor(
-    private readonly storageService: StorageService,
+    private readonly storageService: FileStorageService,
     private readonly dialogRef: MatDialogRef<MoveToOtherFileDialogComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data?: {

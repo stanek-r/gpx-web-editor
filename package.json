@@ -4,10 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test --watch=false --browsers=ChromeHeadlessNoSandbox",
+    "build": "ng build --configuration production",
+    "test": "ng test --watch=false --browsers ChromeHeadless",
     "lint": "ng lint",
-    "e2e": "ng e2e --protractorConfig=protractor.conf.js",
+    "e2e": "ng e2e --protractorConfig=e2e/protractor.conf.js",
     "format": "prettier --write \"**/*.{ts,js,html,scss}\"",
     "format-check": "prettier --check \"**/*.{ts,js,html,scss}\""
   },

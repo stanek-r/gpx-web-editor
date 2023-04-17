@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ImageComponent } from './components/image/image.component';
 import { SideMenuComponent } from './components/side-menu/side-menu.component';
 import { LoginComponent } from './components/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -11,8 +10,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { ErrorDialogComponent } from './components/error-dialog/error-dialog.component';
 
 @NgModule({
-  declarations: [ImageComponent, SideMenuComponent, LoginComponent, ConfirmationDialogComponent, ErrorDialogComponent],
+  declarations: [SideMenuComponent, LoginComponent, ConfirmationDialogComponent, ErrorDialogComponent],
   imports: [RouterModule, CommonModule, FormsModule, ReactiveFormsModule, MatIconModule, MatDividerModule],
-  exports: [ImageComponent, SideMenuComponent, LoginComponent],
+  exports: [SideMenuComponent, LoginComponent],
 })
 export class SharedModule {}
