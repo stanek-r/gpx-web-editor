@@ -1,10 +1,10 @@
 export const environment = {
-  production: false,
+  production: true,
   firebase: {
-    apiKey: 'AIzaSyB1u-WpD9UKVInSv7mrEbPC1DOdK0cUaec',
-    authDomain: 'gpx-web-editor.web.app',
-    databaseURL: 'https://gpx-web-editor-default-rtdb.europe-west1.firebasedatabase.app/',
-    projectId: 'gpx-web-editor',
+    apiKey: 'FILL_API_KEY',
+    authDomain: 'FILL_AUTH_DOMAIN',
+    databaseURL: 'FILL_DATABASE_URL',
+    projectId: 'FILL_PROJECT_ID',
   },
-  googleMapsApiKey: 'AIzaSyBlhKqQmeaoitPsrm293z_X19hTYJ8ckts',
+  googleMapsApiKey: 'FILL_GOOGLE_MAPS_API_KEY',
 };
