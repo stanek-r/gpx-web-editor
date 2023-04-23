@@ -24,7 +24,7 @@ import { EditElementMetadataDialogComponent } from './edit-element-metadata-dial
 export class MapComponent implements OnInit, OnDestroy {
   lat: number | undefined;
   lng: number | undefined;
-  readonly zoom = 9;
+  zoom: number | undefined;
 
   backToDetail = false;
   backProject: string | null = null;
@@ -433,17 +433,39 @@ export class MapComponent implements OnInit, OnDestroy {
         }
       }
     }
-    if (allPoints.length <= 0) {
+    if (allPoints.length === 0) {
       this.lat = 49.83815;
       this.lng = 18.2838842;
+      this.zoom = 10;
       return;
     }
-    this.lat =
-      allPoints.map((p) => p.lat).reduce((previousValue, currentValue) => previousValue + currentValue, 0) /
-      allPoints.length;
-    this.lng =
-      allPoints.map((p) => p.lon).reduce((previousValue, currentValue) => previousValue + currentValue, 0) /
-      allPoints.length;
+    if (allPoints.length === 1) {
+      this.lat = allPoints[0].lat;
+      this.lng = allPoints[0].lon;
+      this.zoom = 10;
+      return;
+    }
+
+    let minLat = Infinity;
+    let maxLat = -Infinity;
+    let minLng = Infinity;
+    let maxLng = -Infinity;
+
+    allPoints.forEach((point) => {
+      minLat = Math.min(minLat, point.lat);
+      maxLat = Math.max(maxLat, point.lat);
+      minLng = Math.min(minLng, point.lon);
+      maxLng = Math.max(maxLng, point.lon);
+    });
+
+    this.lat = (minLat + maxLat) / 2;
+    this.lng = (minLng + maxLng) / 2;
+
+    const latDiff = maxLat - minLat;
+    const lngDiff = maxLng - minLng;
+    const maxDiff = Math.max(latDiff, lngDiff);
+
+    this.zoom = Math.floor(8 - Math.log(maxDiff) / Math.log(2));
   }
 
   isSelected(type: 'routes' | 'tracks' | 'waypoints', fileIndex: number, index1: number, index2?: number): boolean {

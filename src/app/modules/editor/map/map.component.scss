@@ -49,6 +49,14 @@
     flex-direction: column;
     max-width: 300px;
 
+    .element-list {
+      display: flex;
+      flex-direction: column;
+      overflow: scroll;
+      gap: 0.5rem;
+      max-height: 40vh;
+    }
+
     @media (max-width: 540px) {
       max-width: 100%;
       width: calc(100% - 60px);

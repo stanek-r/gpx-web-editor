@@ -2,7 +2,12 @@ import { GpxMetaData, GpxModel, GpxPoint, GpxPointGroup, GpxWaypoint } from './m
 import { MetaData, Point, Route, Track, Waypoint } from 'gpxparser';
 
 export function mapToGpxPoint(point: Point): GpxPoint {
-  return { ele: point.ele, lat: point.lat, lon: point.lon, time: point.time };
+  return {
+    ele: point.ele !== null && isFinite(point.ele) ? point.ele : 0,
+    lat: point.lat !== null && isFinite(point.lat) ? point.lat : 0,
+    lon: point.lon !== null && isFinite(point.lon) ? point.lon : 0,
+    time: point.time,
+  };
 }
 
 export function mapToGpxWaypoint(point: Waypoint): GpxWaypoint {
@@ -17,7 +22,9 @@ export function mapToGpxWaypoint(point: Waypoint): GpxWaypoint {
 export function mapToGpxTrackOrRoute<T>(trackOrRoute: Track | Route): GpxPointGroup {
   const ret: GpxPointGroup = {
     name: trackOrRoute.name,
-    points: trackOrRoute.points.map((p) => mapToGpxPoint(p)),
+    points:
+      trackOrRoute.points?.map((p) => mapToGpxPoint(p))?.filter((p) => !(p.lat === 0 && p.lon === 0 && p.ele === 0)) ??
+      [],
     desc: trackOrRoute.desc,
     cmt: trackOrRoute.cmt,
     src: trackOrRoute.src,
@@ -26,22 +33,37 @@ export function mapToGpxTrackOrRoute<T>(trackOrRoute: Track | Route): GpxPointGr
   };
 
   if (trackOrRoute.slopes) {
-    ret.slopes = trackOrRoute.slopes.map((s) => (isFinite(s) ? s : 0));
+    ret.slopes = trackOrRoute.slopes.map((s) => (s !== null && isFinite(s) ? s : 0));
   }
   if (trackOrRoute.distance) {
-    ret.distance = {
-      total: trackOrRoute.distance.total,
-      cumul: trackOrRoute.distance.cumul,
-    };
+    if (Object.values(trackOrRoute.distance).some((v) => v !== null && isFinite(v))) {
+      ret.distance = {
+        total:
+          trackOrRoute.distance.total !== null && isFinite(trackOrRoute.distance.total)
+            ? trackOrRoute.distance.total
+            : 0,
+        cumul:
+          trackOrRoute.distance.cumul !== null && isFinite(trackOrRoute.distance.cumul)
+            ? trackOrRoute.distance.cumul
+            : 0,
+      };
+    }
   }
   if (trackOrRoute.elevation) {
-    ret.elevation = {
-      min: trackOrRoute.elevation.min,
-      max: trackOrRoute.elevation.max,
-      neg: trackOrRoute.elevation.neg,
-      pos: trackOrRoute.elevation.pos,
-      avg: trackOrRoute.elevation.avg,
-    };
+    if (Object.values(trackOrRoute.elevation).some((v) => v !== null && isFinite(v))) {
+      ret.elevation = {
+        min:
+          trackOrRoute.elevation.min !== null && isFinite(trackOrRoute.elevation.min) ? trackOrRoute.elevation.min : 0,
+        max:
+          trackOrRoute.elevation.max !== null && isFinite(trackOrRoute.elevation.max) ? trackOrRoute.elevation.max : 0,
+        neg:
+          trackOrRoute.elevation.neg !== null && isFinite(trackOrRoute.elevation.neg) ? trackOrRoute.elevation.neg : 0,
+        pos:
+          trackOrRoute.elevation.pos !== null && isFinite(trackOrRoute.elevation.pos) ? trackOrRoute.elevation.pos : 0,
+        avg:
+          trackOrRoute.elevation.avg !== null && isFinite(trackOrRoute.elevation.avg) ? trackOrRoute.elevation.avg : 0,
+      };
+    }
   }
   return ret;
 }
@@ -84,7 +106,7 @@ export function mapToGpxTrack(track: GpxPointGroup): any {
   } as any;
 
   if (track.slopes) {
-    ret.slopes = track.slopes.map((s) => (isFinite(s) ? s : 0));
+    ret.slopes = track.slopes;
   }
 
   if (track.distance) {
@@ -118,7 +140,7 @@ export function mapToGpxRoute(route: GpxPointGroup): any {
   } as any;
 
   if (route.slopes) {
-    ret.slopes = route.slopes.map((s) => (isFinite(s) ? s : 0));
+    ret.slopes = route.slopes;
   }
 
   if (route.distance) {

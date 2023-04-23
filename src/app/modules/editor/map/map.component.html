@@ -87,7 +87,7 @@
       Přidat {{ selectedType === 'tracks' ? 'stopu' : 'trasu' }}
     </button>
     <button (click)="addPointManually()" class="btn btn-primary" *ngIf="canAddPointManually()">Přidat bod</button>
-    <div class="d-flex flex-column gap-2">
+    <div class="element-list">
       <ng-container *ngIf="selectedType === 'waypoints'">
         <div
           *ngFor="let point of files[selectedFile].waypoints; let i = index"
@@ -148,7 +148,7 @@
     </button>
   </div>
   <agm-map
-    *ngIf="lat && lng"
+    *ngIf="lat && lng && zoom"
     [latitude]="lat"
     [longitude]="lng"
     [zoom]="zoom"

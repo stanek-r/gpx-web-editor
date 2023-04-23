@@ -45,7 +45,9 @@ export class UploadComponent {
       const gpx = new gpxParser();
       gpx.parse(fileString);
 
-      const waypoints = gpx.waypoints?.map((w) => mapToGpxWaypoint(w)) ?? [];
+      const waypoints =
+        gpx.waypoints?.map((w) => mapToGpxWaypoint(w))?.filter((w) => !(w.lat === 0 && w.lon === 0 && w.ele === 0)) ??
+        [];
       const routes = gpx.routes?.filter((r) => !!r).map((r) => mapToGpxTrackOrRoute(r)) ?? [];
       const tracks = gpx.tracks?.filter((r) => !!r).map((t) => mapToGpxTrackOrRoute(t)) ?? [];
 
