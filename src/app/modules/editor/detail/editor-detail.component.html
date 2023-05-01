@@ -18,7 +18,7 @@
       <mat-icon>delete_forever</mat-icon>Smazat
     </button>
   </div>
-  <form class="row gap-2 p-2 mt-3" (ngSubmit)="saveChanges()" [formGroup]="fg">
+  <form class="d-flex flex-column gap-2 mt-3" (ngSubmit)="saveChanges()" [formGroup]="fg">
     <input class="form-control" placeholder="Jméno" formControlName="name" />
     <textarea class="form-control" placeholder="Popis" formControlName="desc"></textarea>
     <input

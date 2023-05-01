@@ -44,7 +44,7 @@ export class ProjectListComponent implements OnInit {
     const id = nanoid(10);
     await this.firebaseService.saveProject(id, {
       id,
-      name: 'Project ' + id,
+      name: 'Nový project',
       description: '',
       userIds: [],
       gpxFileIds: [],

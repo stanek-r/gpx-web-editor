@@ -4,6 +4,7 @@ import { GpxModel } from '../../../../shared/models/gpx.model';
 
 export interface AddPointData {
   type: 'waypoints' | 'routes' | 'tracks' | '';
+  name?: '';
   groupIndex?: number;
   lon?: number;
   lat?: number;
@@ -20,6 +21,7 @@ export class AddPointDialogComponent {
 
   addPointData: AddPointData = {
     type: '',
+    name: undefined,
     groupIndex: undefined,
     lon: undefined,
     lat: undefined,
@@ -65,6 +67,7 @@ export class AddPointDialogComponent {
       groupIndex: this.addPointData.groupIndex !== undefined ? +this.addPointData.groupIndex : undefined,
       lon: +this.addPointData.lon,
       lat: +this.addPointData.lat,
+      name: this.addPointData.name,
     });
   }
 

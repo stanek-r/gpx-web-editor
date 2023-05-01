@@ -5,7 +5,7 @@
       <h4>{{ files[selectedFile].metadata?.name }}</h4>
     </div>
     <div class="d-flex justify-content-center" [ngClass]="project ? 'mt-2' : ''">
-      <h5 *ngIf="selectedType === 'waypoints'">Bod {{ selectedIndex + 1 }}</h5>
+      <h5 *ngIf="selectedType === 'waypoints'">Bod zájmu {{ selectedIndex + 1 }}</h5>
       <h5 *ngIf="selectedType === 'tracks'">Stopa {{ selectedIndex + 1 }}</h5>
       <h5 *ngIf="selectedType === 'routes'">Trasa {{ selectedIndex + 1 }}</h5>
     </div>
@@ -32,9 +32,11 @@
     <span *ngIf="selectedPoint.ele && selectedPoint.ele > 0">Výška: {{ selectedPoint.ele }}</span>
     <span *ngIf="selectedPoint.time">Time: {{ selectedPoint.time | date }}</span>
     <div class="d-flex gap-2 mt-3" *ngIf="selectedType === 'waypoints'">
-      <button type="button" class="btn btn-primary w-50 text-nowrap" (click)="editElement(false)">Editovat bod</button>
+      <button type="button" class="btn btn-primary w-50 text-nowrap" (click)="editElement(false)">
+        Editovat bod zájmu
+      </button>
       <button type="button" class="btn btn-warning w-50 text-nowrap" (click)="removePoint(selectedIndex)">
-        Smazat bod
+        Smazat bod zájmu
       </button>
     </div>
     <div class="d-flex flex-column gap-2 mt-3" *ngIf="selectedType !== 'waypoints'">
@@ -76,13 +78,13 @@
       </select>
     </ng-container>
     <select class="form-select" [(ngModel)]="selectedType" (ngModelChange)="showPointInfo = false">
-      <option value="waypoints">Body</option>
+      <option value="waypoints">Body zájmu</option>
       <option value="tracks">Stopy</option>
       <option value="routes">Trasy</option>
     </select>
     <mat-slide-toggle [(ngModel)]="addPoint">Mód přidávání bodů</mat-slide-toggle>
-    <mat-slide-toggle [(ngModel)]="editTracks">Editace stop</mat-slide-toggle>
-    <mat-slide-toggle [(ngModel)]="editRoutes">Editace tras</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="editTracks">Zobrazovat body na stopách</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="editRoutes">Zobrazovat body na trasách</mat-slide-toggle>
     <button (click)="addGroup()" class="btn btn-primary" *ngIf="selectedType !== 'waypoints'">
       Přidat {{ selectedType === 'tracks' ? 'stopu' : 'trasu' }}
     </button>
@@ -94,7 +96,7 @@
           class="d-flex flex-column cursor-pointer"
           (click)="waypointClick(selectedFile, i)"
         >
-          <span [ngClass]="selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''">Bod {{ i + 1 }}</span>
+          <span [ngClass]="selectedIndex === i && showPointInfo ? 'font-weight-bold' : ''">Bod zájmu {{ i + 1 }}</span>
           <span>Jméno: {{ point.name }}</span>
         </div>
       </ng-container>

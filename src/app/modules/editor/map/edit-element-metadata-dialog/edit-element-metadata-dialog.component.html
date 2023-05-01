@@ -3,9 +3,14 @@
 <div mat-dialog-content class="d-flex flex-column gap-2 mt-2" *ngIf="elementToEdit">
   <ng-container *ngIf="type === 'waypoints' || type === 'points'">
     <ng-container *ngIf="type === 'waypoints'">
-      <input type="text" class="form-control mt-1" [(ngModel)]="elementToEdit['name']" placeholder="Jméno bodu" />
-      <input type="text" class="form-control mt-1" [(ngModel)]="elementToEdit['desc']" placeholder="Popis bodu" />
-      <input type="text" class="form-control mt-1" [(ngModel)]="elementToEdit['cmt']" placeholder="Komentář bodu" />
+      <input type="text" class="form-control mt-1" [(ngModel)]="elementToEdit['name']" placeholder="Jméno bodu zájmu" />
+      <input type="text" class="form-control mt-1" [(ngModel)]="elementToEdit['desc']" placeholder="Popis bodu zájmu" />
+      <input
+        type="text"
+        class="form-control mt-1"
+        [(ngModel)]="elementToEdit['cmt']"
+        placeholder="Komentář bodu zájmu"
+      />
     </ng-container>
 
     <input

@@ -35,7 +35,7 @@ export class EditorListComponent implements OnInit {
     await this.storageService.saveFile(id, {
       permissionData: {},
       metadata: {
-        name: 'Soubor ' + id,
+        name: 'Nový soubor',
         link: null,
         desc: null,
         time: new Date(),

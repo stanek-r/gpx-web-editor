@@ -5,7 +5,7 @@
 <mat-divider class="mt-2"></mat-divider>
 <h2 class="mt-3">Mé projekty</h2>
 <div class="list justify-content-center justify-content-md-start" *ngIf="listOfProjects.length > 0">
-  <div class="list-item" *ngFor="let project of listOfProjects">
+  <div class="list-item card" *ngFor="let project of listOfProjects">
     <p class="id-show m-0">ID: {{ project.id }}</p>
     <p>{{ project.name }}</p>
     <p class="description">{{ project.description }}</p>

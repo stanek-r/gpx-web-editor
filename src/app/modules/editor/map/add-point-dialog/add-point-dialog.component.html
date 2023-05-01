@@ -3,7 +3,7 @@
 <div mat-dialog-content class="d-flex flex-column gap-2 mt-2" *ngIf="file">
   <select class="form-control mt-1" [(ngModel)]="addPointData.type" minlength="10" maxlength="10">
     <option value="" disabled>Vyberte typ kam bod přidat</option>
-    <option value="waypoints">Body</option>
+    <option value="waypoints">Body zájmu</option>
     <option value="tracks" *ngIf="file.tracks.length >= 1">Stopy</option>
     <option value="routes" *ngIf="file.routes.length >= 1">Trasy</option>
   </select>
@@ -15,6 +15,10 @@
         {{ pointGroup.name }} (Počet bodů: {{ pointGroup.points.length }})
       </option>
     </select>
+  </ng-container>
+
+  <ng-container *ngIf="addPointData.type === 'waypoints'">
+    <input type="text" class="form-control mt-1" [(ngModel)]="addPointData.name" placeholder="Jméno bodu zájmu" />
   </ng-container>
 
   <input

@@ -146,7 +146,7 @@ export class MapComponent implements OnInit, OnDestroy {
           lat,
           lon: lng,
           time: new Date(),
-          name: 'Point ' + Math.round(Math.random() * 1000),
+          name: 'Bod zájmu',
           ele: 0,
         });
         this.changed = true;
@@ -216,7 +216,7 @@ export class MapComponent implements OnInit, OnDestroy {
         if (value.type === 'waypoints') {
           const newWaypoint: GpxWaypoint = {
             ...newPoint,
-            name: '',
+            name: value.name ?? 'Bod zájmu',
           };
           file.waypoints.push(newWaypoint);
           this.changed = true;
@@ -234,7 +234,7 @@ export class MapComponent implements OnInit, OnDestroy {
       return;
     }
     file[this.selectedType].push({
-      name: 'Group' + Math.round(Math.random() * 1000),
+      name: 'New ' + this.selectedType.substring(0, this.selectedType.length - 1),
       points: [],
       slopes: [],
     });

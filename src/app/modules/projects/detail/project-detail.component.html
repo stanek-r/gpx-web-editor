@@ -14,7 +14,7 @@
     </button>
   </div>
   <div class="w-100">
-    <form class="row gap-2 p-2 mt-3" [formGroup]="fg" (ngSubmit)="saveChanges()">
+    <form class="d-flex flex-column gap-2 mt-3" [formGroup]="fg" (ngSubmit)="saveChanges()">
       <input class="form-control" placeholder="Jméno" formControlName="name" />
       <textarea class="form-control" placeholder="Popis" formControlName="description"></textarea>
       <input
@@ -30,36 +30,39 @@
     </form>
   </div>
   <h2 class="mt-4">Soubory:</h2>
-  <div class="d-flex flex-column flex-md-row gap-3" *ngIf="pointGroups$ | async as pointGroups">
-    <select
-      class="form-control"
-      style="max-width: 450px"
-      [(ngModel)]="addFileToProjectInput"
-      minlength="10"
-      maxlength="10"
-    >
-      <option value="">Vyberte soubor pro přidání</option>
-      <option *ngFor="let pointGroup of pointGroups" [value]="pointGroup.id">
-        {{ pointGroup.name }}
-      </option>
-    </select>
-    <button type="button" class="btn btn-primary" (click)="addToProject()">Přidat</button>
-    <button
-      type="button"
-      class="btn btn-dark text-nowrap d-flex gap-2 ms-0 ms-md-2 mt-2 mt-md-0"
-      (click)="uploadFile()"
-    >
-      <mat-icon>cloud_upload</mat-icon><span>Nahrát GPX soubor</span>
-    </button>
+  <div class="d-flex flex-column gap-3" *ngIf="pointGroups$ | async as pointGroups">
+    <div class="d-flex flex-column flex-md-row align-items-center gap-2">
+      <label for="addFileToProject" style="width: 180px">Přidat již nahraný soubor:</label>
+      <select
+        id="addFileToProject"
+        class="form-control"
+        style="max-width: 450px"
+        [(ngModel)]="addFileToProjectInput"
+        minlength="10"
+        maxlength="10"
+      >
+        <option value="" class="text-secondary">Vyberte soubor pro přidání</option>
+        <option *ngFor="let pointGroup of pointGroups" [value]="pointGroup.id">
+          {{ pointGroup.name }}
+        </option>
+      </select>
+      <button type="button" class="btn btn-primary" (click)="addToProject()">Přidat</button>
+    </div>
+    <div class="d-flex flex-column flex-md-row align-items-center gap-2">
+      <label for="uploadFileButton" style="width: 180px">Náhrát nový soubor:</label>
+      <button id="uploadFileButton" type="button" class="btn btn-dark text-nowrap d-flex gap-2" (click)="uploadFile()">
+        <mat-icon>cloud_upload</mat-icon><span>Nahrát GPX soubor</span>
+      </button>
+    </div>
   </div>
   <div class="d-flex flex-wrap justify-content-center justify-content-md-start" *ngIf="gpxFiles.length > 0">
     <div
       *ngFor="let gpxFileId of projectToShow.gpxFileIds; let i = index"
-      class="d-flex flex-column align-items-center"
-      style="margin: 40px 10px 0 10px"
+      class="d-flex flex-column align-items-center card"
+      style="margin: 40px 10px 0 10px; padding: 10px; background-color: #f5f5f5"
     >
       <ng-container *ngIf="gpxFiles[i] as gpxFile">
-        <p class="id-show m-0 mt-4">ID: {{ gpxFileId }}</p>
+        <p class="id-show m-0">ID: {{ gpxFileId }}</p>
         <p>{{ gpxFile.metadata.name }}</p>
         <p class="description">{{ gpxFile.metadata.desc }}</p>
         <div class="d-flex gap-2">

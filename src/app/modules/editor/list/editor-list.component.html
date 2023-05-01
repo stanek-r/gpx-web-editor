@@ -9,14 +9,14 @@
 <h2 class="mt-3">Mé soubory</h2>
 <ng-container *ngIf="pointGroups$ | async as pointGroups">
   <div class="list justify-content-center justify-content-md-start" *ngIf="pointGroups.length > 0">
-    <div *ngFor="let group of pointGroups">
+    <div *ngFor="let group of pointGroups" class="card">
       <p class="id-show m-0">ID: {{ group.id }}</p>
       <p>{{ group.name }}</p>
       <p class="description">{{ group.description }}</p>
 
       <button type="button" class="btn btn-primary my-1" [routerLink]="group.id">Detail</button>
 
-      <div class="d-flex flex-row gap-2 mt-1">
+      <div class="d-flex flex-row w-auto gap-2 mt-1">
         <button type="button" class="btn btn-primary d-flex" [routerLink]="'map/' + group.id">
           <mat-icon>map</mat-icon>
         </button>
@@ -34,14 +34,14 @@
 <ng-container *ngIf="sharedPointGroups$ | async as sharedPointGroups">
   <h2 class="mt-3">Sdílené soubory</h2>
   <div class="list justify-content-center justify-content-md-start">
-    <div *ngFor="let group of sharedPointGroups">
+    <div *ngFor="let group of sharedPointGroups" class="card">
       <p class="id-show m-0">ID: {{ group.id }}</p>
       <p>{{ group.name }}</p>
       <p class="description">{{ group.description }}</p>
 
       <button type="button" class="btn btn-primary my-1" [routerLink]="group.id">Detail</button>
 
-      <div class="d-flex flex-row gap-2 mt-1">
+      <div class="d-flex flex-row w-auto gap-2 mt-1">
         <button type="button" class="btn btn-primary d-flex" [routerLink]="'map/' + group.id">
           <mat-icon>map</mat-icon>
         </button>

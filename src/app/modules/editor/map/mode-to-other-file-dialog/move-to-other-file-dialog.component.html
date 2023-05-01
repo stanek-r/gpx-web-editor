@@ -14,11 +14,11 @@
     >
   </div>
 
-  <h5 class="mt-3">Body</h5>
+  <h5 class="mt-3">Body zájmu</h5>
   <ng-container *ngIf="fileToExtractFrom.waypoints.length > 0; else noWaypoints">
     <div class="d-flex justify-content-between" *ngFor="let waypoint of fileToExtractFrom.waypoints; let i = index">
       <div class="d-flex flex-column">
-        <span>Bod {{ i + 1 }}</span>
+        <span>Bod zájmu {{ i + 1 }}</span>
         <span>Jméno: {{ waypoint.name }}</span>
       </div>
       <div class="form-check">
@@ -36,7 +36,7 @@
     </div>
   </ng-container>
   <ng-template #noWaypoints>
-    <p>Tento soubor neobsahuje žádné body</p>
+    <p>Tento soubor neobsahuje žádné body zájmu</p>
   </ng-template>
 
   <h5 class="mt-3">Stopy</h5>
