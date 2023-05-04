@@ -1,0 +1,10 @@
+export const environment = {
+  production: true,
+  firebase: {
+    apiKey: '${FIREBASE_API_KEY}'
+    authDomain: '${FIREBASE_AUTH_DOMAIN}',
+    databaseURL: '${FIREBASE_DATABASE_URL}',
+    projectId: '${FIREBASE_PROJECT_ID}',
+  },
+  googleMapsApiKey: '${GOOGLE_MAPS_API_KEY}'
+};
