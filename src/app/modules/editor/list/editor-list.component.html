@@ -1,13 +1,21 @@
 <app-side-menu></app-side-menu>
-<div class="action-menu flex-column flex-md-row">
-  <button type="button" class="btn btn-primary" (click)="addNewGroup()">Vytvořit nový GPX soubor</button>
-  <button type="button" class="btn btn-dark d-flex justify-content-center gap-2" (click)="uploadFile()">
-    <mat-icon>cloud_upload</mat-icon><span>Nahrát GPX soubor</span>
+<div class="action-menu flex-column flex-md-row" *ngIf="pointGroups$ | async as pointGroups">
+  <button type="button" class="btn btn-primary" (click)="addNewGroup()" [disabled]="pointGroups.length > 10">
+    Vytvořit nový GPX soubor
+  </button>
+  <button
+    type="button"
+    class="btn btn-dark d-flex justify-content-center gap-2"
+    (click)="uploadFile()"
+    [disabled]="pointGroups.length > 10"
+  >
+    <mat-icon>cloud_upload</mat-icon><span>Nahrát GPX soubor</span
+    >{{ pointGroups.length > 10 ? ' (max. 10 souborů)' : '' }}
   </button>
 </div>
 <mat-divider class="mt-2"></mat-divider>
 <h2 class="mt-3">Mé soubory</h2>
-<ng-container *ngIf="pointGroups$ | async as pointGroups">
+<ng-container *ngIf="pointGroups$ | async as pointGroups; else loading">
   <div class="list justify-content-center justify-content-md-start" *ngIf="pointGroups.length > 0">
     <div *ngFor="let group of pointGroups" class="card">
       <p class="id-show m-0">ID: {{ group.id }}</p>
@@ -30,8 +38,13 @@
     </div>
   </div>
 </ng-container>
-<mat-divider class="mt-5"></mat-divider>
+<ng-template #loading>
+  <div class="d-flex justify-content-center mt-5">
+    <mat-spinner diameter="100"></mat-spinner>
+  </div>
+</ng-template>
 <ng-container *ngIf="sharedPointGroups$ | async as sharedPointGroups">
+  <mat-divider class="mt-5"></mat-divider>
   <h2 class="mt-3">Sdílené soubory</h2>
   <div class="list justify-content-center justify-content-md-start">
     <div *ngFor="let group of sharedPointGroups" class="card">

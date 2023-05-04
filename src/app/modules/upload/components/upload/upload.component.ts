@@ -19,6 +19,11 @@ export class UploadComponent {
         const gpxFileData = this.importFromFile(fileString);
         if (gpxFileData) {
           this.dialogRef.close(gpxFileData);
+        } else {
+          this.dialogRef.close({
+            error: true,
+            text: 'Soubor příliš velký nebo neplatný',
+          });
         }
       } else {
         this.dialogRef.close({
@@ -41,6 +46,9 @@ export class UploadComponent {
   }
 
   importFromFile(fileString: string): GpxModel | undefined {
+    if (fileString?.length > 1_000_000) {
+      return undefined;
+    }
     try {
       const gpx = new gpxParser();
       gpx.parse(fileString);

@@ -1,5 +1,18 @@
 <app-block-ui-provider></app-block-ui-provider>
-<router-outlet *ngIf="fireUser$ | async; else login"></router-outlet>
+<ng-container *ngIf="fireUser$ | async as fireUser; else login">
+  <router-outlet *ngIf="fireUser.emailVerified; else waitingForEmailVerification"></router-outlet>
+</ng-container>
 <ng-template #login>
   <app-login></app-login>
+</ng-template>
+<ng-template #waitingForEmailVerification>
+  <div class="waitingForEmailValidation">
+    <h1 class="text-center">Čekání na verifikaci emailové adresy</h1>
+    <p>Prosím zkontrolujte vaší schránku a přejděte na odkaz v emailu</p>
+    <div>
+      <button class="btn btn-secondary" (click)="resendEmailVerification()">Poslat znovu</button>
+      <button class="btn btn-primary" (click)="reloadApplication()">Aktualizovat</button>
+    </div>
+    <button class="btn btn-secondary mt-3" (click)="logout()">Odhlásit se</button>
+  </div>
 </ng-template>

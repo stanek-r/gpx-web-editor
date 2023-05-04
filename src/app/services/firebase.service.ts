@@ -10,6 +10,7 @@ import User = firebase.User;
 import { Project } from '../shared/models/project.model';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireDatabase } from '@angular/fire/database';
+import { environment } from '../../environments/environment';
 
 export interface SharedFileInfo {
   uid: string;
@@ -20,7 +21,6 @@ export interface SharedFileInfo {
   providedIn: 'root',
 })
 export class FirebaseService {
-  private fireBaseDatabaseUrl = 'https://gpx-web-editor-default-rtdb.europe-west1.firebasedatabase.app';
   private filesBasePath = '/gpxfiles';
   private sharesBasePath = '/sharing';
   private projectsBasePath = '/project';
@@ -68,7 +68,7 @@ export class FirebaseService {
     }
     return new Promise<GpxModel | null>((resolve) => {
       this.http
-        .get(`${this.fireBaseDatabaseUrl + this.filesBasePath}/${uid ?? user.uid}/${id}.json?auth=${token}`)
+        .get(`${environment.firebase.databaseURL + this.filesBasePath}/${uid ?? user.uid}/${id}.json?auth=${token}`)
         .subscribe({
           next: (data) => {
             resolve(data as GpxModel);
@@ -97,7 +97,7 @@ export class FirebaseService {
           return of(null);
         }
         return this.http.get<any>(
-          `${this.fireBaseDatabaseUrl + this.projectsBasePath}/${user.uid}/${id}.json?auth=${token}`
+          `${environment.firebase.databaseURL + this.projectsBasePath}/${user.uid}/${id}.json?auth=${token}`
         );
       })
     );
@@ -114,7 +114,9 @@ export class FirebaseService {
         if (!token) {
           return of(null);
         }
-        return this.http.get<any>(`${this.fireBaseDatabaseUrl + this.projectsBasePath}/${user.uid}.json?auth=${token}`);
+        return this.http.get<any>(
+          `${environment.firebase.databaseURL + this.projectsBasePath}/${user.uid}.json?auth=${token}`
+        );
       })
     );
   }
@@ -146,6 +148,14 @@ export class FirebaseService {
     );
   }
 
+  /**
+   * Bohužel jsem musel využít separátního objektu pro získání sdílených souborů, i když jsou samotné prístupy
+   * nastavené pomocí pravidel, samotný seznam sdílených souborů je uložen v jiné struktuře
+   *
+   * key = uid uživatele, který soubor sdílí
+   * key2 = id souboru který je sdílený
+   * value = pole emailů, které mají přístup k souboru
+   */
   getSharedFilesChanges(): Observable<SharedFileInfo[]> {
     return this.fireUserSubject.pipe(
       switchMap((user) => {
@@ -185,10 +195,6 @@ export class FirebaseService {
     return this.fireUserSubject.asObservable();
   }
 
-  getFireUserValue(): User | null {
-    return this.fireUserSubject.getValue();
-  }
-
   loginToGoogle(): Observable<firebase.auth.UserCredential> {
     return from(this.fireAuth.signInWithPopup(new GoogleAuthProvider()));
   }
@@ -205,6 +211,14 @@ export class FirebaseService {
         }
       })
     );
+  }
+
+  async resendEmailVerification(): Promise<void> {
+    const user = this.fireUserSubject.getValue();
+    if (!user) {
+      return;
+    }
+    await user.sendEmailVerification();
   }
 
   async logout(): Promise<void> {

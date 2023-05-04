@@ -1,9 +1,11 @@
 <app-side-menu></app-side-menu>
 <div class="ms-5 ps-5 pt-5 w-75">
-  <h2>GPX Web editor</h2>
+  <h1>GPX Web editor</h1>
+  <h3>Vítejte v aplikaci GPX Web editor.</h3>
   <p>
-    Webová aplikace pro ukládání, úpravu a sdílení souborů GPX. Projekt je určen k nasazení na Firebase. Lze je však
-    exportovat do jednoduchého formátu jednostránkové webové stránky.
+    Tato webová aplikace slouží pro úpravu a ukládání souborů ve formátu GPX. GPX je formát pro ukládání tras, bodů a
+    cest v mapě. Aplikace byla vytvořena v rámci bakalářské práce v roce 2023 a je nasazená na do prostředí Firebase.
+    Aplikace má v tuto chvíli limitované využítí na maximálne 10 souborů na uživatele.
   </p>
   <p>
     GitHub repozitář:
@@ -13,7 +15,6 @@
     <h3>Soubory:</h3>
     <p>Možnost nahrávat/stahovat/editovat a vytvářet jednotlivé GPX soubory a následně je zobrazit a upravit na mapě</p>
     <p>Možnost přesouvat a upravovat jednotlivé elementy v souboru</p>
-    <p>Možnost je také jednotlivé GPX soubory nasdílet jiným uživatelům pomocí emailové adresy</p>
     <a class="btn btn-primary" routerLink="/editor">Přejít na soubory</a>
   </div>
   <div class="mt-5">
@@ -28,8 +29,7 @@
   <div *ngIf="fireUser$ | async as fireUser" class="mt-5">
     <h3>Současný uživatel:</h3>
     <h5>{{ fireUser.displayName }}</h5>
-    Email: {{ fireUser.email }}<br />
-    Verifikovaný email: {{ fireUser.emailVerified }}<br />
+    Email: {{ fireUser.email }}<br /><br />
     <img [src]="fireUser.photoURL" alt="User image" *ngIf="fireUser.photoURL" />
   </div>
 </div>

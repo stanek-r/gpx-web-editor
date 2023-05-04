@@ -3,5 +3,4 @@ export interface Project {
   name: string;
   description: string;
   gpxFileIds: string[];
-  userIds: string[];
 }

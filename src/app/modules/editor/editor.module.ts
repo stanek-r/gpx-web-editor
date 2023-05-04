@@ -19,6 +19,7 @@ import { AddPointDialogComponent } from './map/add-point-dialog/add-point-dialog
 import { MoveToOtherFileDialogComponent } from './map/mode-to-other-file-dialog/move-to-other-file-dialog.component';
 import { EditElementMetadataDialogComponent } from './map/edit-element-metadata-dialog/edit-element-metadata-dialog.component';
 import { environment } from '../../../environments/environment';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { environment } from '../../../environments/environment';
     UploadModule,
     MatDialogModule,
     MatSlideToggleModule,
+    MatProgressSpinnerModule,
   ],
   exports: [],
 })

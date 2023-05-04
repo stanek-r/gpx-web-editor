@@ -22,12 +22,12 @@ export class ProjectDetailComponent implements OnInit {
   projectToShow?: Project;
   gpxFiles: GpxModel[] = [];
 
-  pointGroups$ = new BehaviorSubject<FileInfo[] | null>(null);
+  allPointGroupsSubject = new BehaviorSubject<FileInfo[] | null>(null);
+  availablePointGroupsSubject = new BehaviorSubject<FileInfo[] | null>(null);
 
   fg = this.fb.group({
     name: new FormControl('', [Validators.required, Validators.minLength(3)]),
     description: new FormControl(''),
-    userIds: new FormControl(''),
   });
   changed = false;
 
@@ -62,17 +62,15 @@ export class ProjectDetailComponent implements OnInit {
           name: project.name ?? '',
           description: project.description ?? '',
           gpxFileIds: project.gpxFileIds ?? [],
-          userIds: project.userIds ?? [],
         };
         this.fg.controls.name.setValue(project.name);
         this.fg.setValue({
           name: project.name ?? '',
           description: project.description ?? '',
-          userIds: project.userIds?.join(',') ?? [],
         });
 
         this.fg.valueChanges.subscribe(() => {
-          if (this.fg.controls.name.dirty || this.fg.controls.description.dirty || this.fg.controls.userIds.dirty) {
+          if (this.fg.controls.name.dirty || this.fg.controls.description.dirty) {
             this.changed = true;
           }
         });
@@ -101,7 +99,8 @@ export class ProjectDetailComponent implements OnInit {
 
   fetchPointGroups(): void {
     const pointGroups = this.storageService.getListOfFilesValue();
-    this.pointGroups$.next(
+    this.allPointGroupsSubject.next(pointGroups ?? null);
+    this.availablePointGroupsSubject.next(
       !pointGroups ? null : pointGroups.filter((spg) => !this.projectToShow?.gpxFileIds.includes(spg.id))
     );
   }
@@ -115,7 +114,6 @@ export class ProjectDetailComponent implements OnInit {
       id: this.projectToShow.id,
       name: this.fg.value.name ?? '',
       description: this.fg.value.description ?? '',
-      userIds: this.projectToShow.userIds,
       gpxFileIds: this.projectToShow.gpxFileIds,
     });
     // @ts-ignore
@@ -123,7 +121,6 @@ export class ProjectDetailComponent implements OnInit {
       ...this.projectToShow,
       ...{
         name: this.fg.value.name,
-        userIds: this.projectToShow.userIds,
       },
     };
   }
@@ -135,7 +132,6 @@ export class ProjectDetailComponent implements OnInit {
     this.fg.setValue({
       name: this.projectToShow.name,
       description: this.projectToShow.description,
-      userIds: this.projectToShow.userIds.join(','),
     });
   }
 

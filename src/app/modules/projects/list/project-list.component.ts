@@ -46,7 +46,6 @@ export class ProjectListComponent implements OnInit {
       id,
       name: 'Nový project',
       description: '',
-      userIds: [],
       gpxFileIds: [],
     });
     this.router.navigate(['projects', id]);

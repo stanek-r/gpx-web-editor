@@ -167,10 +167,18 @@ describe('Mapping of gpx elements', () => {
       waypoints: [],
       permissionData: {},
     };
+
     const gpx = combineGpxFiles(file1, file2);
+    expect(gpx.metadata.name).toEqual('file1');
+    expect(gpx.routes.length).toEqual(4);
+
     expect(gpx.routes[0].name).toEqual('1');
+    expect(gpx.routes[0].points.length).toEqual(2);
     expect(gpx.routes[1].name).toEqual('2');
+    expect(gpx.routes[1].points.length).toEqual(2);
     expect(gpx.routes[2].name).toEqual('3');
+    expect(gpx.routes[2].points.length).toEqual(2);
     expect(gpx.routes[3].name).toEqual('4');
+    expect(gpx.routes[3].points.length).toEqual(2);
   });
 });

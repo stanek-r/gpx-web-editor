@@ -38,8 +38,8 @@ module.exports = function (config) {
     customLaunchers: {
       ChromeHeadlessCI: {
         base: 'ChromeHeadless',
-        flags: ['--no-sandbox', '--disable-gpu', '--disable-translate', '--disable-extensions']
-      }
+        flags: ['--no-sandbox', '--disable-gpu', '--disable-translate', '--disable-extensions'],
+      },
     },
     singleRun: false,
     restartOnFileChange: true,
