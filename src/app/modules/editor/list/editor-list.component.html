@@ -44,24 +44,26 @@
   </div>
 </ng-template>
 <ng-container *ngIf="sharedPointGroups$ | async as sharedPointGroups">
-  <mat-divider class="mt-5"></mat-divider>
-  <h2 class="mt-3">Sdílené soubory</h2>
-  <div class="list justify-content-center justify-content-md-start">
-    <div *ngFor="let group of sharedPointGroups" class="card">
-      <p class="id-show m-0">ID: {{ group.id }}</p>
-      <p>{{ group.name }}</p>
-      <p class="description">{{ group.description }}</p>
+  <ng-container *ngIf="sharedPointGroups.length > 0">
+    <mat-divider class="mt-5"></mat-divider>
+    <h2 class="mt-3">Sdílené soubory</h2>
+    <div class="list justify-content-center justify-content-md-start">
+      <div *ngFor="let group of sharedPointGroups" class="card">
+        <p class="id-show m-0">ID: {{ group.id }}</p>
+        <p>{{ group.name }}</p>
+        <p class="description">{{ group.description }}</p>
 
-      <button type="button" class="btn btn-primary my-1" [routerLink]="group.id">Detail</button>
+        <button type="button" class="btn btn-primary my-1" [routerLink]="group.id">Detail</button>
 
-      <div class="d-flex flex-row w-auto gap-2 mt-1">
-        <button type="button" class="btn btn-primary d-flex" [routerLink]="'map/' + group.id">
-          <mat-icon>map</mat-icon>
-        </button>
-        <button type="button" class="btn btn-secondary d-flex" (click)="exportToFile(group.id)">
-          <mat-icon>cloud_download</mat-icon>
-        </button>
+        <div class="d-flex flex-row w-auto gap-2 mt-1">
+          <button type="button" class="btn btn-primary d-flex" [routerLink]="'map/' + group.id">
+            <mat-icon>map</mat-icon>
+          </button>
+          <button type="button" class="btn btn-secondary d-flex" (click)="exportToFile(group.id)">
+            <mat-icon>cloud_download</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+  </ng-container>
 </ng-container>

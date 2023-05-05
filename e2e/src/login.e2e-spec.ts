@@ -10,25 +10,26 @@ describe('Login', () => {
   });
 
   it('should allow a user to log in with valid credentials', async () => {
-    const usernameInput = element(by.css('input[type="text"]'));
+    const emailInput = element(by.css('input[type="text"]'));
     const passwordInput = element(by.css('input[type="password"]'));
     const submitButton = element(by.css('button[type="submit"]'));
 
-    await usernameInput.sendKeys('test@test.test');
+    await emailInput.sendKeys('test@test.test');
     await passwordInput.sendKeys('123456789');
     await submitButton.click();
 
-    const errorMessage = element(by.css('.alert'));
-    expect(errorMessage.isPresent()).toBeFalse();
+    const h1Title = element(by.css('h3'));
+    const titleText = await h1Title.getText();
+    expect(titleText).toEqual('Vítejte v aplikaci GPX Web editor.');
   });
 
   it('should show an error message with invalid credentials', async () => {
-    const usernameInput = element(by.css('input[type="text"]'));
+    const emailInput = element(by.css('input[type="text"]'));
     const passwordInput = element(by.css('input[type="password"]'));
     const submitButton = element(by.css('button[type="submit"]'));
 
-    await usernameInput.sendKeys('wrong-username');
-    await passwordInput.sendKeys('wrong-password');
+    await emailInput.sendKeys('test@test.test');
+    await passwordInput.sendKeys('wrong');
     await submitButton.click();
 
     const errorMessage = element(by.css('.alert'));
