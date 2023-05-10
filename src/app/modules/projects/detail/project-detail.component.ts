@@ -22,8 +22,8 @@ export class ProjectDetailComponent implements OnInit {
   projectToShow?: Project;
   gpxFiles: GpxModel[] = [];
 
-  allPointGroupsSubject = new BehaviorSubject<FileInfo[] | null>(null);
-  availablePointGroupsSubject = new BehaviorSubject<FileInfo[] | null>(null);
+  allFilesSubject = new BehaviorSubject<FileInfo[] | null>(null);
+  availableFilesSubject = new BehaviorSubject<FileInfo[] | null>(null);
 
   fg = this.fb.group({
     name: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -94,14 +94,14 @@ export class ProjectDetailComponent implements OnInit {
     }
     this.projectToShow.gpxFileIds = newFiles;
     await this.saveChanges();
-    this.fetchPointGroups();
+    this.fetchAvailableFiles();
   }
 
-  fetchPointGroups(): void {
-    const pointGroups = this.storageService.getListOfFilesValue();
-    this.allPointGroupsSubject.next(pointGroups ?? null);
-    this.availablePointGroupsSubject.next(
-      !pointGroups ? null : pointGroups.filter((spg) => !this.projectToShow?.gpxFileIds.includes(spg.id))
+  fetchAvailableFiles(): void {
+    const allFiles = this.storageService.getListOfFilesValue();
+    this.allFilesSubject.next(allFiles ?? null);
+    this.availableFilesSubject.next(
+      !allFiles ? null : allFiles.filter((spg) => !this.projectToShow?.gpxFileIds.includes(spg.id))
     );
   }
 
@@ -162,7 +162,7 @@ export class ProjectDetailComponent implements OnInit {
       this.gpxFiles.splice(index, 1);
       this.cancelChanges();
       await this.saveChanges();
-      this.fetchPointGroups();
+      this.fetchAvailableFiles();
     }
   }
 

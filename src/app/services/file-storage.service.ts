@@ -31,15 +31,15 @@ export class FileStorageService {
         this.loaded.next(true);
         return;
       }
-      const pointGroupsTmp: FileInfo[] = [];
+      const filesTmp: FileInfo[] = [];
       for (const key of Object.keys(data)) {
-        pointGroupsTmp.push({
+        filesTmp.push({
           id: key,
           name: data[key].metadata.name,
           description: data[key].metadata.desc,
         });
       }
-      this.filesSubject.next(pointGroupsTmp);
+      this.filesSubject.next(filesTmp);
       this.loaded.next(true);
     });
     this.firebaseService.getSharedFilesChanges().subscribe(async (data) => {

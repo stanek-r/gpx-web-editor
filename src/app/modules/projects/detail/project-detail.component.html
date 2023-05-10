@@ -24,7 +24,7 @@
     </form>
   </div>
   <h2 class="mt-4">Soubory:</h2>
-  <div class="d-flex flex-column gap-3" *ngIf="availablePointGroupsSubject | async as pointGroups">
+  <div class="d-flex flex-column gap-3" *ngIf="availableFilesSubject | async as availableFiles">
     <div class="d-flex flex-column flex-md-row align-items-center gap-2">
       <label for="addFileToProject" style="width: 180px">Přidat již nahraný soubor:</label>
       <select
@@ -36,8 +36,8 @@
         maxlength="10"
       >
         <option value="" class="text-secondary">Vyberte soubor pro přidání</option>
-        <option *ngFor="let pointGroup of pointGroups" [value]="pointGroup.id">
-          {{ pointGroup.name }}
+        <option *ngFor="let file of availableFiles" [value]="file.id">
+          {{ file.name }}
         </option>
       </select>
       <button type="button" class="btn btn-primary" (click)="addToProject()">Přidat</button>
@@ -49,11 +49,11 @@
         type="button"
         class="btn btn-dark text-nowrap d-flex gap-2"
         (click)="uploadFile()"
-        *ngIf="allPointGroupsSubject | async as allPointGroups"
-        [disabled]="allPointGroups.length > 10"
+        *ngIf="allFilesSubject | async as allFiles"
+        [disabled]="allFiles.length > 10"
       >
         <mat-icon>cloud_upload</mat-icon><span>Nahrát GPX soubor</span
-        >{{ allPointGroups.length > 10 ? ' (max. 10 souborů)' : '' }}
+        >{{ allFiles.length > 10 ? ' (max. 10 souborů)' : '' }}
       </button>
     </div>
   </div>

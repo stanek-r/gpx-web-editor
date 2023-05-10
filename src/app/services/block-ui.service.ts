@@ -47,20 +47,16 @@ export class BlockUiService {
     this.activeBlocks.next([]);
   }
 
-  // tslint:disable-next-line:typedef
-  blockPipe(options?: Partial<BlockUiOptions>) {
+  blockPipe(options?: Partial<BlockUiOptions>): <T>(source: Observable<T>) => Observable<T> {
     return blockUi(this, options);
   }
 }
 
-/**
- * Pipe operator for UI blocking during async requests.
- * @param blockUiService UI blocking service
- * @param options Settings for ui block
- */
-// tslint:disable-next-line:typedef
-export function blockUi(blockUiService: BlockUiService, options?: Partial<BlockUiOptions>) {
-  return <T>(source: Observable<T>) =>
+export function blockUi<T>(
+  blockUiService: BlockUiService,
+  options?: Partial<BlockUiOptions>
+): (source: Observable<T>) => Observable<T> {
+  return <K>(source: Observable<K>) =>
     defer(() => {
       const block = blockUiService.block(options);
       // @ts-ignore

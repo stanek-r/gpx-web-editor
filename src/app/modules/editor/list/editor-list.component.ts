@@ -15,8 +15,8 @@ import { ErrorDialogComponent } from '../../../shared/components/error-dialog/er
   styleUrls: ['./editor-list.component.scss'],
 })
 export class EditorListComponent implements OnInit {
-  pointGroups$!: Observable<FileInfo[] | null>;
-  sharedPointGroups$!: Observable<FileInfo[] | null>;
+  ownedFiles$!: Observable<FileInfo[] | null>;
+  sharedFiles$!: Observable<FileInfo[] | null>;
 
   constructor(
     private readonly storageService: FileStorageService,
@@ -25,8 +25,8 @@ export class EditorListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.pointGroups$ = this.storageService.getListOfFiles();
-    this.sharedPointGroups$ = this.storageService.getListOfSharedFiles();
+    this.ownedFiles$ = this.storageService.getListOfFiles();
+    this.sharedFiles$ = this.storageService.getListOfSharedFiles();
   }
 
   async addNewGroup(): Promise<void> {

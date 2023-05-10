@@ -73,7 +73,6 @@ export class EditorDetailComponent implements OnInit {
     if (this.fg.value.sharing.length > 0) {
       for (const email of this.fg.value.sharing.split(',') as string) {
         const fixedEmail = email.trim().toLowerCase().replace('@', 'AT').replace('.', 'DOT');
-        // @ts-ignore
         this.fileData.permissionData[fixedEmail] = true;
       }
     }

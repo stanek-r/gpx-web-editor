@@ -487,7 +487,7 @@ export class MapComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  showSplitPointGroupButton(): boolean {
+  showJoinPointGroupButton(): boolean {
     if (this.selectedType === 'waypoints') {
       return false;
     }
